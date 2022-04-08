@@ -42,7 +42,9 @@ const _this = {
                     },
                     locale: {
                         type:       'locale',
-                        id:         getCookie('lang')
+                        locale:      getCookie('locale'),
+                        source:      ['default'],
+                        key:         'ecommerce',
                     },
                     products: {
                         type:       'find',

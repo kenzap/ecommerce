@@ -460,6 +460,9 @@ const _this = {
                     'Accept': 'application/json',
                     'Content-Type': 'text/plain',
                     'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
+                    'Kenzap-Header': localStorage.hasOwnProperty('header'),
+                    'Kenzap-Token': getCookie('kenzap_token'),
+                    'Kenzap-Sid': getSiteId(),
                 },
                 body: JSON.stringify({
                     query: {
