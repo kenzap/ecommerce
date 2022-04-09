@@ -90,7 +90,7 @@ return `
                                                 <div class="input-group">
                                                     <input id="p-sku" type="text" style="width:100%;" class="form-control inp" placeholder="" maxlength="200">
                                                     <p class="form-text">
-                                                        Product stock unit identification number
+                                                        ${ __('Product stock unit identification number') } 
                                                     </p>
                                                 </div>
                                             </div>

@@ -1,5 +1,5 @@
 // js dependencies
-import { showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, getSiteId, link } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, getSiteId, link } from '@kenzap/k-cloud';
 import { HTMLContent } from "../_/_cnt_home.js"
  
 
@@ -22,19 +22,13 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'text/plain',
-                'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                'Kenzap-Header': localStorage.hasOwnProperty('header'),
-                'Kenzap-Token': getCookie('kenzap_token'),
-                'Kenzap-Sid': getSiteId(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 query: {
                     locale: {
                         type:       'locale',
-                        id:         getCookie('lang')
+                        source:      ['extension'],
+                        key:         'ecommerce',
                     }
                 }
             })
@@ -76,9 +70,7 @@ const _this = {
                 parseApiError(response);
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => { parseApiError(response); });
     },
     renderPage: (product) => {
 
@@ -126,7 +118,7 @@ const _this = {
     },
     initFooter: () => {
         
-        initFooter(__('Copyright © '+new Date().getFullYear()+' <a class="text-muted" href="https://kenzap.com/" target="_blank">Kenzap</a>. All rights reserved.'), __('Kenzap Cloud Services - Dashboard'));
+        initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 

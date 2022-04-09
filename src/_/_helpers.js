@@ -1,3 +1,5 @@
+import { getCookie, getSiteId } from '@kenzap/k-cloud';
+
 export const getProductId = () => {
     
     let urlParams = new URLSearchParams(window.location.search);
@@ -40,26 +42,18 @@ export const getPageNumber = () => {
     return parseInt(page);
 }
 
-export const getPagination = (meta, cb) => {
+export const getPagination = (__, meta, cb) => {
 
-    if(typeof(meta) === 'undefined'){ document.querySelector("#listing_info").innerHTML = 'no records to display'; return; }
+    if(typeof(meta) === 'undefined'){ document.querySelector("#listing_info").innerHTML = __('no records to display'); return; }
 
     let offset = meta.limit+meta.offset;
     if(offset>meta.total_records) offset = meta.total_records;
 
-    document.querySelector("#listing_info").innerHTML = "Showing "+(1+meta.offset)+" to "+(offset)+" of "+meta.total_records+" entries";
+    document.querySelector("#listing_info").innerHTML = __("Showing %1$ to %2$ of %3$ entries", (1+meta.offset), (offset), meta.total_records);
+    //  "Showing "+(1+meta.offset)+" to "+(offset)+" of "+meta.total_records+" entries";
 
     let pbc = Math.ceil(meta.total_records / meta.limit);
-    // console.log(pbc);
     document.querySelector("#listing_paginate").style.display = (pbc < 2) ? "none" : "block";
-
-    // page 1 
-
-    // page 3
-    // 1 2
-
-    // page 5
-    // 2 3 4 .. 
 
     let page = getPageNumber(); 
     let html = '<ul class="pagination d-flex justify-content-end pagination-flat">';
@@ -70,7 +64,7 @@ export const getPagination = (meta, cb) => {
         i++; 
         if(((i >= page-3) && (i <= page)) || ((i <= page+3) && (i >=page))){
 
-            html += '<li class="paginate_button page-item '+((page==i)?'active':'')+'"><a href="#" aria-controls="order-listing" data-type="page" data-page="'+i+'" tabindex="0" class="page-link">'+(page==i?'..':i)+'</a></li>';      
+            html += '<li class="paginate_button page-item '+((page==i)?'active':'')+'"><a href="#" aria-controls="order-listing" data-type="page" data-page="'+i+'" tabindex="0" class="page-link">'+(page==i?i:i)+'</a></li>';      
         }
     }  
     html += '<li class="paginate_button page-item next" id="order-listing_next"><a href="#" aria-controls="order-listing" data-type="next" data-page="2" tabindex="0" class="page-link"><span aria-hidden="true">&raquo;</span></a></li>';
@@ -113,14 +107,14 @@ export const getPagination = (meta, cb) => {
     }
 }
 
-export const formatStatus = (st) => {
+export const formatStatus = (__, st) => {
 
     st = parseInt(st); 
     switch(st){ 
-      case 0: return '<div class="badge bg-warning text-dark fw-light">Draft</div>';
-      case 1: return '<div class="badge bg-primary fw-light">Published</div>';
-      case 3: return '<div class="badge bg-secondary fw-light">Unpublished</div>';
-      default: return '<div class="badge bg-secondary fw-light">Drafts</div>';
+      case 0: return '<div class="badge bg-warning text-dark fw-light">' + __('Draft') + '</div>';
+      case 1: return '<div class="badge bg-primary fw-light">' + __('Published') + '</div>';
+      case 3: return '<div class="badge bg-secondary fw-light">' + __('Unpublished') + '</div>';
+      default: return '<div class="badge bg-secondary fw-light">' + __('Drafts') + '</div>';
     }
 }
 
@@ -133,10 +127,10 @@ export const formatPrice = (price) => {
     return price;
 }
 
-export const formatTime = (timestamp) => {
+export const formatTime = (__, timestamp) => {
 	
     let a = new Date(timestamp * 1000);
-    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let months = [__('Jan'), __('Feb'), __('Mar'), __('Apr'), __('May'), __('Jun'), __('Jul'), __('Aug'), __('Sep'), __('Oct'), __('Nov'), __('Dec')];
     let year = a.getFullYear();
     let month = months[a.getMonth()];
     let date = a.getDate();
@@ -179,12 +173,12 @@ export const onClick = (sel, fn) => {
 // time elapsed since creation 
 export const timeConverterAgo = (now, time) => {
 
-    console.log(now + " " + time);
+    // console.log(now + " " + time);
 
     now = parseInt(now);
     time = parseInt(time);
 
-    console.log(now + " " + time);
+    // console.log(now + " " + time);
 
     // parse as elapsed time
     let past = now - time;
@@ -194,7 +188,7 @@ export const timeConverterAgo = (now, time) => {
 
     // process as normal date
     var a = new Date(time * 1000);
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var months = [__('Jan'), __('Feb'), __('Mar'), __('Apr'), __('May'), __('Jun'), __('Jul'), __('Aug'), __('Sep'), __('Oct'), __('Nov'), __('Dec')];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
@@ -374,171 +368,4 @@ export const getCurrencies = () => {
         {"name":"Yemeni Rial","code":"YER","symbol":"﷼"},
         {"name":"Zambian Kwacha","code":"ZMK","symbol":"ZK"}
     ];
-
-    // return {
-    //     "AFA": {"name":"Afghan Afghani","symbol":"؋"},
-    //     "ALL": {"name":"Albanian Lek","symbol":"Lek"},
-    //     "DZD": {"name":"Algerian Dinar","symbol":"دج"},
-    //     "AOA": {"name":"Angolan Kwanza","symbol":"Kz"},
-    //     "ARS": {"name":"Argentine Peso","symbol":"$"},
-    //     "AMD": {"name":"Armenian Dram","symbol":"֏"},
-    //     "AWG": {"name":"Aruban Florin","symbol":"ƒ"},
-    //     "AUD": {"name":"Australian Dollar","symbol":"$"},
-    //     "AZN": {"name":"Azerbaijani Manat","symbol":"m"},
-    //     "BSD": {"name":"Bahamian Dollar","symbol":"B$"},
-    //     "BHD": {"name":"Bahraini Dinar","symbol":".د.ب"},
-    //     "BDT": {"name":"Bangladeshi Taka","symbol":"৳"},
-    //     "BBD": {"name":"Barbadian Dollar","symbol":"Bds$"},
-    //     "BYR": {"name":"Belarusian Ruble","symbol":"Br"},
-    //     "BEF": {"name":"Belgian Franc","symbol":"fr"},
-    //     "BZD": {"name":"Belize Dollar","symbol":"$"},
-    //     "BMD": {"name":"Bermudan Dollar","symbol":"$"},
-    //     "BTN": {"name":"Bhutanese Ngultrum","symbol":"Nu."},
-    //     "BTC": {"name":"Bitcoin","symbol":"฿"},
-    //     "BOB": {"name":"Bolivian Boliviano","symbol":"Bs."},
-    //     "BAM": {"name":"Bosnia-Herzegovina Convertible Mark","symbol":"KM"},
-    //     "BWP": {"name":"Botswanan Pula","symbol":"P"},
-    //     "BRL": {"name":"Brazilian Real","symbol":"R$"},
-    //     "GBP": {"name":"British Pound Sterling","symbol":"£"},
-    //     "BND": {"name":"Brunei Dollar","symbol":"B$"},
-    //     "BGN": {"name":"Bulgarian Lev","symbol":"Лв."},
-    //     "BIF": {"name":"Burundian Franc","symbol":"FBu"},
-    //     "KHR": {"name":"Cambodian Riel","symbol":"KHR"},
-    //     "CAD": {"name":"Canadian Dollar","symbol":"$"},
-    //     "CVE": {"name":"Cape Verdean Escudo","symbol":"$"},
-    //     "KYD": {"name":"Cayman Islands Dollar","symbol":"$"},
-    //     "XOF": {"name":"CFA Franc BCEAO","symbol":"CFA"},
-    //     "XAF": {"name":"CFA Franc BEAC","symbol":"FCFA"},
-    //     "XPF": {"name":"CFP Franc","symbol":"₣"},
-    //     "CLP": {"name":"Chilean Peso","symbol":"$"},
-    //     "CNY": {"name":"Chinese Yuan","symbol":"¥"},
-    //     "COP": {"name":"Colombian Peso","symbol":"$"},
-    //     "KMF": {"name":"Comorian Franc","symbol":"CF"},
-    //     "CDF": {"name":"Congolese Franc","symbol":"FC"},
-    //     "CRC": {"name":"Costa Rican ColÃ³n","symbol":"₡"},
-    //     "HRK": {"name":"Croatian Kuna","symbol":"kn"},
-    //     "CUC": {"name":"Cuban Convertible Peso","symbol":"$, CUC"},
-    //     "CZK": {"name":"Czech Republic Koruna","symbol":"Kč"},
-    //     "DKK": {"name":"Danish Krone","symbol":"Kr."},
-    //     "DJF": {"name":"Djiboutian Franc","symbol":"Fdj"},
-    //     "DOP": {"name":"Dominican Peso","symbol":"$"},
-    //     "XCD": {"name":"East Caribbean Dollar","symbol":"$"},
-    //     "EGP": {"name":"Egyptian Pound","symbol":"ج.م"},
-    //     "ERN": {"name":"Eritrean Nakfa","symbol":"Nfk"},
-    //     "EEK": {"name":"Estonian Kroon","symbol":"kr"},
-    //     "ETB": {"name":"Ethiopian Birr","symbol":"Nkf"},
-    //     "EUR": {"name":"Euro","symbol":"€"},
-    //     "FKP": {"name":"Falkland Islands Pound","symbol":"£"},
-    //     "FJD": {"name":"Fijian Dollar","symbol":"FJ$"},
-    //     "GMD": {"name":"Gambian Dalasi","symbol":"D"},
-    //     "GEL": {"name":"Georgian Lari","symbol":"ლ"},
-    //     "DEM": {"name":"German Mark","symbol":"DM"},
-    //     "GHS": {"name":"Ghanaian Cedi","symbol":"GH₵"},
-    //     "GIP": {"name":"Gibraltar Pound","symbol":"£"},
-    //     "GRD": {"name":"Greek Drachma","symbol":"₯, Δρχ, Δρ"},
-    //     "GTQ": {"name":"Guatemalan Quetzal","symbol":"Q"},
-    //     "GNF": {"name":"Guinean Franc","symbol":"FG"},
-    //     "GYD": {"name":"Guyanaese Dollar","symbol":"$"},
-    //     "HTG": {"name":"Haitian Gourde","symbol":"G"},
-    //     "HNL": {"name":"Honduran Lempira","symbol":"L"},
-    //     "HKD": {"name":"Hong Kong Dollar","symbol":"$"},
-    //     "HUF": {"name":"Hungarian Forint","symbol":"Ft"},
-    //     "ISK": {"name":"Icelandic KrÃ³na","symbol":"kr"},
-    //     "INR": {"name":"Indian Rupee","symbol":"₹"},
-    //     "IDR": {"name":"Indonesian Rupiah","symbol":"Rp"},
-    //     "IRR": {"name":"Iranian Rial","symbol":"﷼"},
-    //     "IQD": {"name":"Iraqi Dinar","symbol":"د.ع"},
-    //     "ILS": {"name":"Israeli New Sheqel","symbol":"₪"},
-    //     "ITL": {"name":"Italian Lira","symbol":"L,£"},
-    //     "JMD": {"name":"Jamaican Dollar","symbol":"J$"},
-    //     "JPY": {"name":"Japanese Yen","symbol":"¥"},
-    //     "JOD": {"name":"Jordanian Dinar","symbol":"ا.د"},
-    //     "KZT": {"name":"Kazakhstani Tenge","symbol":"лв"},
-    //     "KES": {"name":"Kenyan Shilling","symbol":"KSh"},
-    //     "KWD": {"name":"Kuwaiti Dinar","symbol":"ك.د"},
-    //     "KGS": {"name":"Kyrgystani Som","symbol":"лв"},
-    //     "LAK": {"name":"Laotian Kip","symbol":"₭"},
-    //     "LVL": {"name":"Latvian Lats","symbol":"Ls"},
-    //     "LBP": {"name":"Lebanese Pound","symbol":"£"},
-    //     "LSL": {"name":"Lesotho Loti","symbol":"L"},
-    //     "LRD": {"name":"Liberian Dollar","symbol":"$"},
-    //     "LYD": {"name":"Libyan Dinar","symbol":"د.ل"},
-    //     "LTL": {"name":"Lithuanian Litas","symbol":"Lt"},
-    //     "MOP": {"name":"Macanese Pataca","symbol":"$"},
-    //     "MKD": {"name":"Macedonian Denar","symbol":"ден"},
-    //     "MGA": {"name":"Malagasy Ariary","symbol":"Ar"},
-    //     "MWK": {"name":"Malawian Kwacha","symbol":"MK"},
-    //     "MYR": {"name":"Malaysian Ringgit","symbol":"RM"},
-    //     "MVR": {"name":"Maldivian Rufiyaa","symbol":"Rf"},
-    //     "MRO": {"name":"Mauritanian Ouguiya","symbol":"MRU"},
-    //     "MUR": {"name":"Mauritian Rupee","symbol":"₨"},
-    //     "MXN": {"name":"Mexican Peso","symbol":"$"},
-    //     "MDL": {"name":"Moldovan Leu","symbol":"L"},
-    //     "MNT": {"name":"Mongolian Tugrik","symbol":"₮"},
-    //     "MAD": {"name":"Moroccan Dirham","symbol":"MAD"},
-    //     "MZM": {"name":"Mozambican Metical","symbol":"MT"},
-    //     "MMK": {"name":"Myanmar Kyat","symbol":"K"},
-    //     "NAD": {"name":"Namibian Dollar","symbol":"$"},
-    //     "NPR": {"name":"Nepalese Rupee","symbol":"₨"},
-    //     "ANG": {"name":"Netherlands Antillean Guilder","symbol":"ƒ"},
-    //     "TWD": {"name":"New Taiwan Dollar","symbol":"$"},
-    //     "NZD": {"name":"New Zealand Dollar","symbol":"$"},
-    //     "NIO": {"name":"Nicaraguan CÃ³rdoba","symbol":"C$"},
-    //     "NGN": {"name":"Nigerian Naira","symbol":"₦"},
-    //     "KPW": {"name":"North Korean Won","symbol":"₩"},
-    //     "NOK": {"name":"Norwegian Krone","symbol":"kr"},
-    //     "OMR": {"name":"Omani Rial","symbol":".ع.ر"},
-    //     "PKR": {"name":"Pakistani Rupee","symbol":"₨"},
-    //     "PAB": {"name":"Panamanian Balboa","symbol":"B/."},
-    //     "PGK": {"name":"Papua New Guinean Kina","symbol":"K"},
-    //     "PYG": {"name":"Paraguayan Guarani","symbol":"₲"},
-    //     "PEN": {"name":"Peruvian Nuevo Sol","symbol":"S/."},
-    //     "PHP": {"name":"Philippine Peso","symbol":"₱"},
-    //     "PLN": {"name":"Polish Zloty","symbol":"zł"},
-    //     "QAR": {"name":"Qatari Rial","symbol":"ق.ر"},
-    //     "RON": {"name":"Romanian Leu","symbol":"lei"},
-    //     "RUB": {"name":"Russian Ruble","symbol":"₽"},
-    //     "RWF": {"name":"Rwandan Franc","symbol":"FRw"},
-    //     "SVC": {"name":"Salvadoran ColÃ³n","symbol":"₡"},
-    //     "WST": {"name":"Samoan Tala","symbol":"SAT"},
-    //     "SAR": {"name":"Saudi Riyal","symbol":"﷼"},
-    //     "RSD": {"name":"Serbian Dinar","symbol":"din"},
-    //     "SCR": {"name":"Seychellois Rupee","symbol":"SRe"},
-    //     "SLL": {"name":"Sierra Leonean Leone","symbol":"Le"},
-    //     "SGD": {"name":"Singapore Dollar","symbol":"$"},
-    //     "SKK": {"name":"Slovak Koruna","symbol":"Sk"},
-    //     "SBD": {"name":"Solomon Islands Dollar","symbol":"Si$"},
-    //     "SOS": {"name":"Somali Shilling","symbol":"Sh.so."},
-    //     "ZAR": {"name":"South African Rand","symbol":"R"},
-    //     "KRW": {"name":"South Korean Won","symbol":"₩"},
-    //     "XDR": {"name":"Special Drawing Rights","symbol":"SDR"},
-    //     "LKR": {"name":"Sri Lankan Rupee","symbol":"Rs"},
-    //     "SHP": {"name":"St. Helena Pound","symbol":"£"},
-    //     "SDG": {"name":"Sudanese Pound","symbol":".س.ج"},
-    //     "SRD": {"name":"Surinamese Dollar","symbol":"$"},
-    //     "SZL": {"name":"Swazi Lilangeni","symbol":"E"},
-    //     "SEK": {"name":"Swedish Krona","symbol":"kr"},
-    //     "CHF": {"name":"Swiss Franc","symbol":"CHf"},
-    //     "SYP": {"name":"Syrian Pound","symbol":"LS"},
-    //     "STD": {"name":"São Tomé and Príncipe Dobra","symbol":"Db"},
-    //     "TJS": {"name":"Tajikistani Somoni","symbol":"SM"},
-    //     "TZS": {"name":"Tanzanian Shilling","symbol":"TSh"},
-    //     "THB": {"name":"Thai Baht","symbol":"฿"},
-    //     "TOP": {"name":"Tongan Pa'anga","symbol":"$"},
-    //     "TTD": {"name":"Trinidad & Tobago Dollar","symbol":"$"},
-    //     "TND": {"name":"Tunisian Dinar","symbol":"ت.د"},
-    //     "TRY": {"name":"Turkish Lira","symbol":"₺"},
-    //     "TMT": {"name":"Turkmenistani Manat","symbol":"T"},
-    //     "UGX": {"name":"Ugandan Shilling","symbol":"USh"},
-    //     "UAH": {"name":"Ukrainian Hryvnia","symbol":"₴"},
-    //     "AED": {"name":"United Arab Emirates Dirham","symbol":"إ.د"},
-    //     "UYU": {"name":"Uruguayan Peso","symbol":"$"},
-    //     "USD": {"name":"US Dollar","symbol":"$"},
-    //     "UZS": {"name":"Uzbekistan Som","symbol":"лв"},
-    //     "VUV": {"name":"Vanuatu Vatu","symbol":"VT"},
-    //     "VEF": {"name":"Venezuelan BolÃvar","symbol":"Bs"},
-    //     "VND": {"name":"Vietnamese Dong","symbol":"₫"},
-    //     "YER": {"name":"Yemeni Rial","symbol":"﷼"},
-    //     "ZMK": {"name":"Zambian Kwacha","symbol":"ZK"}
-    // };
 }

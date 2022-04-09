@@ -1,5 +1,5 @@
 // js dependencies
-import { showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
 import { getCurrencies } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_settings.js"
 
@@ -42,7 +42,8 @@ const _this = {
                     },
                     locale: {
                         type:       'locale',
-                        id:         getCookie('lang')
+                        source:      ['extension'],
+                        key:         'ecommerce',
                     },
                     settings: {
                         type:       'get',
@@ -83,9 +84,7 @@ const _this = {
                 parseApiError(response);
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => { parseApiError(response); });
     },
     authUser: (response) => {
 
@@ -182,13 +181,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'text/plain',
-                    'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                    'Kenzap-Token': getCookie('kenzap_token'),
-                    'Kenzap-Sid': getSiteId(),
-                },
+                headers: headers,
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -215,10 +208,7 @@ const _this = {
                 
                 console.log('Success:', response);
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
- 
+            .catch(error => { parseApiError(response); });
         },
  
         searchProductsActivate: (e) => {
@@ -273,13 +263,7 @@ const _this = {
         // send data
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'text/plain',
-                'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                'Kenzap-Token': getCookie('kenzap_token'),
-                'Kenzap-Sid': getSiteId(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 query: {
                     settings: {
@@ -300,9 +284,7 @@ const _this = {
                 toast.show();
 
                 // modalCont.hide();
-
                 // _this.getData();
-
                 // open product editing page
                 // window.location.href = `/product-edit/?id=${ response.product.id}`
 
@@ -313,15 +295,11 @@ const _this = {
             
             console.log('Success:', response);
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
-        console.log('saveSettings');
+        .catch(error => { parseApiError(response); });
     },
     initFooter: () => {
         
-        initFooter(__('Copyright © '+new Date().getFullYear()+' <a class="text-muted" href="https://kenzap.com/" target="_blank">Kenzap</a>. All rights reserved.'), __('Kenzap Cloud Services - Dashboard'));
+        initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 

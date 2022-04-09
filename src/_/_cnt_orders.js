@@ -9,15 +9,17 @@ export const HTMLContent = (__) => {
           <div class="col-md-12 page-title">
             <div class="st-opts st-table mb-3 dropdown">
                 <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="order-status" data-id="status" data-value="" data-bs-toggle="dropdown" aria-expanded="false">
-                  All
+                ${ __('All') }
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="order-status">
-                  <li><a class="dppi dropdown-item" data-key="" href="#" >All</a></li>
-                  <li><a class="dppi dropdown-item" data-key="new" href="#" >New</a></li>
-                  <li><a class="dppi dropdown-item" data-key="processing" href="#" >Processing</a></li>
-                  <li><a class="dppi dropdown-item" data-key="completed" href="#" >Completed</a></li>
-                  <li><a class="dppi dropdown-item" data-key="canceled" href="#" >Canceled</a></li>
-                  <li><a class="dppi dropdown-item" data-key="failed" href="#" >Failed</a></li>
+                  <li><a class="dppi dropdown-item" data-key="" href="#" >${ __('All') }</a></li>
+                  <li><a class="dppi dropdown-item" data-key="new" href="#" >${ __('New') }</a></li>
+                  <li><a class="dppi dropdown-item" data-key="paid" href="#" >${ __('Processing') }</a></li>
+                  <li><a class="dppi dropdown-item" data-key="processing" href="#" >${ __('Processing') }</a></li>
+                  <li><a class="dppi dropdown-item" data-key="completed" href="#" >${ __('Completed') }</a></li>
+                  <li><a class="dppi dropdown-item" data-key="canceled" href="#" >${ __('Canceled') }</a></li>
+                  <li><a class="dppi dropdown-item" data-key="failed" href="#" >${ __('Failed') }</a></li>
+                  <li><a class="dppi dropdown-item" data-key="refunded" href="#" >${ __('Failed') }</a></li>
                 </ul>
             </div>
             <div class="st-opts" >
@@ -38,11 +40,10 @@ export const HTMLContent = (__) => {
                   <table class="table table-hover table-borderless align-middle table-striped table-p-list">
                     <thead>
                       <tr>
-
-                        <th>From</th>
-                        <th>Status</th>
-                        <th>Total</th>
-                        <th>Time</th>
+                        <th>${ __('From') }</th>
+                        <th>${ __('Status') }</th>
+                        <th>${ __('Total') }</th>
+                        <th>${ __('Time') }</th>
                         <th></th>
                       </tr>
                     </thead>

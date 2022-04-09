@@ -1,5 +1,5 @@
 // js dependencies
-import { showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
 import { getProductId, formatPrice } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
@@ -25,14 +25,7 @@ const _this = {
 
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'text/plain',
-                'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                'Kenzap-Header': localStorage.hasOwnProperty('header'),
-                'Kenzap-Token': getCookie('kenzap_token'),
-                'Kenzap-Sid': getSiteId(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 query: {
                     user: {
@@ -48,7 +41,8 @@ const _this = {
                     },
                     locale: {
                         type:       'locale',
-                        id:         'en'
+                        source:      ['extension'],
+                        key:         'ecommerce',
                     }
                 }
             }) 
@@ -58,6 +52,8 @@ const _this = {
 
             // hide UI loader
             hideLoader();
+
+            if (!response.success){ parseApiError(response); return; }
 
             if (response.success){
 
@@ -89,17 +85,9 @@ const _this = {
 
                 // init page listeners
                 _this.initListeners('all');
-            
-            }else{
-
-                parseApiError(response);
             }
-            
-            // console.log('Success:', response);
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => { parseApiError(response); });
     },
     renderPage: (product) => {
 
@@ -125,7 +113,7 @@ const _this = {
         d.querySelector("#p-priced").value = product.priced;
 
         // price variation section
-        console.log(product.variations);
+        // console.log(product.variations);
         for(let m in product.variations){ 
 
             let vr = product.variations[m];
@@ -456,14 +444,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'text/plain',
-                    'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                    'Kenzap-Header': localStorage.hasOwnProperty('header'),
-                    'Kenzap-Token': getCookie('kenzap_token'),
-                    'Kenzap-Sid': getSiteId(),
-                },
+                headers: headers,
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -498,11 +479,7 @@ const _this = {
                 
                 console.log('Success:', response);
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-
-            console.log('saveProduct');
+            .catch(error => { parseApiError(response); });
         },
 
         openImage: (e) => {
@@ -590,8 +567,8 @@ const _this = {
                 \
                 </ul>\
             </div>\
-            <p class="card-description"><a class="add-mix" href="#">+ add option</a> to differentiate price and product options.</p>\
-            <div class="add-mix-ctn d-none"><a class="add-mix" href="#">+ add option</a></div>\
+            <p class="card-description"><a class="add-mix" href="#">'+ __('+ add option') +'</a> '+ __(', differentiate price and product options.') +'</p>\
+            <div class="add-mix-ctn d-none"><a class="add-mix" href="#">'+ __('+ add option') +'</a></div>\
         </div>\
         ';
     

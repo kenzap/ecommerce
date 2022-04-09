@@ -1,5 +1,5 @@
 // js dependencies
-import { showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
 import { getPageNumber, getPagination, formatStatus, formatPrice, formatTime } from "../_/_helpers.js"
 import { productListContent } from "../_/_cnt_product_list.js"
 
@@ -25,14 +25,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'text/plain',
-                'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                'Kenzap-Header': localStorage.hasOwnProperty('header'),
-                'Kenzap-Token': getCookie('kenzap_token'),
-                'Kenzap-Sid': getSiteId(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 query: {
                     user: {
@@ -42,8 +35,8 @@ const _this = {
                     },
                     locale: {
                         type:       'locale',
-                        locale:      getCookie('locale'),
-                        source:      ['default'],
+                        // locale:      localStorage.hasOwnProperty('locale') ? localStorage.getItem('locale') : "en",
+                        source:      ['extension'],
                         key:         'ecommerce',
                     },
                     products: {
@@ -103,9 +96,7 @@ const _this = {
                 parseApiError(response);
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => { parseApiError(response); });
     },
     authUser: (response) => {
 
@@ -163,8 +154,6 @@ const _this = {
         if (response.products.length == 0) {
 
             document.querySelector(".table tbody").innerHTML = `<tr><td colspan="6">${ __("No products to display.") }</td></tr>`;
-            // $( "#loader" ).fadeOut( "fast" );
-            // initListeners();
             return;
         }
 
@@ -177,7 +166,6 @@ const _this = {
             let img = 'https://cdn.kenzap.com/loading.png';
 
             if(typeof(response.products[i].img) === 'undefined') response.products[i].img = [];
-            // if(typeof(response.products[i].img) !== 'undefined' && response.products[i].img[0] == 'true') img = 'https://preview.kenzap.cloud/S1000452/_site/images/product-'+response.products[i].id+'-1-100x100.jpeg?1630925420';
             if(response.products[i].img[0]) img = CDN + '/S'+sid+'/product-'+response.products[i]._id+'-1-100x100.jpeg?'+response.products[i].updated;
               
             list += `
@@ -193,13 +181,13 @@ const _this = {
                         </div>
                     </td>
                     <td>
-                        <span>${ formatStatus(response.products[i].status) }</span>
+                        <span>${ formatStatus(__, response.products[i].status) }</span>
                     </td>
                     <td>
                         <span>${ formatPrice(response.products[i].price) }</span>
                     </td>
                     <td>
-                        <span>${ formatTime(response.products[i].updated) }</span>
+                        <span>${ formatTime(__, response.products[i].updated) }</span>
                     </td>
                     <td> 
                         <a href="#" data-id="${ response.products[i]._id }" class="remove-product text-danger ">
@@ -217,12 +205,6 @@ const _this = {
         document.querySelector(".table tbody").innerHTML = list;
     },
     initListeners: () => {
-
-        // _this.state.firstLoad ? 'all' : 'partial'
-
-        // if(type == 'all'){
-
-        // }
 
         // remove product
         onClick('.remove-product', _this.listeners.removeProduct);
@@ -252,13 +234,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'text/plain',
-                    'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                    'Kenzap-Token': getCookie('kenzap_token'),
-                    'Kenzap-Sid': getSiteId(),
-                },
+                headers: headers,
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -285,10 +261,7 @@ const _this = {
                 
                 console.log('Success:', response);
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
- 
+            .catch(error => { parseApiError(response); });
         },
  
         searchProductsActivate: (e) => {
@@ -308,8 +281,6 @@ const _this = {
             e.preventDefault();
 
             _this.getData();
-
-            // console.log('search products ' +e.currentTarget.value);
         },
 
         modalSuccessBtn: (e) => {
@@ -365,13 +336,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'text/plain',
-                    'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                    'Kenzap-Token': getCookie('kenzap_token'),
-                    'Kenzap-Sid': getSiteId(),
-                },
+                headers: headers,
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -397,9 +362,7 @@ const _this = {
                 
                 console.log('Success:', response);
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            .catch(error => { parseApiError(response); });
 
             console.log('saveProduct');
 
@@ -412,11 +375,11 @@ const _this = {
     },
     initPagination: (response) => {
 
-        getPagination(response.meta, _this.getData);
+        getPagination(__, response.meta, _this.getData);
     },
     initFooter: () => {
         
-        initFooter(__('Copyright © '+new Date().getFullYear()+' <a class="text-muted" href="https://kenzap.com/" target="_blank">Kenzap</a>. All rights reserved.'), __('Kenzap Cloud Services - Dashboard'));
+        initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 
