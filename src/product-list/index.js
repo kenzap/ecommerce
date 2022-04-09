@@ -96,7 +96,7 @@ const _this = {
                 parseApiError(response);
             }
         })
-        .catch(error => { parseApiError(response); });
+        .catch(error => { parseApiError(error); });
     },
     authUser: (response) => {
 
@@ -259,9 +259,8 @@ const _this = {
                     parseApiError(response);
                 }
                 
-                console.log('Success:', response);
             })
-            .catch(error => { parseApiError(response); });
+            .catch(error => { parseApiError(error); });
         },
  
         searchProductsActivate: (e) => {
@@ -359,13 +358,8 @@ const _this = {
 
                     parseApiError(response);
                 }
-                
-                console.log('Success:', response);
             })
-            .catch(error => { parseApiError(response); });
-
-            console.log('saveProduct');
-
+            .catch(error => { parseApiError(error); });
         }
 
         modalCont.show();

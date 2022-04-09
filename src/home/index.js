@@ -70,7 +70,7 @@ const _this = {
                 parseApiError(response);
             }
         })
-        .catch(error => { parseApiError(response); });
+        .catch(error => { parseApiError(error); });
     },
     renderPage: (product) => {
 

@@ -25,14 +25,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'text/plain',
-                'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
-                'Kenzap-Header': localStorage.hasOwnProperty('header'),
-                'Kenzap-Token': getCookie('kenzap_token'),
-                'Kenzap-Sid': getSiteId(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 query: {
                     user: {
@@ -84,7 +77,7 @@ const _this = {
                 parseApiError(response);
             }
         })
-        .catch(error => { parseApiError(response); });
+        .catch(error => { parseApiError(error); });
     },
     authUser: (response) => {
 
@@ -206,9 +199,8 @@ const _this = {
                     parseApiError(response);
                 }
                 
-                console.log('Success:', response);
             })
-            .catch(error => { parseApiError(response); });
+            .catch(error => { parseApiError(error); });
         },
  
         searchProductsActivate: (e) => {
@@ -293,9 +285,8 @@ const _this = {
                 parseApiError(response);
             }
             
-            console.log('Success:', response);
         })
-        .catch(error => { parseApiError(response); });
+        .catch(error => { parseApiError(error); });
     },
     initFooter: () => {
         

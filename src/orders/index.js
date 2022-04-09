@@ -101,7 +101,7 @@ const _this = {
                 parseApiError(response);
             }
         })
-        .catch(error => { parseApiError(response); });
+        .catch(error => { parseApiError(error); });
     },
     authUser: (response) => {
 
@@ -520,13 +520,10 @@ const _this = {
 
                     parseApiError(response);
                 }
-                
-                console.log('Success:', response);
             })
             .catch(error => {
-                console.error('Error:', error);
+                parseApiError(error);
             });
- 
         },
  
         searchOrders: (e) => {
@@ -633,14 +630,10 @@ const _this = {
 
                 parseApiError(response);
             }
-            
-            console.log('Success:', response);
         })
         .catch(error => {
-            console.error('Error:', error);
+            parseApiError(error);
         });
-
-        console.log('saveOrder');
     },
     initFooter: () => {
         

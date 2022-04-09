@@ -87,7 +87,7 @@ const _this = {
                 _this.initListeners('all');
             }
         })
-        .catch(error => { parseApiError(response); });
+        .catch(error => { parseApiError(error); });
     },
     renderPage: (product) => {
 
@@ -479,7 +479,7 @@ const _this = {
                 
                 console.log('Success:', response);
             })
-            .catch(error => { parseApiError(response); });
+            .catch(error => { parseApiError(error); });
         },
 
         openImage: (e) => {
