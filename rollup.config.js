@@ -7,6 +7,7 @@ import babel from "@rollup/plugin-babel"
 import commonjs from "@rollup/plugin-commonjs"
 import copy from 'rollup-plugin-copy'
 import fs from 'fs';
+import replaceHtmlVars from 'rollup-plugin-replace-html-vars';
 
 // TODO - remove these two
 // import serve from 'rollup-plugin-serve'
@@ -80,7 +81,7 @@ const scriptOutputs = scriptPaths.reduce((files, file) => {
 
 if(prodEnv){
 	
-	fs.mkdirSync( targetFolder + 'locales/' );
+	if (!fs.existsSync( targetFolder + 'locales/' )){ fs.mkdirSync( targetFolder + 'locales/' ); }
 	fs.writeFileSync( targetFolder + 'locales/default.json', '{ "language": "default", "texts": {} }', { flag:'w' } ); // set defaults
 
 	let scriptFilesAll = glob.sync(absolutePath("src/**/*.js"))
@@ -138,20 +139,29 @@ const bundles = scriptPaths.map((key) => {
 			targets: [
 				{ src: ['public/home/*'], dest: 'public' },
 			],
-		}),
+		})
 	]
 
 	// plugin list for production mode
 	if (prodEnv) {
 
 		plugins.push(terserPlugin)
+		plugins.push(
+			replaceHtmlVars({
+				files: 'public/settings/index.html',
+				from: /\${timestamp}/g,
+				to: new Date().getTime(),
+			})
+		)
+
 		sourcemap = false
 	// plugin list development mode
 	}else{
+
 		plugins.push(
 			livereload({
 				watch: [ 
-				path.resolve(__dirname, 'public'),
+					path.resolve(__dirname, 'public'),
 				],
 				delay: 500,
 				exts: [ 'html', 'js', 'scss', 'sass', 'css' ]
@@ -166,7 +176,6 @@ const bundles = scriptPaths.map((key) => {
 			format: "iife",
 			sourcemap,
 		},
-		plugins,
 	}
 })
 
