@@ -1,7 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, getSiteId, link } from '@kenzap/k-cloud';
 import { HTMLContent } from "../_/_cnt_home.js"
- 
 
 // where everything happens
 const _this = {
