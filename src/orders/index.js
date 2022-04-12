@@ -80,7 +80,7 @@ const _this = {
             hideLoader();
 
             if(response.success){
-
+                
                 // init header
                 initHeader(response);
 
@@ -378,6 +378,7 @@ const _this = {
 
                 }else{
 
+                
                     parseApiError(response);
                 }
             })

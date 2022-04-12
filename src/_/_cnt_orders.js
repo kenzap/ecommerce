@@ -25,7 +25,7 @@ export const HTMLContent = (__) => {
             </div>
             <div class="st-opts" >
               <div class="input-group-sm mb-0 justify-content-start mb-3 mb-sm-0" >
-                <input id="usearch" type="text" class="inp form-control search-input" placeholder="${ __('Search order') }">
+                <input id="usearch" type="text" class="inp form-control search-input" autocomplete="off" placeholder="${ __('Search order') }">
               </div>
               <!-- <a id="viewSum" href="#" style="margin-left:16px;">view summary</a> -->
             </div>
