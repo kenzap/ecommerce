@@ -1,6 +1,7 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link, onChange } from '@kenzap/k-cloud';
 import { timeConverterAgo, formatPrice, getPageNumber } from "../_/_helpers.js"
+import { preview } from "../_/_order_preview.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
 
 // where everything happens
@@ -18,7 +19,8 @@ const _this = {
         statuses: [],
         audio: new Audio('https://kenzap.com/static/swiftly.mp3'),
         limit: 50, // number of records to load per table
-        searchLimit: 50, // product suggestion fetch search limit
+        slistLimit: 10, // product suggestion fetch search limit
+        productsSuggestions: []
     },
     init: () => {
          
@@ -226,38 +228,6 @@ const _this = {
         // _this.state.firstLoad = false;
         _this.state.orderIDs = orderIDsTemp;
 
-        // populate fields
-        // for (let field in response.settings){
-
-        //     if(typeof(response.settings[field]) === "undefined") continue;
-        //     if(response.settings[field] == "") continue;
-        //     if(document.querySelector("#"+field)) switch(document.querySelector("#"+field).dataset.type){
-        
-        //         case 'text':   
-        //         case 'email':  
-        //         case 'emails':  
-        //         case 'select':
-        //         case 'textarea': document.querySelector("#"+field).value = response.settings[field]; break;
-        //         // case 'radio': $("#"+field).parent().parent().parent().parent().parent().find("input[value=" + data.res[field] + "]").prop('checked', true); break;
-        //     }
-        // }
-
-        // for(let s of document.querySelectorAll('.form-control')){
-
-        //     switch(s.dataset.type){
-          
-        //         case 'text':   
-        //         case 'email':  
-        //         case 'emails':  
-        //         case 'select':
-        //         case 'textarea': data[s.id] = s.value; break;
-        //         case 'radio': data[s.id] = s.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; break;
-        //     }
-
-        // let sid = getSiteId();
-
-        // bind settings data
-  
         // provide result to the page
         document.querySelector(".table tbody").innerHTML = list;
     },
@@ -295,8 +265,8 @@ const _this = {
     initListeners: () => {
 
         // view order
-        onClick('.view-order', _this.listeners.viewOrder);
-
+        preview.viewOrder(_this);
+        
         // remove order
         onClick('.remove-order', _this.listeners.removeOrder);
 
@@ -337,7 +307,7 @@ const _this = {
 
             e.preventDefault();
 
-            console.log(e.currentTarget.dataset.key);
+            // console.log(e.currentTarget.dataset.key);
 
             let os = document.querySelector('#order-status');
             if(e.currentTarget.dataset.key == ""){
@@ -373,124 +343,7 @@ const _this = {
             _this.getData();
         },
 
-        viewOrder: (e) => {
-
-            let modal = document.querySelector(".order-modal");
-            let modalCont = new bootstrap.Modal(modal);
-            let i = e.currentTarget.dataset.index;
-            let items = '';
-
-            Object.keys(_this.state.statuses).forEach((key, index) => {
-
-                console.log(key);
-                items += `<li><a class="dppi dropdown-item" data-key="${ key }" href="#">${ _this.state.statuses[key].text }</a></li>`
-            })
-
-            // get order status
-            let statusSelect = `
-            <div class="st-modal st-opts mb-3 me-1 me-sm-3 dropdown">
-                <a class="btn btn-sm ${ _this.state.statuses[_this.state.orders[i]['status']].class } dropdown-toggle order-form" data-id="status" data-type="key" data-value="new" href="#" role="button" id="order-status-modal" data-bs-toggle="dropdown" aria-expanded="false" >
-                    ${ _this.state.statuses[_this.state.orders[i]['status']].text }
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="order-status-modal">
-                    ${ items }
-                </ul>
-            </div>`;
-
-            // structure modal
-            modal.querySelector(".modal-dialog").classList.add('modal-dialog-wide');
-            modal.querySelector(".modal-header .modal-title").innerHTML =  _this.state.orders[i]['from'];
-            modal.querySelector(".modal-footer .btn-primary").innerHTML = __('Update');
-            // modal.querySelector(".btn-primary").style.display = 'none';
-            modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
-
-            let html = statusSelect;
-
-            // console.log(i);
-            // console.log(_this.state.orders[i]._id);
-
-            let fields = {_id: {l: __("ID")}, from: {l: __("From"), e: "text", editable: true}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "text"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"} };
-
-            // order table details
-            for(let x in fields){
-
-                if(_this.state.orders[i][x] === undefined) continue;
-
-                let val = _this.state.orders[i][x];
-                let field = fields[x].l;
-
-                if (x=='total'){ val = formatPrice(val); }
-
-                html += `
-                <div class="mb-3 mt-3 order-row ${ x == '_id' || x == 'from' ? "elipsized": "" }">
-                    <b>${ field }</b>&nbsp; ${ _this.renderField(fields[x], val, x) }
-                </div>`;
-
-            }
-
-            // user details
-            // for(let x in _this.state.orders[i]){
-
-            //     if(fields[x] === undefined) continue;
-            //     let val = _this.state.orders[i][x];
-            //     let field = fields[x].l;
-
-            //     if (x=='total'){ val = formatPrice(val); }
-
-            //     html += '\
-            //     <div class="mb-3 mt-3">\
-            //         <b>'+field+'</b>&nbsp;'+_this.renderField(fields[x], val, x)+'\
-            //     </div>';
-            // }
         
-            html += '';
-            modal.querySelector(".modal-body").innerHTML = html;
-            modalCont.show();
-
-            // order item product edit listener
-            onKeyUp('.edit-item', _this.listeners.suggestOrderItem);
-
-            // save changes to orders
-            _this.listeners.modalSuccessBtnFunc = (e) => {
-
-                e.preventDefault();
-
-                _this.updateOrder(_this.state.orders[i]._id);
-                
-                modalCont.hide();
-                // let note = modal.querySelector(".modal #note").value;
-                // let data = []; data['title'] = mtitle; 
-            }
-
-            onClick('.st-modal li a', (e) => {
-
-                e.preventDefault();
-
-                console.log(e.currentTarget.dataset.key);
-
-                let osm = document.querySelector('#order-status-modal');
-                osm.innerHTML = _this.state.statuses[e.currentTarget.dataset.key].text;
-                osm.dataset.value = e.currentTarget.dataset.key;
-                let list = [];
-
-                // clear previous classes
-                Object.keys(_this.state.statuses).forEach((key) => {
-                    list = _this.state.statuses[key].class.split(' ');
-                    list.forEach((key) => { 
-                        osm.classList.remove(key);
-                    });    
-                });
-
-                // add new classes
-                list = _this.state.statuses[e.currentTarget.dataset.key].class.split(' ');
-                list.forEach((key) => { 
-                    // console.log(key);
-                    osm.classList.add(key);
-                });    
-
-
-            });
-        },
         removeOrder: (e) => {
 
             e.preventDefault();
@@ -542,132 +395,15 @@ const _this = {
 
             // console.log('search products ' +e.currentTarget.value);
         },
-        suggestOrderItem: (e) => {
-            
-            // console.log(e.currentTarget.value);
-
-            let s  = e.currentTarget.value;
-
-            // do API query
-            fetch('https://api-v1.kenzap.cloud/', {
-                method: 'post',
-                headers: headers,
-                body: JSON.stringify({
-                    query: {
-                        products: {
-                            type:       'find',
-                            key:        'ecommerce-product',
-                            fields:     ['_id', 'id', 'img', 'status', 'price', 'title', 'updated'],
-                            limit:      _this.state.limit,
-                            offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.searchLimit - _this.state.searchLimit,    // automatically calculate the offset of table pagination
-                            search:     {                                                           // if s is empty search query is ignored
-                                            field: 'title',
-                                            s: s
-                                        },
-                            sortby:     {
-                                            field: 'title',
-                                            order: 'DESC'
-                                        },
-                        }
-                    }
-                })
-            })
-            .then(response => response.json())
-            .then(response => {
-
-                // hide UI loader
-                hideLoader();
-
-                if(response.success){
-
-                    let options = ``;
-                    response.products.forEach(product => {
-
-                        options += `<option data-id="${ product.title }" value="${ product.title }">${ product.title }</option>`;
-                        
-                    });
-
-                    document.querySelector('#item-suggestions').innerHTML = options;
-
-                    // console.log(s);
-
-                }else{
-
-                    parseApiError(response);
-                }
-            })
-            .catch(error => { parseApiError(error); });
-
-        },
+        
         modalSuccessBtn: (e) => {
             
-            console.log('calling modalSuccessBtnFunc');
             _this.listeners.modalSuccessBtnFunc(e);
         },
 
         modalSuccessBtnFunc: null
     },
-    renderField: (a, item, x) => {
-
-        switch(a.e){
-            
-            // case 'text': return '<input type="text" class="form-control pv" id="'+x+'" value="'+b+'">';
-            case 'text': return item;
-            case 'textarea': return '<textarea type="text" rows="4" class="form-control order-form pv " data-type="textarea" id="'+x+'" value="'+item+'">'+item+'</textarea>';
-            case 'items': 
-
-                // parse product items
-                let html = `<table class="items"><tr><th><div class="me-1 me-sm-3">${ __('Product') }</div></th><th class="qty"><div class="me-1 me-sm-3">${ __('Qty') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __('Total') }</div></th><th></th></tr>`;
-                for(let x in item){
-
-                    // parse variations
-                    let vars = '';
-                    for(let v in item[x].variations){
-
-                        // parse variation list
-                        let list = ''; for(let l in item[x].variations[v].list) list += item[x].variations[v].list[l].title + " ";
-                        vars += '<div><b>' + item[x].variations[v].title + "</b> <span>" + list + "</span></div> ";
-
-                        // meal note
-                        if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>"+__('Note')+"</b> " + item[x].variations[v].note + "</div> ";
-                    }
-
-                    html += '<tr>';
-                    html += '<td><div contenteditable="true">' + item[x].title + '</div><div>' + item[x].note + '</div><div class="vars border-primary">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3">' + formatPrice(item[x].priceF) + '</div><td>'+_this.itemOptions(item[x])+'</td></td>';
-                    html += '</tr>';
-                }
-
-                // add row for manual product entry
-                html += `<tr>
-                            <td>
-                                <div class="me-1 me-sm-3">
-                                    <input type="text" value="" autocomplete="off" placeholder="${ __('Search..') }" class="form-control edit-item" list="item-suggestions">
-                                    <datalist id="item-suggestions" class="fs-12">
-
-                                    </datalist>
-                                </div>
-                            </td>
-                            <td class="qty">
-                                <div class="me-1 me-sm-3">
-                                    <input type="text" value="" autocomplete="off" class="form-control text-right edit-qty">
-                                </div>
-                            </td>
-                            <td class="tp">
-                                <div class="me-1 me-sm-3">
-                                    <input type="text" value="" autocomplete="off" class="form-control edit-tp">
-                                </div>
-                            </td>
-                            <td class="align-middle text-center"> 
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="24" height="24" class="bi bi-plus-circle text-success align-middle add-item"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>
-                            </td>
-                        </tr>`;
-
-                html += `</table>`;
-            
-            return html;
-            default: return item;
-        }
-    },
+    
     updateOrder: (id) => {
 
         let data = {};
@@ -678,6 +414,27 @@ const _this = {
             switch(s.dataset.type){
           
                 case 'key': data[s.dataset.id] = s.dataset.value; break;
+                case 'items':   
+                
+                    data['items'] = {};
+                    for(let item of document.querySelectorAll('.order-item-row-active')){
+
+                        data['items'][item.dataset.id] =
+                        {
+                                "id": item.dataset.id,
+                                "qty": parseInt(item.querySelector('.item-qty').dataset.value),
+                                "note": item.querySelector('.item-note').innerHTML,
+                                "type": "new",
+                                "index": "0",
+                                "price": parseFloat(item.querySelector('.item-pricef').dataset.price),
+                                "sdesc": item.querySelector('.item-title').dataset.sdesc,
+                                "title": item.querySelector('.item-title').dataset.value,
+                                "priceF": parseFloat(item.querySelector('.item-pricef').dataset.value),
+                                "variations": []
+                        }
+                    }
+                    
+                break
                 case 'text':   
                 case 'email':  
                 case 'emails':  
@@ -686,6 +443,10 @@ const _this = {
                 case 'radio': data[s.id] = s.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; break;
             }
         }
+
+        // console.log(data);
+
+        // return;
 
         // send data
         fetch('https://api-v1.kenzap.cloud/', {
@@ -722,25 +483,6 @@ const _this = {
         .catch(error => {
             parseApiError(error);
         });
-    },
-    itemOptions: (item) => {
-
-        let options = `
-
-            <div class="dropdown text-center">
-                <a  href="#" role="button" id="order-item-options" data-id="status" data-value="" data-bs-toggle="dropdown" aria-expanded="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical order-item-options" viewBox="0 0 16 16"><path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="order-item-options" >
-                    <li><a class="oio dropdown-item" data-key="edit-item-note" href="#">${ __('Add note') }</a></li>
-                    <li><a class="oio dropdown-item" data-key="edit-item-variation" href="#">${ __('Add variation') }</a></li>
-                    <li><a class="oio dropdown-item" data-key="edit-item-price" href="#">${ __('Adjust price') }</a></li>
-                    <li><a class="oio dropdown-item text-danger" data-key="remove-item" href="#">${ __('Remove') }</a></li>
-                </ul>
-            </div>
-        `;
-
-        return options;
     },
     initFooter: () => {
         

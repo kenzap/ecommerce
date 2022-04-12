@@ -76,7 +76,7 @@ footer {
   background: transparent;
 }
 
-/* order new/edit moda; */
+/* order preview mode */
 .modal-header {
   border-bottom: 0;
 }
@@ -101,32 +101,27 @@ table.items {
   width: 100%;
   display: table;
   font-size: 0.9rem;
+  /* order preview mode/suggestions */
 }
-
 table.items td {
   vertical-align: top;
 }
-
 table.items .qty {
   text-align: right;
   max-width: 100px;
 }
-
 table.items .edit-qty {
   text-align: right;
   max-width: 150px;
 }
-
 table.items .tp {
   text-align: right;
   max-width: 100px;
 }
-
 table.items .edit-tp {
   text-align: right;
   max-width: 250px;
 }
-
 table.items .vars {
   font-style: italic;
   padding-left: 8px;
@@ -135,17 +130,36 @@ table.items .vars {
   font-size: 0.8rem;
   border-left: 2px solid #ff0079;
 }
-
 table.items .vars:empty {
   display: none;
 }
-
 table.items .order-item-options {
   cursor: pointer;
 }
-
 table.items .add-item {
   cursor: pointer;
+}
+table.items .s-list {
+  position: absolute;
+  margin-left: -5px;
+  padding: 5px 0;
+  background: white;
+  list-style: none;
+  cursor: pointer;
+}
+table.items .s-list li {
+  padding: 8px 16px;
+}
+table.items .s-list li:hover {
+  color: white;
+  background-color: #1941DF;
+}
+table.items .s-list li.current {
+  color: white;
+  background-color: pink;
+}
+table.items [data-toggle=false].s-list {
+  display: none;
 }
 
 @media (max-width: 500px) {
