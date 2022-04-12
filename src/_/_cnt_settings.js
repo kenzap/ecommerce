@@ -2,9 +2,9 @@ export const HTMLContent = (__) => {
 
     return `
     <div class="container p-edit">
-        <div class="d-flex justify-content-between bd-highlight mb-3">
+        <div class="d-md-flex justify-content-between bd-highlight mb-3">
             <nav class="bc" aria-label="breadcrumb"></nav>
-            <button class="btn btn-primary btn-save" type="button">${ __('Save changes') }</button>
+            <button class="btn btn-primary btn-save mt-3 mb-1 mt-md-0 mb-md-0" type="button">${ __('Save changes') }</button>
         </div>
         <div class="row">
             <div class="col-md-12 grid-margin grid-margin-lg-0 grid-margin-md-0 stretch-card">

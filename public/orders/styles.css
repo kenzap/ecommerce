@@ -7,7 +7,7 @@ footer {
   margin-bottom: 32px;
 }
 
-/* orders */
+/* orders table */
 .table {
   min-width: 760px;
 }
@@ -44,6 +44,21 @@ footer {
   object-fit: fill;
 }
 
+.details {
+  max-width: 250px;
+  min-width: 250px;
+}
+
+@media (max-width: 577px) {
+  .table {
+    min-width: 500px;
+  }
+}
+.view-order {
+  cursor: pointer;
+}
+
+/* table filtering */
 .st-opts {
   display: inline-block;
 }
@@ -61,6 +76,7 @@ footer {
   background: transparent;
 }
 
+/* order new/edit moda; */
 .modal-header {
   border-bottom: 0;
 }
@@ -89,17 +105,26 @@ table.items {
 
 table.items td {
   vertical-align: top;
-  padding: 4px 0px;
 }
 
 table.items .qty {
   text-align: right;
-  padding: 4px 16px 4px 0;
+  max-width: 100px;
+}
+
+table.items .edit-qty {
+  text-align: right;
+  max-width: 150px;
 }
 
 table.items .tp {
   text-align: right;
-  padding: 4px 16px 4px 0;
+  max-width: 100px;
+}
+
+table.items .edit-tp {
+  text-align: right;
+  max-width: 250px;
 }
 
 table.items .vars {
@@ -113,6 +138,14 @@ table.items .vars {
 
 table.items .vars:empty {
   display: none;
+}
+
+table.items .order-item-options {
+  cursor: pointer;
+}
+
+table.items .add-item {
+  cursor: pointer;
 }
 
 @media (max-width: 500px) {

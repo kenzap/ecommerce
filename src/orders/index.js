@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { timeConverterAgo, formatPrice } from "../_/_helpers.js"
+import { timeConverterAgo, formatPrice, getPageNumber } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
 
 // where everything happens
@@ -18,12 +18,13 @@ const _this = {
         statuses: [],
         audio: new Audio('https://kenzap.com/static/swiftly.mp3'),
         limit: 50, // number of records to load per table
+        searchLimit: 50, // product suggestion fetch search limit
     },
     init: () => {
          
         _this.getData();
 
-        _this.state.refreshTimer = setInterval(() => { _this.getData(); }, 7000);
+        // _this.state.refreshTimer = setInterval(() => { _this.getData(); }, 7000);
     },
     getData: () => {
 
@@ -188,26 +189,28 @@ const _this = {
             let classN = ((_this.state.orderIDs.includes(response.orders[i]._id) || _this.state.firstLoad)?'':'new');
             list += `
             <tr class="${ classN }">
-              <td class="destt" style="max-width:250px;min-width:250px;">
-                <div>
-                  <b>${ response.orders[i].from }</b><div class="elipsized fst-italic">${ response.orders[i].note }</div>
+              <td class="details">
+                <div class="ps-1 view-order" data-id="${ response.orders[i]._id }" data-index="${ i }">
+                  <b class="">${ response.orders[i].from }</b>
+                  <div class=" elipsized fst-italic">${ response.orders[i].note ? response.orders[i].note : "" }</div>
+                  <div class=" d-sm-none"> <span class="me-2">${ _this.getStatus(response.orders[i].status) }</span> <span class="text-muted">${ timeConverterAgo(response.meta.time, response.orders[i].created) }</span> </div>
                 </div>
               </td>
-              <td>
+              <td class="d-none d-sm-table-cell">
                 <span style="font-size:24px;">${ _this.getStatus(response.orders[i].status) }</span>
               </td>
               <td>
                 <span style="font-size:18px;">${ formatPrice(response.orders[i].total) }</span>
               </td>
-              <td class="">
+              <td class="d-none d-sm-table-cell">
                 <span style="font-size:18px;">${ timeConverterAgo(response.meta.time, response.orders[i].created) }</span>
               </td>
               <td class="last">
-                <a href="#" data-id="${ response.orders[i]._id }" data-index="${ i }" class="view-order text-success me-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                <a href="#" data-id="${ response.orders[i]._id }" data-index="${ i }" class="view-order text-success d-none me-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
                 </svg></a>
-                <a href="#" data-id="${ response.orders[i]._id }" data-index="${ i }" class="remove-order text-danger "><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <a href="#" data-id="${ response.orders[i]._id }" data-index="${ i }" class="remove-order text-danger me-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                     <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                 </svg></a>
@@ -385,7 +388,7 @@ const _this = {
 
             // get order status
             let statusSelect = `
-            <div class="st-modal st-opts mb-3 me-3 dropdown">
+            <div class="st-modal st-opts mb-3 me-1 me-sm-3 dropdown">
                 <a class="btn btn-sm ${ _this.state.statuses[_this.state.orders[i]['status']].class } dropdown-toggle order-form" data-id="status" data-type="key" data-value="new" href="#" role="button" id="order-status-modal" data-bs-toggle="dropdown" aria-expanded="false" >
                     ${ _this.state.statuses[_this.state.orders[i]['status']].text }
                 </a>
@@ -395,18 +398,18 @@ const _this = {
             </div>`;
 
             // structure modal
-            modal.querySelector(".modal-dialog").classList.add('modal-dialog-wide'); // '<div class="badge bg-warning text-dark fw-light me-3 mb-1">'+__('New')+'</div>' + 
-            modal.querySelector(".modal-header .modal-title").innerHTML = statusSelect + _this.state.orders[i]['from'];
+            modal.querySelector(".modal-dialog").classList.add('modal-dialog-wide');
+            modal.querySelector(".modal-header .modal-title").innerHTML =  _this.state.orders[i]['from'];
             modal.querySelector(".modal-footer .btn-primary").innerHTML = __('Update');
             // modal.querySelector(".btn-primary").style.display = 'none';
             modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
 
-            let html = ``;
+            let html = statusSelect;
 
-            console.log(i);
-            console.log(_this.state.orders[i]._id);
+            // console.log(i);
+            // console.log(_this.state.orders[i]._id);
 
-            let fields = {_id: {l: "ID"}, from: {l: "From", e: "text", editable: true}, items: {l: "", e: "items"}, fname: {l: "Name", e: "text"}, lname: {l: "Surname", e: "text"}, bios: {l: "Bios", e: "textarea"}, avatar: {l: "Avatar", e: "text"}, email: {l: "Email", e: "text"}, countryr: {l: "Country", e: "text"}, cityr: {l: "City", e: "text"}, addr1: {l: "Address 1", e: "textarea"}, addr2: {l: "Address 2", e: "textarea"}, post: {l: "Post", e: "text"}, state: {l: "State", e: "text"}, c1: {l: "Whatsapp", e: "text"}, c2: {l: "Messenger", e: "text"}, c3: {l: "Line", e: "text"}, c4: {l: "Email", e: "text"}, c5: {l: "Telegram", e: "text"}, email: {l: "Email", e: "text"}, bio: {l: "Bio", e: "text"}, y1: {l: "Name", e: "text"}, y2: {l: "IBAN", e: "text"}, y3: {l: "SWIFT", e: "text"}, y4: {l: "Bank", e: "text"}, y5: {l: "Bank city", e: "text"}, y6: {l: "Bank country", e: "text"}, note: {l: "Note", e: "textarea"}, total: {l: "Total", e: "text"}, s3: {l: "Link 3", e: "text"}, company: {l: "Company", e: "text"}, vat: {l: "Tax ID", e: "text"}, grade: {l: "Grade", e: "text"}, kenzap_ida: {l: "Kenzap IDA", e: "text"} };
+            let fields = {_id: {l: __("ID")}, from: {l: __("From"), e: "text", editable: true}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "text"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"} };
 
             // order table details
             for(let x in fields){
@@ -418,10 +421,10 @@ const _this = {
 
                 if (x=='total'){ val = formatPrice(val); }
 
-                html += '\
-                <div class="mb-3 mt-3">\
-                    <b>'+field+'</b>&nbsp;'+_this.renderField(fields[x], val, x)+'\
-                </div>';
+                html += `
+                <div class="mb-3 mt-3 order-row ${ x == '_id' || x == 'from' ? "elipsized": "" }">
+                    <b>${ field }</b>&nbsp; ${ _this.renderField(fields[x], val, x) }
+                </div>`;
 
             }
 
@@ -444,6 +447,10 @@ const _this = {
             modal.querySelector(".modal-body").innerHTML = html;
             modalCont.show();
 
+            // order item product edit listener
+            onKeyUp('.edit-item', _this.listeners.suggestOrderItem);
+
+            // save changes to orders
             _this.listeners.modalSuccessBtnFunc = (e) => {
 
                 e.preventDefault();
@@ -525,7 +532,6 @@ const _this = {
                 parseApiError(error);
             });
         },
- 
         searchOrders: (e) => {
 
             e.preventDefault();
@@ -536,7 +542,63 @@ const _this = {
 
             // console.log('search products ' +e.currentTarget.value);
         },
+        suggestOrderItem: (e) => {
+            
+            // console.log(e.currentTarget.value);
 
+            let s  = e.currentTarget.value;
+
+            // do API query
+            fetch('https://api-v1.kenzap.cloud/', {
+                method: 'post',
+                headers: headers,
+                body: JSON.stringify({
+                    query: {
+                        products: {
+                            type:       'find',
+                            key:        'ecommerce-product',
+                            fields:     ['_id', 'id', 'img', 'status', 'price', 'title', 'updated'],
+                            limit:      _this.state.limit,
+                            offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.searchLimit - _this.state.searchLimit,    // automatically calculate the offset of table pagination
+                            search:     {                                                           // if s is empty search query is ignored
+                                            field: 'title',
+                                            s: s
+                                        },
+                            sortby:     {
+                                            field: 'title',
+                                            order: 'DESC'
+                                        },
+                        }
+                    }
+                })
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                // hide UI loader
+                hideLoader();
+
+                if(response.success){
+
+                    let options = ``;
+                    response.products.forEach(product => {
+
+                        options += `<option value="${ product.id }">${ product.title }</option>`;
+                        
+                    });
+
+                    document.querySelector('#item-suggestions').innerHTML = options;
+
+                    // console.log(s);
+
+                }else{
+
+                    parseApiError(response);
+                }
+            })
+            .catch(error => { parseApiError(error); });
+
+        },
         modalSuccessBtn: (e) => {
             
             console.log('calling modalSuccessBtnFunc');
@@ -545,39 +607,65 @@ const _this = {
 
         modalSuccessBtnFunc: null
     },
-    renderField: (a, b, x) => {
+    renderField: (a, item, x) => {
 
         switch(a.e){
+            
             // case 'text': return '<input type="text" class="form-control pv" id="'+x+'" value="'+b+'">';
-            case 'text': return b;
-            case 'textarea': return '<textarea type="text" rows="4" class="form-control order-form pv " data-type="textarea" id="'+x+'" value="'+b+'">'+b+'</textarea>';
+            case 'text': return item;
+            case 'textarea': return '<textarea type="text" rows="4" class="form-control order-form pv " data-type="textarea" id="'+x+'" value="'+item+'">'+item+'</textarea>';
             case 'items': 
 
                 // parse product items
-                let html = '<table class="items"><tr><th>Product</th><th class="qty">Quantity</th><th class="tp">Total</th></tr>';
-                for(let x in b){
+                let html = `<table class="items"><tr><th><div class="me-1 me-sm-3">${ __('Product') }</div></th><th class="qty"><div class="me-1 me-sm-3">${ __('Qty') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __('Total') }</div></th><th></th></tr>`;
+                for(let x in item){
 
-                // parse variations
-                let vars = '';
-                for(let v in b[x].variations){
+                    // parse variations
+                    let vars = '';
+                    for(let v in item[x].variations){
 
-                    // parse variation list
-                    let list = ''; for(let l in b[x].variations[v].list) list += b[x].variations[v].list[l].title + " ";
-                    vars += '<div><b>' + b[x].variations[v].title + "</b> <span>" + list + "</span></div> ";
+                        // parse variation list
+                        let list = ''; for(let l in item[x].variations[v].list) list += item[x].variations[v].list[l].title + " ";
+                        vars += '<div><b>' + item[x].variations[v].title + "</b> <span>" + list + "</span></div> ";
 
-                    // meal note
-                    if(b[x].variations[v].note !== undefined && b[x].variations[v].note.length > 0) vars += "<div><b>Note</b> " + b[x].variations[v].note + "</div> ";
+                        // meal note
+                        if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>"+__('Note')+"</b> " + item[x].variations[v].note + "</div> ";
+                    }
+
+                    html += '<tr>';
+                    html += '<td><div contenteditable="true">' + item[x].title + '</div><div>' + item[x].note + '</div><div class="vars border-primary">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3">' + formatPrice(item[x].priceF) + '</div><td>'+_this.itemOptions(item[x])+'</td></td>';
+                    html += '</tr>';
                 }
 
-                html += '<tr>';
-                html += '<td><div>' + b[x].title + '</div><div>' + b[x].note + '</div><div class="vars border-primary">' + vars + '</div></td><td class="qty"><span>' + b[x].qty + '</span></td><td class="tp"><span>' + formatPrice(b[x].priceF) + '</span></td>';
-                html += '</tr>';
-                }
+                // add row for manual product entry
+                html += `<tr>
+                            <td>
+                                <div class="me-1 me-sm-3">
+                                    <input type="text" value="" autocomplete="off" placeholder="${ __('Search..') }" class="form-control edit-item" list="item-suggestions">
+                                    <datalist id="item-suggestions" class="fs-12">
 
-                html += '</table>';
+                                    </datalist>
+                                </div>
+                            </td>
+                            <td class="qty">
+                                <div class="me-1 me-sm-3">
+                                    <input type="text" value="" autocomplete="off" class="form-control text-right edit-qty">
+                                </div>
+                            </td>
+                            <td class="tp">
+                                <div class="me-1 me-sm-3">
+                                    <input type="text" value="" autocomplete="off" class="form-control edit-tp">
+                                </div>
+                            </td>
+                            <td class="align-middle text-center"> 
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="24" height="24" class="bi bi-plus-circle text-success align-middle add-item"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>
+                            </td>
+                        </tr>`;
+
+                html += `</table>`;
             
             return html;
-            default: return b;
+            default: return item;
         }
     },
     updateOrder: (id) => {
@@ -634,6 +722,25 @@ const _this = {
         .catch(error => {
             parseApiError(error);
         });
+    },
+    itemOptions: (item) => {
+
+        let options = `
+
+            <div class="dropdown text-center">
+                <a  href="#" role="button" id="order-item-options" data-id="status" data-value="" data-bs-toggle="dropdown" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical order-item-options" viewBox="0 0 16 16"><path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="order-item-options" >
+                    <li><a class="oio dropdown-item" data-key="edit-item-note" href="#">${ __('Add note') }</a></li>
+                    <li><a class="oio dropdown-item" data-key="edit-item-variation" href="#">${ __('Add variation') }</a></li>
+                    <li><a class="oio dropdown-item" data-key="edit-item-price" href="#">${ __('Adjust price') }</a></li>
+                    <li><a class="oio dropdown-item text-danger" data-key="remove-item" href="#">${ __('Remove') }</a></li>
+                </ul>
+            </div>
+        `;
+
+        return options;
     },
     initFooter: () => {
         
