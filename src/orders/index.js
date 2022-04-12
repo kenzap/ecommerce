@@ -583,7 +583,7 @@ const _this = {
                     let options = ``;
                     response.products.forEach(product => {
 
-                        options += `<option value="${ product.id }">${ product.title }</option>`;
+                        options += `<option data-id="${ product.title }" value="${ product.title }">${ product.title }</option>`;
                         
                     });
 
