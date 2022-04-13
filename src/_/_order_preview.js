@@ -16,8 +16,12 @@ export const preview = {
 
         modal.addEventListener('hide.bs.modal', function (e) {
            
-            // if (window.location.href.indexOf("#editing")!=-1) 
-            if(_this.modalOpen) history.back();
+            if (window.location.href.indexOf("#editing")==-1) return;
+
+            history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search);
+            
+            // history.pushState({pageID: 'orders'}, 'Orders', window.location.href);
+            // if(_this.modalOpen) history.back();
 
             // _this.modalCont = null;
         });
@@ -385,14 +389,18 @@ export const preview = {
     // make note field visible below the order item
     onClick('.edit-item-note', (e) => {
 
-      let noteEl = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('.item-note');
-      console.log(noteEl);
-      noteEl.classList.remove('d-none');
-      noteEl.focus();
+        e.preventDefault();
+
+        let noteEl = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('.item-note');
+        console.log(noteEl);
+        noteEl.classList.remove('d-none');
+        noteEl.focus();
     });
 
     // remove order item
     onClick('.remove-item', (e) => {
+
+        e.preventDefault();
 
         e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
 
