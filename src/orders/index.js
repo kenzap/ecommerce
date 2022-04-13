@@ -310,11 +310,8 @@ const _this = {
         // android back pressed
         window.addEventListener("hashchange", function(e) {
 
-            alert('back pressed ' +window.location.href);
-            // if(window.location.href.indexOf("#editing")==-1) return;
-
-            if(_this.modalCont) _this.modalCont.hide();
-            
+            // close modal if still openned
+            if(window.location.href.indexOf("#editing")==-1) if(_this.modalCont){ e.preventDefault(); _this.modalCont.hide(); return false; }
 		});
     },
     listeners: {

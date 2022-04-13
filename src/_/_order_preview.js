@@ -10,13 +10,13 @@ export const preview = {
         let i = e.currentTarget.dataset.index; // _this.state.orderPreviewIndex = i;
 
         // to properly handle back button on mobiles
-        window.history.pushState(null, 'editing');
+        // window.history.pushState(null, 'editing');
+        history.pushState({pageID: 'orders'}, 'Orders', window.location.href+"#editing");
 
         modal.addEventListener('hide.bs.modal', function (e) {
            
-            console.log('close');
-            window.history.back();
-
+            if(window.location.href.indexOf("#editing")!=-1) history.back();
+            
             _this.modalCont = null;
         });
         
@@ -205,6 +205,8 @@ export const preview = {
                 return html;
             default: 
             
+                if(x == '_id') item = item.substr(0, 5);
+
                 html = `<div data-id="${x}" data-type="text" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}">${ item }</div>`;
                 return html;
         }
