@@ -11,6 +11,7 @@ const _this = {
         firstLoad: true,
         firstTouch: true,
         modalCont: null,
+        modalOpen: false,
         playSoundNow: false,
         newOrderCount: 0,
         orderIDs: [],
@@ -311,7 +312,8 @@ const _this = {
         window.addEventListener("hashchange", function(e) {
 
             // close modal if still openned
-            if(window.location.href.indexOf("#editing")==-1) { e.preventDefault(); if(_this.modalCont){ _this.modalCont.hide(); } return false; }
+            // if(window.location.href.indexOf("#editing")==-1) { e.preventDefault(); if(_this.modalCont){ _this.modalCont.hide(); } return false; }
+            if(_this.modalCont){ e.preventDefault(); _this.modalOpen = false; _this.modalCont.hide(); return false; }
 		});
     },
     listeners: {
@@ -515,10 +517,8 @@ const _this = {
 
                     _this.modalCont.hide();
 
-                    let toast = new bootstrap.Toast(document.querySelector('.toast'));
-                    document.querySelector('.toast .toast-body').innerHTML = __('Order created');  
-                    toast.show();
-                    
+                    toast( __('Order created') );
+
                     _this.getData();
 
                 }else{
@@ -556,9 +556,7 @@ const _this = {
 
                     _this.modalCont.hide();
 
-                    let toast = new bootstrap.Toast(document.querySelector('.toast'));
-                    document.querySelector('.toast .toast-body').innerHTML = __('Order updated');  
-                    toast.show();
+                    toast( __('Order updated') );
                     
                     _this.getData();
 

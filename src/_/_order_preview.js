@@ -7,17 +7,19 @@ export const preview = {
 
         let modal = document.querySelector(".order-modal");
         _this.modalCont = new bootstrap.Modal(modal);
+        _this.modalOpen = true;
         let i = e.currentTarget.dataset.index; // _this.state.orderPreviewIndex = i;
-
+        
         // to properly handle back button on mobiles
         // window.history.pushState(null, 'editing');
         history.pushState({pageID: 'orders'}, 'Orders', window.location.href+"#editing");
 
         modal.addEventListener('hide.bs.modal', function (e) {
            
-            if(window.location.href.indexOf("#editing")!=-1) history.back();
+            // if (window.location.href.indexOf("#editing")!=-1) 
+            if(_this.modalOpen) history.back();
 
-            _this.modalCont = null;
+            // _this.modalCont = null;
         });
         
         // is new order ?

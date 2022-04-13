@@ -7,6 +7,11 @@ footer {
   margin-bottom: 32px;
 }
 
+@media (max-width: 500px) {
+  .toast {
+    width: auto;
+  }
+}
 /* settings */
 .list-icon {
   color: #9b9b9b;

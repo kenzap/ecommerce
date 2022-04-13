@@ -7,6 +7,11 @@ footer {
   margin-bottom: 32px;
 }
 
+@media (max-width: 500px) {
+  .toast {
+    width: auto;
+  }
+}
 /* product list */
 .table-p-list thead tr th:nth-child(1) {
   width: 44px;
