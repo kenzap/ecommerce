@@ -1,6 +1,6 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link, onChange } from '@kenzap/k-cloud';
-import { timeConverterAgo, formatPrice, getPageNumber } from "../_/_helpers.js"
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link, onChange, spaceID } from '@kenzap/k-cloud';
+import { timeConverterAgo, formatPrice, getPageNumber, makeNumber } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
 
@@ -13,14 +13,16 @@ const _this = {
         playSoundNow: false,
         newOrderCount: 0,
         orderIDs: [],
-        orders: [],
+        orders: [], // where all requested orders are cached
+        orderSingle: [], // where single order is stored during preview
         playTitleTimer: null,
         refreshTimer: null,
         statuses: [],
         audio: new Audio('https://kenzap.com/static/swiftly.mp3'),
         limit: 50, // number of records to load per table
         slistLimit: 10, // product suggestion fetch search limit
-        productsSuggestions: []
+        productsSuggestions: [],
+        // orderPreviewIndex: null
     },
     init: () => {
          
@@ -276,6 +278,9 @@ const _this = {
         // break here if initListeners is called more than once
         if(!_this.state.firstLoad) return;
 
+        // add new order listener
+        preview.newOrder(_this);
+
         // modal success button
         onClick('.modal .btn-primary', _this.listeners.modalSuccessBtn);
         
@@ -303,6 +308,10 @@ const _this = {
     },
     listeners: {
 
+        newOrder: (e) => {
+
+
+        },
         changeStatus: (e) => {
 
             e.preventDefault();
@@ -405,7 +414,13 @@ const _this = {
         modalSuccessBtnFunc: null
     },
     
-    updateOrder: (id) => {
+    updateOrder: (modalCont, i, id) => {
+
+        let modal = document.querySelector(".modal");
+        if(modal.querySelector(".btn-primary").dataset.loading === 'true') return;
+
+        modal.querySelector(".btn-primary").dataset.loading = true;
+        modal.querySelector(".btn-primary").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' + __('Loading..');
 
         let data = {};
 
@@ -414,9 +429,18 @@ const _this = {
 
             switch(s.dataset.type){
           
-                case 'key': data[s.dataset.id] = s.dataset.value; break;
+                // case 'html': data[s.dataset.id] = s.innerHTML; break;
+                case 'key': 
+                    data[s.dataset.id] = s.dataset.value; 
+                    break;
+                case 'key-number': 
+                    data[s.dataset.id] = makeNumber(s.dataset.value); 
+                    break;
                 case 'items':   
                 
+                    // console.log(i);
+                    // console.log(_this.state.orders[i]);
+
                     data['items'] = {};
                     for(let item of document.querySelectorAll('.order-item-row-active')){
 
@@ -431,59 +455,114 @@ const _this = {
                                 "sdesc": item.querySelector('.item-title').dataset.sdesc,
                                 "title": item.querySelector('.item-title').dataset.value,
                                 "priceF": parseFloat(item.querySelector('.item-pricef').dataset.value),
-                                "variations": []
+                                "variations": id == 'new' ? [] : _this.state.orders[i].items[item.dataset.id] ? _this.state.orders[i].items[item.dataset.id].variations : [],
                         }
                     }
                     
                 break
                 case 'text':   
+                    data[s.dataset.id] = s.innerHTML;
+                    break;
                 case 'email':  
                 case 'emails':  
                 case 'select':
-                case 'textarea': data[s.id] = s.value; break;
-                case 'radio': data[s.id] = s.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; break;
+                case 'textarea': 
+                    data[s.id] = s.value; 
+                    break;
+                case 'radio': 
+                    data[s.id] = s.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; 
+                    break;
             }
         }
 
-        // console.log(data);
+        console.log(data);
 
         // return;
 
-        // send data
-        fetch('https://api-v1.kenzap.cloud/', {
-            method: 'post',
-            headers: headers,
-            body: JSON.stringify({
-                query: {
-                    settings: {
-                        type:       'update',
-                        key:        'ecommerce-order',        
-                        sid:        getSiteId(),
-                        id:         id,
-                        data:       data
+        // create new order
+        if(id == 'new'){
+
+            // additional required fields
+            data['name'] = data['from'];
+
+            // send data
+            fetch('https://api-v1.kenzap.cloud/', {
+                method: 'post',
+                headers: headers,
+                body: JSON.stringify({
+                    query: {
+                        order: {
+                            type:       'create',
+                            key:        'ecommerce-order',        
+                            sid:        spaceID(),
+                            data:       data
+                        }
                     }
+                })
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                if (response.success){
+
+                    modalCont.hide();
+
+                    let toast = new bootstrap.Toast(document.querySelector('.toast'));
+                    document.querySelector('.toast .toast-body').innerHTML = __('Order created');  
+                    toast.show();
+                    
+                    _this.getData();
+
+                }else{
+
+                    parseApiError(response);
                 }
             })
-        })
-        .then(response => response.json())
-        .then(response => {
+            .catch(error => {
+                parseApiError(error);
+            });
 
-            if (response.success){
+        // update existing order
+        }else{
 
-                let toast = new bootstrap.Toast(document.querySelector('.toast'));
-                document.querySelector('.toast .toast-body').innerHTML = __('Order updated');  
-                toast.show();
-                
-                _this.getData();
+            // send data
+            fetch('https://api-v1.kenzap.cloud/', {
+                method: 'post',
+                headers: headers,
+                body: JSON.stringify({
+                    query: {
+                        order: {
+                            type:       'update',
+                            key:        'ecommerce-order',        
+                            sid:        getSiteId(),
+                            id:         id,
+                            data:       data
+                        }
+                    }
+                })
+            })
+            .then(response => response.json())
+            .then(response => {
 
-            }else{
+                if (response.success){
 
-                parseApiError(response);
-            }
-        })
-        .catch(error => {
-            parseApiError(error);
-        });
+                    modalCont.hide();
+
+                    let toast = new bootstrap.Toast(document.querySelector('.toast'));
+                    document.querySelector('.toast .toast-body').innerHTML = __('Order updated');  
+                    toast.show();
+                    
+                    _this.getData();
+
+                }else{
+
+                    parseApiError(response);
+                }
+            })
+            .catch(error => {
+                parseApiError(error);
+            });
+        }
     },
     initFooter: () => {
         

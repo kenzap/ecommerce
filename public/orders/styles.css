@@ -124,9 +124,6 @@ table.items .edit-tp {
 }
 table.items .vars {
   font-style: italic;
-  padding-left: 8px;
-  margin-left: 4px;
-  margin-top: 4px;
   font-size: 0.8rem;
   border-left: 2px solid #ff0079;
 }

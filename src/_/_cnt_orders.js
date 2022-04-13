@@ -4,7 +4,7 @@ export const HTMLContent = (__) => {
       <div class="container ec-orders">
         <div class="d-md-flex justify-content-between bd-highlight mb-3">
             <nav class="bc" aria-label="breadcrumb"></nav>
-            <button class="btn btn-primary btn-add mt-3 mb-1 mt-md-0 mb-md-0" type="button">${ __('New order') }</button>
+            <button class="btn btn-primary add-order btn-add mt-3 mb-1 mt-md-0 mb-md-0" type="button">${ __('New order') }</button>
         </div>
         <div class="row">
           <div class="col-md-12 page-title">

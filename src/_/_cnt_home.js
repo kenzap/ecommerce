@@ -10,7 +10,7 @@ export const HTMLContent = (__) => {
             </div>
             <div class="row">
                 <div class="col-md-12 grid-margin grid-margin-lg-0 grid-margin-md-0 stretch-card">
-                    <div class="card border-white shadow-sm p-sm-3">
+                    <div class="card border-white shadow-sm p-sm-3 py-3">
                         <nav class="nav flex-column">
                             <a class="nav-link active fs-4" aria-current="page" href="${ link('/product-list/') }">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list-stars me-3" viewBox="0 0 16 16">

@@ -127,6 +127,13 @@ export const formatPrice = (price) => {
     return price;
 }
 
+export const makeNumber = function(price) {
+
+    price = price == "" ? 0 : price;
+    price = parseFloat(price);
+    return price;
+}
+
 export const formatTime = (__, timestamp) => {
 	
     let a = new Date(timestamp * 1000);

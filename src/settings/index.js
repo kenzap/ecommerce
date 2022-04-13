@@ -1,5 +1,5 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, toast, link } from '@kenzap/k-cloud';
 import { getCurrencies } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_settings.js"
 
@@ -134,24 +134,7 @@ const _this = {
             }
         }
 
-        // for(let s of document.querySelectorAll('.form-control')){
 
-        //     switch(s.dataset.type){
-          
-        //         case 'text':   
-        //         case 'email':  
-        //         case 'emails':  
-        //         case 'select':
-        //         case 'textarea': data[s.id] = s.value; break;
-        //         case 'radio': data[s.id] = s.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; break;
-        //     }
-
-        let sid = getSiteId();
-
-        // bind settings data
-  
-        // provide result to the page
-        // document.querySelector(".table tbody").innerHTML = list;
     },
     initListeners: () => {
 

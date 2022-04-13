@@ -8,7 +8,7 @@ export const HTMLContent = (__) => {
         </div>
         <div class="row">
             <div class="col-md-12 grid-margin grid-margin-lg-0 grid-margin-md-0 stretch-card">
-              <div class="card border-white shadow-sm p-sm-3">
+              <div class="card border-white shadow-sm p-sm-3 ">
                 <nav class="nav tab-content mb-4" role="tablist">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-link active" id="nav-notifications-link" data-bs-toggle="tab" data-bs-target="#nav-notifications" type="button" role="tab" aria-controls="nav-notifications" aria-selected="true" href="#">${ __('Notifications') }</a>
