@@ -311,7 +311,7 @@ const _this = {
         window.addEventListener("hashchange", function(e) {
 
             // close modal if still openned
-            if(window.location.href.indexOf("#editing")==-1) if(_this.modalCont){ e.preventDefault(); _this.modalCont.hide(); return false; }
+            if(window.location.href.indexOf("#editing")==-1) { e.preventDefault(); if(_this.modalCont){ _this.modalCont.hide(); } return false; }
 		});
     },
     listeners: {

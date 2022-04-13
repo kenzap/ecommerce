@@ -16,7 +16,7 @@ export const preview = {
         modal.addEventListener('hide.bs.modal', function (e) {
            
             if(window.location.href.indexOf("#editing")!=-1) history.back();
-            
+
             _this.modalCont = null;
         });
         
