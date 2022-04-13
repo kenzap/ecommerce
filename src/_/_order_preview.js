@@ -6,8 +6,19 @@ export const preview = {
     renderOrder: (_this, e) => {
 
         let modal = document.querySelector(".order-modal");
-        let modalCont = new bootstrap.Modal(modal);
+        _this.modalCont = new bootstrap.Modal(modal);
         let i = e.currentTarget.dataset.index; // _this.state.orderPreviewIndex = i;
+
+        // to properly handle back button on mobiles
+        window.history.pushState(null, 'editing');
+
+        modal.addEventListener('hide.bs.modal', function (e) {
+           
+            console.log('close');
+            window.history.back();
+
+            _this.modalCont = null;
+        });
         
         // is new order ?
         if(typeof(i) === 'undefined'){
@@ -90,7 +101,7 @@ export const preview = {
 
         html += '';
         modal.querySelector(".modal-body").innerHTML = html;
-        modalCont.show();
+        _this.modalCont.show();
 
         // table order item listners (remove, add note, adjust variations, etc)
         preview.tableOrderItemListeners();
@@ -112,7 +123,7 @@ export const preview = {
 
             e.preventDefault();
 
-            _this.updateOrder(modalCont, i, _this.state.orderSingle._id);
+            _this.updateOrder(i, _this.state.orderSingle._id);
         }
 
         onClick('.st-modal li a', (e) => {
@@ -157,7 +168,6 @@ export const preview = {
             case 'text': 
 
                 html = `<div data-id="${x}" data-type="text" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}">${ item }</div>`;
-            
                 return html;
             case 'textarea': return '<textarea type="text" rows="4" class="form-control order-form pv " data-type="textarea" id="'+x+'" value="'+item+'">'+item+'</textarea>';
             case 'items': 
@@ -192,9 +202,11 @@ export const preview = {
                         </tr>`;
 
                 html += `</table>`;
+                return html;
+            default: 
             
-            return html;
-            default: return item;
+                html = `<div data-id="${x}" data-type="text" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}">${ item }</div>`;
+                return html;
         }
   },
   itemOptions: (item) => {
@@ -338,27 +350,6 @@ export const preview = {
 
                   });
 
-                  // // auto update price when quantity is changed
-                  // document.querySelector('.edit-qty').addEventListener('keypress', (e)=>{
-
-                  //     console.log(e.which);
-
-                  //     setTimeout(() => {
-
-                  //         let priceF = parseFloat(document.querySelector('.edit-qty').value) * parseFloat(document.querySelector('.edit-qty').dataset.price);
-                  //         if(isNaN(priceF)) priceF = "";
-                  //         document.querySelector('.edit-tp').value = priceF;
-
-                  //     }, 300);
-
-                  //     if(e.which != 8 && isNaN(String.fromCharCode(e.which))){
-
-                  //         e.preventDefault(); // stop character from entering input
-                  //         return false;
-                  //     }
-
-                  // });
-
                   // price can be float number only
                   document.querySelector('.edit-tp').addEventListener('keypress', (e)=>{
 
@@ -370,7 +361,10 @@ export const preview = {
                           return false;
                       }
                   });
-                                          
+
+                  // focus on quantity field
+                  document.querySelector('.edit-qty').focus();
+                  document.querySelector('.edit-qty').select();                           
               });
 
           }else{
@@ -397,6 +391,8 @@ export const preview = {
     onClick('.remove-item', (e) => {
 
         e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
+
+        preview.refreshTotals();
     });
   },
   refreshTotals: () => {

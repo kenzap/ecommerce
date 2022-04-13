@@ -10,6 +10,7 @@ const _this = {
     state: {
         firstLoad: true,
         firstTouch: true,
+        modalCont: null,
         playSoundNow: false,
         newOrderCount: 0,
         orderIDs: [],
@@ -305,6 +306,16 @@ const _this = {
             }
 
         }, false);
+
+        // android back pressed
+        window.addEventListener("hashchange", function(e) {
+
+            alert('back pressed ' +window.location.href);
+            // if(window.location.href.indexOf("#editing")==-1) return;
+
+            if(_this.modalCont) _this.modalCont.hide();
+            
+		});
     },
     listeners: {
 
@@ -381,7 +392,7 @@ const _this = {
 
                 if (response.success){
 
-                    // modalCont.hide();
+                    // _this.modalCont.hide();
 
                     _this.getData();
 
@@ -414,7 +425,7 @@ const _this = {
         modalSuccessBtnFunc: null
     },
     
-    updateOrder: (modalCont, i, id) => {
+    updateOrder: (i, id) => {
 
         let modal = document.querySelector(".modal");
         if(modal.querySelector(".btn-primary").dataset.loading === 'true') return;
@@ -505,7 +516,7 @@ const _this = {
 
                 if (response.success){
 
-                    modalCont.hide();
+                    _this.modalCont.hide();
 
                     let toast = new bootstrap.Toast(document.querySelector('.toast'));
                     document.querySelector('.toast .toast-body').innerHTML = __('Order created');  
@@ -546,7 +557,7 @@ const _this = {
 
                 if (response.success){
 
-                    modalCont.hide();
+                    _this.modalCont.hide();
 
                     let toast = new bootstrap.Toast(document.querySelector('.toast'));
                     document.querySelector('.toast .toast-body').innerHTML = __('Order updated');  
