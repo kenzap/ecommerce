@@ -56,7 +56,7 @@ export const getPagination = (__, meta, cb) => {
     document.querySelector("#listing_paginate").style.display = (pbc < 2) ? "none" : "block";
 
     let page = getPageNumber(); 
-    let html = '<ul class="pagination d-flex justify-content-end pagination-flat">';
+    let html = '<ul class="pagination d-flex justify-content-end pagination-flat mb-0">';
     html += '<li class="paginate_button page-item previous" id="listing_previous"><a href="#" aria-controls="order-listing" data-type="prev" data-page="0" tabindex="0" class="page-link"><span aria-hidden="true">&laquo;</span></li>';
     let i = 0;
     while(i<pbc){
@@ -118,14 +118,43 @@ export const formatStatus = (__, st) => {
     }
 }
 
-export const formatPrice = (price) => {
+/**
+    * Render price
+    * @public
+    */
+ export const priceFormat = function(_this, price) {
 
-    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: "USD", });
-    if(typeof(price) === 'undefined' || price == '') price = 0;
-    price = parseFloat(price);
-    price = formatter.format(price);
-    return price;
+    price = makeNumber(price);
+
+    let priceF = parseFloat(price).toFixed(2);
+    
+    switch(_this.state.settings.currency_symb_loc){
+        case 'left': priceF = _this.state.settings.currency_symb + priceF; break;
+        case 'right': priceF = priceF + _this.state.settings.currency_symb; break;
+    }
+
+    return priceF;
 }
+
+/**
+    * Normalize number variables mostly to cover malformed data cases
+    * @public
+    */
+// export const makeNumber = function(price) {
+
+//     price = price == "" ? 0 : price;
+
+//     return price;
+// }
+
+// export const formatPrice = (price) => {
+
+//     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: "USD", });
+//     if(typeof(price) === 'undefined' || price == '') price = 0;
+//     price = parseFloat(price);
+//     price = formatter.format(price);
+//     return price;
+// }
 
 export const makeNumber = function(price) {
 
@@ -204,6 +233,92 @@ export const timeConverterAgo = (now, time) => {
     var sec = a.getSeconds();
     var time = date + ' ' + month + ' ' + year; // + ' ' + hour + ':' + min + ':' + sec ;
     return time;
+}
+
+export const parseVariations = (_this, product) => {
+
+    let html_vars = '';
+    console.log(product.variations);
+    if(typeof(product.variations !== 'undefined'))
+    for(let v in product.variations){
+
+        // variation type
+        let type = '';	
+        if(product.variations[v].type=='checkbox') type = 'check';
+        if(product.variations[v].type=='radio')    type = 'radio';
+
+        // update cart state
+        // if(typeof(cart.state.product.variations[v]) === 'undefined') cart.state.product.variations[v] = {title: product.variations[v].title, required: product.variations[v].required, allow: product.variations[v].required == '1'?false:true };	
+
+        // struct variation
+        html_vars += '\
+        <b>' + __(product.variations[v].title) + (product.variations[v].required == '1' ? ' <span class="tag">'+__('required')+'</span>':'')+'</b>\
+        <div class="kp-'+type+'" >';
+
+        // variation labels
+        for(let d in product.variations[v].data){
+
+            let checked = false;
+            // for public qr feed
+            // if(typeof(cart.state.product.variations[v]) !== 'undefined' && typeof(cart.state.product.variations[v].list) !== 'undefined' && typeof(cart.state.product.variations[v].list["_"+d]) !== 'undefined'){ checked = true; }
+            
+            // verify variation price validity
+            product.variations[v].data[d]['price'] = makeNumber(product.variations[v].data[d]['price']);
+
+            switch(type){
+                case 'check':
+
+                html_vars += '\
+                    <label>\
+                        <input type="checkbox" data-required="'+product.variations[v].required+'" data-indexv="'+v+'" data-index="'+d+'" data-title="'+product.variations[v].data[d]['title']+'" data-titlev="'+__(product.variations[v].title)+'" data-price="'+product.variations[v].data[d]['price']+'" '+(checked?'checked="checked"':'')+'>\
+                        <div class="checkbox">\
+                            <svg width="20px" height="20px" viewBox="0 0 20 20">\
+                                <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>\
+                                <polyline points="4 11 8 15 16 6"></polyline>\
+                            </svg>\
+                        </div>\
+                        <span>'+__(product.variations[v].data[d]['title'])+'</span>\
+                        <div class="price">+ '+priceFormat(_this, product.variations[v].data[d]['price'])+'</div>\
+                    </label>';
+                
+                break;
+                case 'radio':
+
+                html_vars += '\
+                    <label>\
+                        <input type="radio" data-required="'+product.variations[v].required+'" data-indexv="'+v+'" name="radio'+v+'" data-index="'+d+'" data-title="'+product.variations[v].data[d]['title']+'" data-titlev="'+__(product.variations[v].title)+'" data-price="'+product.variations[v].data[d]['price']+'" '+(checked?'checked="checked"':'')+' />\
+                        <span>'+__(product.variations[v].data[d]['title'])+'</span>\
+                        <div class="price">+ '+priceFormat(_this, product.variations[v].data[d]['price'])+'</div>\
+                    </label>';
+                
+                break;
+            }
+        }
+
+        html_vars += '</div>';
+    }
+
+    return html_vars;
+}
+
+export const escape = (htmlStr) => {
+
+    return htmlStr.replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");        
+ 
+}
+
+export const unescape = (htmlStr) => {
+
+    htmlStr = htmlStr.replace(/&lt;/g , "<");	 
+    htmlStr = htmlStr.replace(/&gt;/g , ">");     
+    htmlStr = htmlStr.replace(/&quot;/g , "\"");  
+    htmlStr = htmlStr.replace(/&#39;/g , "\'");   
+    htmlStr = htmlStr.replace(/&amp;/g , "&");
+    return htmlStr;
 }
 
 export const getCurrencies = () => {

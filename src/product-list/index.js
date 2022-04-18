@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getPageNumber, getPagination, formatStatus, formatPrice, formatTime } from "../_/_helpers.js"
+import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime } from "../_/_helpers.js"
 import { productListContent } from "../_/_cnt_product_list.js"
 
 // where everything happens
@@ -8,6 +8,7 @@ const _this = {
   
     state:{
         firstLoad: true,
+        settings: {},
         limit: 10, // number of records to load per table
     },
     init: () => {
@@ -39,6 +40,11 @@ const _this = {
                         source:      ['extension'],
                         key:         'ecommerce',
                     },
+                    settings: {
+                        type:       'get',
+                        key:        'ecommerce-settings',
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display'],
+                    },
                     products: {
                         type:       'find',
                         key:        'ecommerce-product',
@@ -58,7 +64,7 @@ const _this = {
                         //                     field: 'created',
                         //                 }
                         //             ]
-                    }
+                    },
                 }
             })
         })
@@ -159,6 +165,8 @@ const _this = {
 
         let sid = getSiteId();
 
+        _this.state.settings = response.settings;
+
         // generate website table
         let list = '';
         for (let i in response.products) {
@@ -176,7 +184,7 @@ const _this = {
                         </div>
                     </td>
                     <td class="destt" style="max-width:250px;min-width:250px;">
-                        <div class="mb-3 mt-3"> 
+                        <div class="my-1"> 
                             <a class="text-body" href="${ link('/product-edit/?id='+response.products[i]._id) }" >${ response.products[i].title }<i style="color:#9b9b9b;font-size:15px;margin-left:8px;" title="${ __("Edit product") }" class="mdi mdi-pencil menu-icon edit-page"></i></a>
                         </div>
                     </td>
@@ -184,14 +192,14 @@ const _this = {
                         <span>${ formatStatus(__, response.products[i].status) }</span>
                     </td>
                     <td>
-                        <span>${ formatPrice(response.products[i].price) }</span>
+                        <span>${ priceFormat(_this, response.products[i].price) }</span>
                     </td>
                     <td>
                         <span>${ formatTime(__, response.products[i].updated) }</span>
                     </td>
-                    <td> 
-                        <a href="#" data-id="${ response.products[i]._id }" class="remove-product text-danger ">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <td class="text-end"> 
+                        <a href="#" data-id="${ response.products[i]._id }" class="remove-product text-danger me-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                 <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                             </svg>
@@ -373,7 +381,10 @@ const _this = {
     },
     initFooter: () => {
         
-        initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
+        initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), __('Copyright © %1$ %2$E-commerce%3$ Extension', new Date().getFullYear(), '<a class="text-muted" href="#" target="_blank">', '</a>'));
+ 
+        // initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
+        // initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 

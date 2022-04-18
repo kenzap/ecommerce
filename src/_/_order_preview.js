@@ -1,8 +1,9 @@
 import { headers, showLoader, hideLoader, onClick, onKeyUp, parseApiError, spaceID } from '@kenzap/k-cloud';
-import { timeConverterAgo, formatPrice, getPageNumber, makeNumber } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape } from "../_/_helpers.js"
 
 export const preview = {
 
+    _this: null,
     renderOrder: (_this, e) => {
 
         let modal = document.querySelector(".order-modal");
@@ -79,7 +80,7 @@ export const preview = {
         // console.log(i);
         // console.log(_this.state.orderSingle._id);
 
-        let fields = {_id: {l: __("ID")}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "text"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
+        let fields = {_id: {l: __("ID")}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "text"}, tax: {l: __("Tax"), e: "text"}, totalWithTax: {l: __("Amount Payable"), e: "text"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
 
         // order table details
         for(let x in fields){
@@ -92,15 +93,16 @@ export const preview = {
             switch(x){
 
                 case 'total':
+                case 'tax':
+                case 'totalWithTax':
 
-                    val = formatPrice(val); 
+                    val = priceFormat(_this, val); 
                     
-                    break;
                 default:
 
                     html += `
-                    <div class="mb-3 mt-3 order-row ${ x == '_id' || x == 'from' ? "elipsized": "" }" >
-                        <b>${ field }</b>${ preview.renderField(fields[x], val, x) }
+                    <div class="mb-3 mt-3 order-row keyx-${ x } ${ x == '_id' || x == 'from' ? "elipsized": "" }" >
+                        <b>${ field }</b>${ preview.renderField(_this, fields[x], val, x) }
                     </div>`;
             }
         }
@@ -121,8 +123,11 @@ export const preview = {
         // add product item to order table
         preview.addOrderItem(_this);
 
-        // calculate totals
-        preview.refreshTotals();
+        // calculate totals for new orders only
+        if(_this.state.orderSingle._id == 'new') preview.refreshTotals();
+
+        // focus on item input fields
+        if(_this.state.orderSingle._id == 'new') setTimeout(() => { document.querySelector('.edit-item').focus(); }, 300);
         
         // save changes to orders
         _this.listeners.modalSuccessBtnFunc = (e) => {
@@ -159,13 +164,15 @@ export const preview = {
     },
     newOrder: (_this) => {
 
+        preview._this = _this;
         onClick('.add-order', (e) => { preview.renderOrder(_this, e); });
     },
     viewOrder: (_this) => {
 
+        preview._this = _this;
         onClick('.view-order', (e) => { preview.renderOrder(_this, e); });
     },
-    renderField: (a, item, x) => {
+    renderField: (_this, a, item, x) => {
 
         let html = '';
         switch(a.e){
@@ -180,7 +187,7 @@ export const preview = {
 
                 // parse product items
                 html = `<table class="items order-form" data-type="items"><tr><th><div class="me-1 me-sm-3">${ __('Product') }</div></th><th class="qty"><div class="me-1 me-sm-3">${ __('Qty') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __('Total') }</div></th><th></th></tr>`;
-                for(let x in item){ html += preview.structOrderItemTable(x, item, false); }
+                for(let x in item){ html += preview.structOrderItemTable(_this, x, item, false); }
 
                 // add row for manual product entry
                 html += `<tr class="new-item-row">
@@ -207,7 +214,8 @@ export const preview = {
                             </td>
                         </tr>`;
 
-                html += `</table>`;
+                html += `</table><div class="item-vars-input mt-3"> </div>`;
+
                 return html;
             default: 
             
@@ -227,7 +235,7 @@ export const preview = {
             </a>
             <ul class="dropdown-menu" aria-labelledby="order-item-options" >
                 <li><a class="oio dropdown-item edit-item-note" data-key="edit-item-note" href="#">${ __('Add note') }</a></li>
-                <li><a class="oio dropdown-item" data-key="edit-item-variation" href="#">${ __('Add variation') }</a></li>
+                <li><a class="oio dropdown-item d-none" data-key="edit-item-variation" href="#">${ __('Add variation') }</a></li>
                 <li><a class="oio dropdown-ite d-none" data-key="edit-item-price" href="#">${ __('Adjust price') }</a></li>
                 <li><a class="oio dropdown-item text-danger remove-item" data-key="remove-item" href="#">${ __('Remove') }</a></li>
             </ul>
@@ -236,7 +244,9 @@ export const preview = {
 
     return options;
   },
-  structOrderItemTable: (x, item, isNew = false) => {
+  structOrderItemTable: (_this, x, item, isNew = false) => {
+
+    // console.log(item[x].variations);
 
     // parse variations
     let vars = '', output = ''
@@ -250,8 +260,8 @@ export const preview = {
         if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";
     }
 
-    output += '<tr class="order-item-row-active" data-x="'+x+'" data-id="'+item[x].id+'">';
-    output += '<td><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-pricef" data-price="'+item[x].price+'" data-value="'+item[x].priceF+'" >' + formatPrice(item[x].priceF) + '</div><td>'+preview.itemOptions(item[x])+'</td></td>';
+    output += '<tr class="order-item-row-active" data-x="'+x+'" data-id="'+item[x].id+'" data-vars="'+escape(JSON.stringify(item[x].variations))+'">';
+    output += '<td><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-pricef" data-price="'+item[x].price+'" data-value="'+item[x].priceF+'" >' + priceFormat(_this, item[x].priceF) + '</div><td>'+preview.itemOptions(item[x])+'</td></td>';
     output += '</tr>';
 
     return output;
@@ -278,7 +288,7 @@ export const preview = {
                   products: {
                       type:       'find',
                       key:        'ecommerce-product',
-                      fields:     ['_id', 'id', 'img', 'status', 'price', 'title'],
+                      fields:     ['_id', 'id', 'img', 'status', 'variations', 'price', 'title'],
                       limit:      _this.state.slist,
                       offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.slist - _this.state.slist,    // automatically calculate the offset of table pagination
                       search:     {                                                           // if s is empty search query is ignored
@@ -341,8 +351,7 @@ export const preview = {
                   // auto update price when quantity is changed
                   document.querySelector('.edit-qty').addEventListener('keypress', (e)=>{
 
-                      console.log(e.which);
-
+                      // console.log(e.which);
                       if(e.which != 8 && isNaN(String.fromCharCode(e.which))){
 
                           e.preventDefault(); // stop character from entering input
@@ -353,7 +362,7 @@ export const preview = {
 
                   document.querySelector('.edit-qty').addEventListener('keydown', (e)=>{
 
-                      console.log('keydown');
+                      // console.log('keydown');
                       setTimeout(() => { calcPriceF(); }, 300);
 
                   });
@@ -361,8 +370,7 @@ export const preview = {
                   // price can be float number only
                   document.querySelector('.edit-tp').addEventListener('keypress', (e)=>{
 
-                      console.log(e.which);
-
+                      // console.log(e.which);
                       if(e.which != 8 && e.which != 46 && isNaN(String.fromCharCode(e.which))){
 
                           e.preventDefault(); // stop character from entering input
@@ -372,7 +380,12 @@ export const preview = {
 
                   // focus on quantity field
                   document.querySelector('.edit-qty').focus();
-                  document.querySelector('.edit-qty').select();                           
+                  document.querySelector('.edit-qty').select();   
+                  
+                  // parse selected product variations
+                  // console.log('parseVariations');
+                  document.querySelector('.item-vars-input').innerHTML = parseVariations(_this, _this.state.productsSuggestions[index]);
+
               });
 
           }else{
@@ -404,6 +417,7 @@ export const preview = {
 
         e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
 
+        // if(preview._this.state.orderSingle._id == 'new') 
         preview.refreshTotals();
     });
   },
@@ -411,6 +425,9 @@ export const preview = {
 
     // clear previous calculations
     if(document.querySelector('.order-total')) document.querySelector('.order-total').remove();
+    if(document.querySelector('.keyx-total')) document.querySelector('.keyx-total').remove();
+    if(document.querySelector('.keyx-tax')) document.querySelector('.keyx-tax').remove();
+    if(document.querySelector('.keyx-totalWithTax')) document.querySelector('.keyx-totalWithTax').remove();
 
     let html = "", totals = { total: { title: __('Total'), amount: 0 }, tax: { title: __('Tax'), amount: 0 }, totalWithTax: { title: __('Paid'), amount: 0 } };
     for(let price of document.querySelectorAll('.item-pricef')){
@@ -426,8 +443,8 @@ export const preview = {
     for(let i in totals){
 
         html += `
-        <div class="mb-3 mt-3 order-row elipsized">
-            <b>${ totals[i].title }</b><div class="order-form ms-2 d-inline-block" data-id="${ i }" data-type="key-number" data-value="${ totals[i].amount }">${ formatPrice(totals[i].amount) }</div>
+        <div class="mb-3 mt-3 order-row elipsized keyx-${i}">
+            <b>${ totals[i].title }</b><div class="order-form ms-2 d-inline-block" data-id="${ i }" data-type="key-number" data-value="${ totals[i].amount }">${ priceFormat(preview._this, totals[i].amount) }</div>
         </div>`;
     }
 
@@ -483,34 +500,89 @@ export const preview = {
   */
   addOrderItem: (_this) => {
 
-    onClick('.add-item', (e) =>{
+    onClick('.add-item', (e) => {
 
       let x = 0, itemArr = [], item = {};
 
       item.id = document.querySelector('.edit-item').dataset.id;   
       item.title = document.querySelector('.edit-item').value;   
-      item.priceF = document.querySelector('.edit-tp').value;
-      item.price = document.querySelector('.edit-tp').dataset.price;
-      item.qty = document.querySelector('.edit-qty').value;
+      item.priceF = parseFloat(document.querySelector('.edit-tp').value);
+      item.price = parseInt(document.querySelector('.edit-tp').dataset.price);
+      item.qty = parseInt(document.querySelector('.edit-qty').value);
       item.note = "";
       item.variations = [];
+
+      // working
+      let count = 0;
+      let list = document.querySelectorAll(".item-vars-input input");
+      for(const inp of list){
+
+            // console.log(v.checked);
+            // let v = parseInt(inp.dataset.indexv);
+
+            let v = count;
+            if(inp.checked){
+
+                if(!item.variations[v]) item.variations[v] = {};
+
+                if(!item.variations[v].list) item.variations[v].list = {};
+
+                if(!item.variations[v].title) item.variations[v].title = inp.dataset.titlev;
+
+                // cache selected variations
+                item.variations[v].list["_"+inp.dataset.index] = { title: inp.dataset.title, price: parseFloat(inp.dataset.price) }; 
+
+                item.priceF += item.qty * parseFloat(inp.dataset.price);
+                
+                count +=1;
+            }
+      }
+
+      // console.log(item.variations);
+
+      // handle variations
+    //   let count = 0;
+    //   for(const cbg of document.querySelectorAll(".item-vars-input .kp-check input[type=checkbox][data-indexv='"+v+"']")){
+
+    //       // checks if this block is required and allows checkout
+    //       if(cb.dataset.required=="1"){ if(count) item.variations[v].allow = true; }else{ cart.state.product.variations[v].allow = true; }
+
+    //       // cache selected variations
+    //       if(cbg.checked){ cart.state.product.variations[v].list["_"+cbg.dataset.index] = {title: cbg.dataset.title, price: parseFloat(cbg.dataset.price) }; count +=1; }
+    //   }
+
+    //   // let count = 0;
+    //   for(const rag of document.querySelectorAll(".item-vars-input .kp-radio input[type=radio][data-indexv='"+v+"']")){
+      
+    //       // console.log(rag.dataset.price);
+
+    //       // cache selected variations
+    //       if(rag.checked){ cart.state.product.variations[v].list["_"+rag.dataset.index] = {title: rag.dataset.title, price: parseFloat(rag.dataset.price) }; count +=1; }
+          
+    //       // checks if this block is required and allows checkout
+    //       if(cb.dataset.required=="1"){ if(count) cart.state.product.variations[v].allow = true; }else{ cart.state.product.variations[v].allow = true; }
+    //   }
+
 
       if(item.title.length<2){ alert(__('Incorrect product data')); return; }
 
       itemArr.push(item);
 
-      let itemRow = preview.structOrderItemTable(x, itemArr, true);
+      let itemRow = preview.structOrderItemTable(_this, x, itemArr, true);
 
       document.querySelector('.new-item-row').insertAdjacentHTML("beforebegin", itemRow);
 
       preview.tableOrderItemListeners();
 
+      // calculate totals for new orders only
+      // if(_this.state.orderSingle._id == 'new') 
       preview.refreshTotals();
 
       // clear fields
-      item.title = document.querySelector('.edit-item').value = "";   
-      item.priceF = document.querySelector('.edit-tp').value = "";
-      item.qty = document.querySelector('.edit-qty').value = "";
+      document.querySelector('.edit-item').value = "";   
+      document.querySelector('.edit-tp').value = "";
+      document.querySelector('.edit-qty').value = "";
+      document.querySelector(".item-vars-input").innerHTML = "";
 
       // focus back to the input field
       setTimeout(() => { document.querySelector('.edit-item').focus(); }, 300);

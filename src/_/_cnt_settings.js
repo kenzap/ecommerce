@@ -12,9 +12,9 @@ export const HTMLContent = (__) => {
                 <nav class="nav tab-content mb-4" role="tablist">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-link active" id="nav-notifications-link" data-bs-toggle="tab" data-bs-target="#nav-notifications" type="button" role="tab" aria-controls="nav-notifications" aria-selected="true" href="#">${ __('Notifications') }</a>
-                        <a class="nav-link" id="nav-currency-link" data-bs-toggle="tab" data-bs-target="#nav-currency" type="button" role="tab" aria-controls="nav-currency" aria-selected="true" href="#">${ __('Currency') }</a>
+                        <a class="nav-link" id="nav-currency-link" data-bs-toggle="tab" data-bs-target="#nav-currency" type="button" role="tab" aria-controls="nav-currency" aria-selected="true" href="#">${ __('Currency &amp; Tax') }</a>
                         <a class="nav-link" id="nav-payout-link" data-bs-toggle="tab" data-bs-target="#nav-payout" type="button" role="tab" aria-controls="nav-payout" aria-selected="true"  href="#">${ __('Payout') }</a>
-                        <a class="nav-link" id="nav-tax-link" data-bs-toggle="tab" data-bs-target="#nav-tax" type="button" role="tab" aria-controls="nav-tax" aria-selected="true"  href="#">${ __('Tax') }</a>
+                        <a class="nav-link" id="nav-tax-link" data-bs-toggle="tab" data-bs-target="#nav-tax" type="button" role="tab" aria-controls="nav-tax" aria-selected="true"  href="#">${ __('Legal') }</a>
                     </div>
                 </nav>
                 <div class="card-body tab-content" id="nav-tabContent">
@@ -184,6 +184,60 @@ export const HTMLContent = (__) => {
                       </div>
                     </div>
 
+                    <h4 id="gen" class="card-title mb-4 mt-4">${ __('Tax') }</h4>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${ __('Tax') }</label>
+                          <div class="col-sm-9">
+                            <div class="form-check">
+                              <input id="tax_calc" class="form-check-input inp" name="tax_calc" type="checkbox" value="1" data-type="checkbox">
+                              <label class="form-check-label" for="tax_calc">
+                                ${ __('Calculate') }
+                              </label>
+                            </div>
+                            <p class="form-text">${ __('Enable tax calculations when processing orders.') }</p>
+                          </div> 
+                        </div>
+                      </div>
+          
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${ __('Geolocation') }</label>
+                          <div class="col-sm-9">
+                            <div class="form-check">
+                              <input id="tax_auto_rate" class="form-check-input inp" name="tax_auto_rate" type="checkbox" value="1" data-type="checkbox">
+                              <label class="form-check-label" for="tax_auto_rate">
+                                ${ __('Auto tax rate') }
+                              </label>
+                            </div>
+                            <p class="form-text">${ __('Automatically detect tax rate whenever applicable.') }</p>
+                          </div> 
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${ __('Rate') }</label>
+                          <div class="col-sm-9">
+                            <input id="tax_rate" type="text" class="form-control inp" placeholder="21" name="tax_rate" data-type="text">
+                            <p class="form-text">${ __('Default tax rate. Example, 9 or 21. Use numeric value.') }</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${ __('Display') }</label>
+                          <div class="col-sm-9">
+                            <input id="tax_display" type="text" class="form-control inp" placeholder="VAT" name="tax_display" data-type="text">
+                            <p class="form-text">${ __('Tax title. Example, VAT or GST.') }</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <br>
                     <hr>
                     <br>
@@ -226,7 +280,7 @@ export const HTMLContent = (__) => {
                           <div class="col-sm-4">
                             <div class="form-check">
                               <label class="form-check-label">
-                                <input type="radio" class="form-check-input inp" name="entity_type" id="entity_type" value="individual" data-type="radio">
+                                <input type="radio" class="form-check-input inp" name="entity_type" value="individual" data-type="radio" checked="true">
                                 ${ __('Individual') }
                                 <i class="input-helper"></i></label>
                             </div>
@@ -234,7 +288,7 @@ export const HTMLContent = (__) => {
                           <div class="col-sm-5">
                             <div class="form-check">
                               <label class="form-check-label">
-                                <input type="radio" class="form-check-input inp" name="entity_type" id="entity_type" value="business" data-type="radio">
+                                <input type="radio" class="form-check-input inp" name="entity_type" value="business" data-type="radio">
                                 ${ __('Business') }
                                 <i class="input-helper"></i></label>
                             </div>

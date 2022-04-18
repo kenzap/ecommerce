@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link, onChange, spaceID } from '@kenzap/k-cloud';
-import { timeConverterAgo, formatPrice, getPageNumber, makeNumber } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
 
@@ -15,7 +15,9 @@ const _this = {
         playSoundNow: false,
         newOrderCount: 0,
         orderIDs: [],
+        // orderPreview: {},
         orders: [], // where all requested orders are cached
+        settings: {}, // where all requested settings are cached
         orderSingle: [], // where single order is stored during preview
         playTitleTimer: null,
         refreshTimer: null,
@@ -73,6 +75,11 @@ const _this = {
                             field: 'created',
                             order: 'DESC'
                         }
+                    },
+                    settings: {
+                        type:       'get',
+                        key:        'ecommerce-settings',
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display'],
                     }
                 }
             })
@@ -167,6 +174,9 @@ const _this = {
 
         // cache orders globally
         _this.state.orders = response.orders;
+        
+        // cache settings globally
+        _this.state.settings = response.settings;
 
         // no orders in the list
         if (response.orders.length == 0) {
@@ -203,10 +213,10 @@ const _this = {
                 </div>
               </td>
               <td class="d-none d-sm-table-cell">
-                <span style="font-size:24px;">${ _this.getStatus(response.orders[i].status) }</span>
+                <span class="fs-12">${ _this.getStatus(response.orders[i].status) }</span>
               </td>
               <td>
-                <span style="font-size:18px;">${ formatPrice(response.orders[i].total) }</span>
+                <span style="font-size:18px;">${ priceFormat(_this, response.orders[i].total) }</span>
               </td>
               <td class="d-none d-sm-table-cell">
                 <span style="font-size:18px;">${ timeConverterAgo(response.meta.time, response.orders[i].created) }</span>
@@ -454,6 +464,7 @@ const _this = {
                     data['items'] = {};
                     for(let item of document.querySelectorAll('.order-item-row-active')){
 
+                        let vars = JSON.parse(unescape(item.dataset.vars));
                         data['items'][item.dataset.id] =
                         {
                                 "id": item.dataset.id,
@@ -465,7 +476,7 @@ const _this = {
                                 "sdesc": item.querySelector('.item-title').dataset.sdesc,
                                 "title": item.querySelector('.item-title').dataset.value,
                                 "priceF": parseFloat(item.querySelector('.item-pricef').dataset.value),
-                                "variations": id == 'new' ? [] : _this.state.orders[i].items[item.dataset.id] ? _this.state.orders[i].items[item.dataset.id].variations : [],
+                                "variations": id == 'new' ? [] : vars ? vars : [],
                         }
                     }
                     
@@ -572,7 +583,8 @@ const _this = {
     },
     initFooter: () => {
         
-        initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
+        initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
+        // initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 

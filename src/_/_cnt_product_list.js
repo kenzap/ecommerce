@@ -11,15 +11,14 @@ export const productListContent = (__) => {
 
         <div class="row">
             <div class="col-md-12 grid-margin grid-margin-lg-0 grid-margin-md-0 stretch-card">
-                <div class="card border-white shadow-sm">
-                    <div class="card-body">
+                <div class="card border-white shadow-sm border-0">
+                    <div class="card-body p-0">
                         <div class="no-footer">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="table-responsive">
                                         <table
-                                            class="table table-hover table-borderless align-middle table-striped table-p-list"
-                                            style="min-width: 800px;">
+                                            class="table table-hover table-borderless align-middle table-striped table-p-list mb-0" style="min-width: 800px;">
                                             <thead>
 
                                             </thead>
@@ -31,13 +30,13 @@ export const productListContent = (__) => {
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-12 col-md-5">
-                                    <div class="dataTables_info mt-3 text-secondary fw-lighter" id="listing_info"
+                            <div class="row my-2">
+                                <div class="col-sm-12 col-md-5 d-flex align-items-center">
+                                    <div class="dataTables_info mx-2 text-secondary fw-lighter " id="listing_info"
                                         role="status" aria-live="polite">&nbsp;</div>
                                 </div>
                                 <div class="col-sm-12 col-md-7">
-                                    <div class="dataTables_paginate paging_simple_numbers mt-3" id="listing_paginate">
+                                    <div class="dataTables_paginate paging_simple_numbers m-2" id="listing_paginate">
                                     </div>
                                 </div>
                             </div>

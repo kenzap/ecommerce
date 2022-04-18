@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getProductId, formatPrice } from "../_/_helpers.js"
+import { getProductId, priceFormat } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
 
@@ -12,8 +12,8 @@ const _this = {
         _this.getData(); 
     },
     state: {
-
-        ajaxQueue: 0
+        ajaxQueue: 0,
+        settings: {}, // where all requested settings are cached
     },
     getData: () => {
 
@@ -38,6 +38,11 @@ const _this = {
                         key:        'ecommerce-product',
                         id:         id,   
                         fields:     ['_id', 'id', 'img', 'status', 'price', 'variations', 'priced', 'title', 'sdesc', 'ldesc', 'sku', 'cats', 'updated']
+                    },
+                    settings: {
+                        type:       'get',
+                        key:        'ecommerce-settings',
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display'],
                     },
                     locale: {
                         type:       'locale',
@@ -577,7 +582,7 @@ const _this = {
     structMixRow: (data) => {
 
         return '\
-        <li data-title="'+data.title+'" data-price="'+data.price+'" data-cond="" class="pt-2 pb-2"><div class="form-check"><label class="form-check-label form-label"><input class="'+data.type+' form-check-input" type="'+data.type+'" checked="" data-ft="'+data.title+'">'+data.title+' &nbsp;&nbsp;&nbsp; '+formatPrice(data.price)+'</label></div>\
+        <li data-title="'+data.title+'" data-price="'+data.price+'" data-cond="" class="pt-2 pb-2"><div class="form-check"><label class="form-check-label form-label"><input class="'+data.type+' form-check-input" type="'+data.type+'" checked="" data-ft="'+data.title+'">'+data.title+' &nbsp;&nbsp;&nbsp; '+priceFormat(_this, data.price)+'</label></div>\
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff0079" class="remove-option bi bi-x-circle" viewBox="0 0 16 16">\
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>\
                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>\

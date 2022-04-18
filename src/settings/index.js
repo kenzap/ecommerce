@@ -123,14 +123,15 @@ const _this = {
 
             if(typeof(response.settings[field]) === "undefined") continue;
             if(response.settings[field] == "") continue;
-            if(document.querySelector("#"+field)) switch(document.querySelector("#"+field).dataset.type){
+            if(document.querySelector("[name='"+field+"']")) switch(document.querySelector("[name='"+field+"']").dataset.type){
         
                 case 'text':   
                 case 'email':  
                 case 'emails':  
                 case 'select':
                 case 'textarea': document.querySelector("#"+field).value = response.settings[field]; break;
-                // case 'radio': $("#"+field).parent().parent().parent().parent().parent().find("input[value=" + data.res[field] + "]").prop('checked', true); break;
+                case 'checkbox': document.querySelector("#"+field).checked = response.settings[field] == "1" ? true : false; break;
+                case 'radio': document.querySelector("[name='"+field+"'][value='"+response.settings[field]+"']").checked = true; break;
             }
         }
 
@@ -209,7 +210,6 @@ const _this = {
 
         modalSuccessBtn: (e) => {
             
-            console.log('calling modalSuccessBtnFunc');
             _this.listeners.modalSuccessBtnFunc(e);
         },
 
@@ -222,7 +222,7 @@ const _this = {
         let data = {};
 
         // iterate through all fields
-        for(let s of document.querySelectorAll('.form-control')){
+        for(let s of document.querySelectorAll('.inp')){
 
             switch(s.dataset.type){
           
@@ -231,9 +231,12 @@ const _this = {
                 case 'emails':  
                 case 'select':
                 case 'textarea': data[s.id] = s.value; break;
-                case 'radio': data[s.id] = s.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; break;
+                case 'checkbox': data[s.id] = s.checked ? s.value : ""; break;
+                case 'radio': data[s.name] = s.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; break;
             }
         }
+
+        // console.log(data);
 
         // send data
         fetch('https://api-v1.kenzap.cloud/', {
@@ -254,9 +257,7 @@ const _this = {
 
             if (response.success){
 
-                let toast = new bootstrap.Toast(document.querySelector('.toast'));
-                document.querySelector('.toast .toast-body').innerHTML = __('Successfully updated');  
-                toast.show();
+                toast('Changes applied');
 
                 // modalCont.hide();
                 // _this.getData();
@@ -273,7 +274,8 @@ const _this = {
     },
     initFooter: () => {
         
-        initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
+        initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
+        // initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 
