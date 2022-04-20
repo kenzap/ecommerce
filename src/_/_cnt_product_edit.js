@@ -59,23 +59,22 @@ return `
                                     <div class="bg-light price_group mt-3 mb-3 p-4">
                                         <h4 class="card-title mb-3">${ __('Price') }</h4>
                                         <div class="price_group_base">
-                                            <div class="mb-3 mw">
+                                            <div class="mb-3">
                                                 <div class="input-group">
-
-                                                    <div id="p-price-c">
+                                                    <div id="p-price-c ">
                                                         <label for="p-price" class="form-label">${ __('Price normal') } <span class="lang"></span></label>
-                                                        <div class="input-group">
+                                                        <div class="input-group pe-3 mb-3">
                                                             <span class="input-group-text">$</span>
                                                             <input id="p-price" type="text" class="form-control inp" placeholder="55.00" autocomplete="off">
                                                         </div>
                                                     </div>
-                                                    <div id="p-priced-c">
-                                                        <label for="p-priced" class="form-label">${ __('Discounted') } <span class="lang"></span></label>
+                                                    <div id="p-priced-c ">
+                                                        <label for="p-priced pe-3 mb-3" class="form-label">${ __('Discounted') } <span class="lang"></span></label>
                                                         <input id="p-priced" type="text" class="form-control inp" placeholder="45.00" autocomplete="off">
                                                     </div>
 
                                                 </div>
-                                                <div class="add-mix-ctn"><a class="add-mix-block" href="#" data-action="add">${ __('+ add variation') }</a></div>
+                                                <div class="add-mix-ctn text-left mt-3 mb-2"><a class="add-mix-block" href="#" data-action="add">${ __('+ add variation') }</a></div>
                                             </div>
 
                                             <div class="variation-blocks">
@@ -113,7 +112,7 @@ return `
 
             </div>
         </div>
-        <div class="col-lg-3 grid-margin grid-margin-lg-0 grid-margin-md-0">
+        <div class="col-lg-3 mt-3 mt-lg-0 grid-margin grid-margin-lg-0 grid-margin-md-0">
 
             <div class="row">
                 <div class="col-12 grid-margin stretch-card">

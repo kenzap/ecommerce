@@ -444,7 +444,7 @@ export const preview = {
     for(let i in totals){
 
         let display = totals[i].title;
-        if(i == 'total_tax') display = _this.state.settings.tax_display + " ("+ _this.state.settings.tax_rate +"%):";
+        if(i == 'total_tax') display = preview._this.state.settings.tax_display + " (" + preview._this.state.settings.tax_rate + "%):";
 
         html += `
         <div class="mb-3 mt-3 order-row elipsized keyx-${i}">

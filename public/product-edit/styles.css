@@ -74,10 +74,6 @@ footer {
   color: inherit;
 }
 
-#p-priced-c {
-  margin-left: 16px;
-}
-
 .file-img img {
   border: 1px solid #f1f1f1;
 }
@@ -162,12 +158,6 @@ footer {
 
 .p-edit .offer-pricef li {
   list-style-type: none;
-}
-
-.add-mix-ctn {
-  text-align: left;
-  margin-top: 0.7rem;
-  margin-bottom: 1.5rem;
 }
 
 .var-block {

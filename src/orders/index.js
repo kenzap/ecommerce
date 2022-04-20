@@ -457,16 +457,15 @@ const _this = {
                     data[s.dataset.id] = makeNumber(s.dataset.value); 
                     break;
                 case 'items':   
-                
-                    // console.log(i);
-                    // console.log(_this.state.orders[i]);
 
-                    data['items'] = {};
+                    // data['items'] = {};
+                    data['items'] = [];
                     for(let item of document.querySelectorAll('.order-item-row-active')){
 
                         let vars = JSON.parse(unescape(item.dataset.vars));
-                        data['items'][item.dataset.id] =
-                        {
+                        // data['items'][item.dataset.id] =
+                        data['items'].push(
+                            {
                                 "id": item.dataset.id,
                                 "qty": parseInt(item.querySelector('.item-qty').dataset.value),
                                 "note": item.querySelector('.item-note').innerHTML,
@@ -477,7 +476,8 @@ const _this = {
                                 "title": item.querySelector('.item-title').dataset.value,
                                 "priceF": parseFloat(item.querySelector('.item-pricef').dataset.value),
                                 "variations": id == 'new' ? [] : vars ? vars : [],
-                        }
+                            }
+                        );
                     }
                     
                 break
