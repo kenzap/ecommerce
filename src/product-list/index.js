@@ -360,7 +360,7 @@ const _this = {
                 if (response.success){
 
                     // open product editing page
-                    window.location.href = `/product-edit/?id=${ response.product.id}`
+                    window.location.href = link(`/product-edit/?id=${ response.product.id}`)
 
                 }else{
 
