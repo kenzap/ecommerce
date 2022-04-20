@@ -1,5 +1,10 @@
 import { getCookie, getSiteId } from '@kenzap/k-cloud';
 
+export const mt = (val) =>{
+
+    return (""+val).length < 2 ? "0"+val : val;
+}
+
 export const getProductId = () => {
     
     let urlParams = new URLSearchParams(window.location.search);

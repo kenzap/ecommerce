@@ -690,7 +690,7 @@ const _this = {
                 if(response.success && _this.state.ajaxQueue == 0){
 
                     let toast = new bootstrap.Toast(document.querySelector('.toast'));
-                    document.querySelector('.toast .toast-body').innerHTML = __('Order updated');  
+                    document.querySelector('.toast .toast-body').innerHTML = __('Product updated');  
                     toast.show();
 
                     // hide UI loader
@@ -703,7 +703,7 @@ const _this = {
         if(_this.state.ajaxQueue == 0){
 
             let toast = new bootstrap.Toast(document.querySelector('.toast'));
-            document.querySelector('.toast .toast-body').innerHTML = __('Order updated');  
+            document.querySelector('.toast .toast-body').innerHTML = __('Product updated');  
             toast.show();
 
             hideLoader();

@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link, onChange, spaceID } from '@kenzap/k-cloud';
-import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
 
@@ -496,9 +496,12 @@ const _this = {
             }
         }
 
-        console.log(data);
+        let dateObj = new Date();
+        data['created_ymd'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1) + '' + mt(dateObj.getUTCDate());
+        data['created_ym'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1);
+        data['created_y'] = dateObj.getUTCFullYear() + '';
 
-        // return;
+        console.log(data);
 
         // create new order
         if(id == 'new'){

@@ -10,7 +10,7 @@ export const HTMLContent = (__) => {
           <div class="col-md-12 page-title">
             <div class="st-opts st-table mb-3 dropdown">
                 <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="order-status" data-id="status" data-value="" data-bs-toggle="dropdown" aria-expanded="false">
-                ${ __('All') }
+                  ${ __('All') }
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="order-status">
                   <li><a class="dppi dropdown-item" data-key="" href="#" >${ __('All') }</a></li>

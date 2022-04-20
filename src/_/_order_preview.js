@@ -80,7 +80,7 @@ export const preview = {
         // console.log(i);
         // console.log(_this.state.orderSingle._id);
 
-        let fields = {_id: {l: __("ID")}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "text"}, tax: {l: __("Tax"), e: "text"}, totalWithTax: {l: __("Amount Payable"), e: "text"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
+        let fields = {_id: {l: __("ID")}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "text"}, total_tax: {l: __("Tax"), e: "text"}, total_with_tax: {l: __("Amount Payable"), e: "text"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
 
         // order table details
         for(let x in fields){
@@ -93,8 +93,11 @@ export const preview = {
             switch(x){
 
                 case 'total':
-                case 'tax':
-                case 'totalWithTax':
+                case 'total_tax':
+
+                    // field = _this.state.settings.tax_display + " ("+ _this.state.settings.tax_rate +"%):";
+            
+                case 'total_with_tax':
 
                     val = priceFormat(_this, val); 
                     
@@ -426,25 +429,26 @@ export const preview = {
     // clear previous calculations
     if(document.querySelector('.order-total')) document.querySelector('.order-total').remove();
     if(document.querySelector('.keyx-total')) document.querySelector('.keyx-total').remove();
-    if(document.querySelector('.keyx-tax')) document.querySelector('.keyx-tax').remove();
-    if(document.querySelector('.keyx-totalWithTax')) document.querySelector('.keyx-totalWithTax').remove();
+    if(document.querySelector('.keyx-total_tax')) document.querySelector('.keyx-total_tax').remove();
+    if(document.querySelector('.keyx-total_with_tax')) document.querySelector('.keyx-total_with_tax').remove();
 
-    let html = "", totals = { total: { title: __('Total'), amount: 0 }, tax: { title: __('Tax'), amount: 0 }, totalWithTax: { title: __('Paid'), amount: 0 } };
+    let html = "", totals = { total: { title: __('Total'), amount: 0 }, total_tax: { title: __('Tax'), amount: 0 }, total_with_tax: { title: __('Paid'), amount: 0 } };
     for(let price of document.querySelectorAll('.item-pricef')){
-
-        // console.log(price.dataset.value);
 
         let tax = makeNumber(price.dataset.value) * 0.09;
         totals['total'].amount += makeNumber(price.dataset.value);
-        totals['tax'].amount += tax
-        totals['totalWithTax'].amount += (makeNumber(price.dataset.value) + tax);
+        totals['total_tax'].amount += tax
+        totals['total_with_tax'].amount += (makeNumber(price.dataset.value) + tax);
     };
 
     for(let i in totals){
 
+        let display = totals[i].title;
+        if(i == 'total_tax') display = _this.state.settings.tax_display + " ("+ _this.state.settings.tax_rate +"%):";
+
         html += `
         <div class="mb-3 mt-3 order-row elipsized keyx-${i}">
-            <b>${ totals[i].title }</b><div class="order-form ms-2 d-inline-block" data-id="${ i }" data-type="key-number" data-value="${ totals[i].amount }">${ priceFormat(preview._this, totals[i].amount) }</div>
+            <b>${ display }</b><div class="order-form ms-2 d-inline-block" data-id="${ i }" data-type="key-number" data-value="${ totals[i].amount }">${ priceFormat(preview._this, totals[i].amount) }</div>
         </div>`;
     }
 
