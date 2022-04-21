@@ -13,7 +13,7 @@ export const preview = {
         
         // to properly handle back button on mobiles
         // window.history.pushState(null, 'editing');
-        history.pushState({pageID: 'orders'}, 'Orders', window.location.href+"#editing");
+        history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search + "#editing");
 
         modal.addEventListener('hide.bs.modal', function (e) {
            
@@ -247,7 +247,7 @@ export const preview = {
 
     return options;
   },
-  structOrderItemTable: (_this, x, item, isNew = false) => {
+  structOrderItemTable: (_this, x, item, isNew = false, options = true) => {
 
     // console.log(item[x].variations);
 
@@ -264,7 +264,7 @@ export const preview = {
     }
 
     output += '<tr class="order-item-row-active" data-x="'+x+'" data-id="'+item[x].id+'" data-vars="'+escape(JSON.stringify(item[x].variations))+'">';
-    output += '<td><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-pricef" data-price="'+item[x].price+'" data-value="'+item[x].priceF+'" >' + priceFormat(_this, item[x].priceF) + '</div><td>'+preview.itemOptions(item[x])+'</td></td>';
+    output += '<td ><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-pricef" data-price="'+item[x].price+'" data-value="'+item[x].priceF+'" >' + priceFormat(_this, item[x].priceF) + '</div><td class="'+(options?'':'d-none')+'">'+preview.itemOptions(item[x])+'</td></td>';
     output += '</tr>';
 
     return output;
