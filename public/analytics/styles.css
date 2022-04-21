@@ -12,6 +12,15 @@ footer {
     width: auto;
   }
 }
-.range-plugin {
-  z-index: 10;
+.timgc {
+  max-width: 50px;
+  overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timgc img {
+  position: relative;
+  min-height: 28px;
 }

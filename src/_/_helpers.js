@@ -131,7 +131,7 @@ export const formatStatus = (__, st) => {
 
     price = makeNumber(price);
 
-    let priceF = parseFloat(price).toFixed(2);
+    let priceF = (Math.round(parseFloat(price) * 100)/100).toFixed(2);
     
     switch(_this.state.settings.currency_symb_loc){
         case 'left': priceF = _this.state.settings.currency_symb + priceF; break;

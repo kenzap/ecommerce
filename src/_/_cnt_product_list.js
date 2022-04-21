@@ -17,8 +17,7 @@ export const productListContent = (__) => {
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="table-responsive">
-                                        <table
-                                            class="table table-hover table-borderless align-middle table-striped table-p-list mb-0" style="min-width: 800px;">
+                                        <table class="table table-hover table-borderless align-middle table-striped table-p-list mb-0" style="min-width: 800px;">
                                             <thead>
 
                                             </thead>

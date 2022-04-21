@@ -1,5 +1,5 @@
 @import "../_/_global.scss";
 
-.range-plugin{
-    z-index: 10;
-}
+// .table thead tr th:nth-child(1){width:44px;} 
+.timgc{max-width:50px;overflow:hidden; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+.timgc img{position:relative;min-height:28px;}
