@@ -280,6 +280,8 @@ const _this = {
 
             pmodal.querySelector(".modal-body").innerHTML = modalHTml;
 
+            setTimeout( () => pmodal.querySelector("#mtitle").focus(),100 );
+
             _this.listeners.modalSuccessBtnFunc = (e) => {
 
                 e.preventDefault();
@@ -350,7 +352,7 @@ const _this = {
 
             pmodal.querySelector(".modal-body").innerHTML = modalHTML;
 
-            setTimeout( () => modal.querySelector("#mtitle").focus(),100 );
+            setTimeout( () => pmodal.querySelector("#mtitle").focus(),100 );
 
             _this.listeners.modalSuccessBtnFunc = (e) => {
 
