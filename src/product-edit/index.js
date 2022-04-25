@@ -315,7 +315,7 @@ const _this = {
                 setTimeout(() => _this.initListeners('partial'), 10);
             }
 
-            console.log('addMixBlock');
+           //  console.log('addMixBlock');
         },
 
         addMixOption: (e) => {
@@ -338,7 +338,7 @@ const _this = {
                     <label for="mtitle" class="form-label">${ __('Title') }</label>\
                     <input type="text" class="form-control" id="mtitle" autocomplete="off" placeholder="${ __('Brown rice') }">\
                 </div>\
-                <div class="form-group">\
+                <div class="form-group mt-3">\
                     <label for="mprice" class="form-label">${ __('Price') }</label>\
                     <div class="input-group mb-3">
                         <span class="input-group-text">$</span>
@@ -349,6 +349,8 @@ const _this = {
             </div>`;
 
             pmodal.querySelector(".modal-body").innerHTML = modalHTML;
+
+            setTimeout( () => modal.querySelector("#mtitle").focus(),100 );
 
             _this.listeners.modalSuccessBtnFunc = (e) => {
 

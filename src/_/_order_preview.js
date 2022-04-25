@@ -469,8 +469,8 @@ export const preview = {
       "name": "WP Asia",
       "note": "",
       "step": 1,
-      "items": {
-          "24adf24670cf977efe9386b781c9dc18124ac54b": {
+      "items": [
+          {
               "id": "24adf24670cf977efe9386b781c9dc18124ac54b",
               "qty": 2,
               "note": "",
@@ -482,7 +482,7 @@ export const preview = {
               "priceF": 20,
               "variations": []
           },
-          "c070bdb900bb47605b0056f96e7c4c9108fa22fe": {
+          {
               "id": "c070bdb900bb47605b0056f96e7c4c9108fa22fe",
               "qty": 1,
               "note": "",
@@ -494,7 +494,7 @@ export const preview = {
               "priceF": 8,
               "variations": []
           }
-      },
+      ],
       "table": "1",
       "total": 28,
       "status": "new",

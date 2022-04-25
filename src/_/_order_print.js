@@ -1,4 +1,4 @@
-import { headers, showLoader, hideLoader, onClick, onKeyUp, parseApiError, spaceID } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID, toast } from '@kenzap/k-cloud';
 import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 
@@ -13,108 +13,88 @@ export const print = {
 
         e.preventDefault();
         
-        let modal = document.querySelector(".order-modal");
-        _this.modalCont = new bootstrap.Modal(modal);
-        _this.modalOpen = true;
+        const date = new Date();
         let i = e.currentTarget.dataset.index; // _this.state.orderPreviewIndex = i;
         _this.state.orderSingle = _this.state.orders[i];
+        let o = _this.state.orders[i];
 
-        // to properly handle back button on mobiles
-        history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search + "#printing");
+        o.entity = "Fu Zhen Seafood";
 
-        modal.addEventListener('hide.bs.modal', function (e) {
-           
-            if (window.location.href.indexOf("#printing")==-1) return;
+        let data = {};
+        data.print = _this.state.settings.receipt_template;
 
-            history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search);
-        });
+        // kenzapprint://kenzapprint.app?data=${ encodeURIComponent(JSON.stringify(applink)) }
 
-        let html = "";
+        // var today = new Date();
+        // var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        // var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
-        // header
-        html += `
-        <table class="table table-hover table-borderless align-middle table-p-list" style="min-width:200px;">
-            <tr>
-                <td class="text-center p-1" colspan="3">Order #2334</td>
-            </tr>
-            <tr>
-                <td class="text-center p-1" colspan="3">25 Mar 2022</td>
-            </tr>
-            <tr>
-                <td class="text-center p-1" colspan="3">Fu Zhen Seafood Restaurant</td>
-            </tr>
-            <tr>
-                <td class="text-center" colspan="3"><hr /></td>
-            </tr>`;
+        // order id
+        data.print = data.print.replace(/{{order_id_short}}/g, o.id.substr(0, 5));
+
+        // current time
+        data.print = data.print.replace(/{{date_time}}/g,   date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short', }));
+
+        // order items
+        let items = '';
+        for(let i in o.items){
+
+            items += `[L]<b>${ o.items[i].qty } X ${ o.items[i].title }</b>[R]${ priceFormat(_this, o.items[i].priceF) }\n`;
+            for(let v in o.items[i].variations){
+    
+                items += `[L]| ${ o.items[i].variations[v].title }:`;
+                for(let l in  o.items[i].variations[v].list) items += ` ${ o.items[i].variations[v].list[l].title },`;
+
+                if(items.endsWith(',')) items = items.substring(0, items.length - 1) + '\n';
+
+                // parse variation list
+                // let list = ''; for(let l in item[x].variations[v].list) list += item[x].variations[v].list[l].title + " ";
+                // vars += '<div><b>' + item[x].variations[v].title + "</b> <span>" + list + "</span></div> ";
         
-            _this.state.orderSingle.items.forEach((item, x) => { console.log( _this.state.orderSingle.items[x]); html += preview.structOrderItemTable(_this, x, _this.state.orderSingle.items, false, false) } );
+                // // meal note
+                // if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";
+            }
+        }
+        if(items.endsWith('\n')) items = items.substring(0, items.length - 2);
+        data.print = data.print.replace(/{{order_items}}/g, items);
 
-            html += `
-            <tr>
-                <td class="text-center p-1" colspan="3"><hr /></td>
-            </tr>`;
+        // order note
+        let note = o.note.length == 0 || o.note == '<br>' ? '' : o.note;
+        if(note.length>0){
+            //  data.print += '[C]================================';
+            data.print = data.print.replace(/{{order_note}}/g, '[C]================================\n' + note + '\n[C]================================\n');
+        }
+        // if(note.length>0) data.print += '[C]================================';
 
-            if(_this.state.orderSingle.total) html += `
-            <tr>
-                <td class="text-end p-1" colspan="3">
-                    <div class="mb-0order-row elipsized ">
-                        <b>Subtotal</b><div class="order-form ms-2 d-inline-block" >${ priceFormat(print._this, _this.state.orderSingle.total) }</div>
-                    </div>
-                </td>
-            <tr>`;
-            
-            if(_this.state.orderSingle.total_tax) html += `
-            <tr>
-                <td class="text-end p-1" colspan="3">
-                    <div class="mb-0 order-row elipsized ">
-                        <b>GST</b><div class="order-form ms-2 d-inline-block" >${ priceFormat(print._this, _this.state.orderSingle.total_tax) }</div>
-                    </div>
-                </td>
-            <tr>`;
-
-            if(_this.state.orderSingle.total_with_tax) html += `
-            <tr>
-                <td class="text-end p-1" colspan="3">
-                    <div class="mb-0 order-row elipsized ">
-                        <b>Total</b><div class="order-form ms-2 d-inline-block" >${ priceFormat(print._this, _this.state.orderSingle.total_with_tax) }</div>
-                    </div>
-                </td>
-            <tr>`;`;
-
-            // html += `
-            // <tr>
-            //     <td class="text-center" colspan="3"><hr /></td>
-            // </tr>`;
-        html += `
-        </table>
+        // order totals
+        data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.total));
+        data.print = data.print.replace(/{{total_tax}}/g, priceFormat(_this, o.total_tax));
+        data.print = data.print.replace(/{{total_with_tax}}/g, priceFormat(_this, o.total_with_tax));
         
-        
-        `;
+        // debug vs actual print
+        data.debug = false;
 
-        modal.querySelector(".modal-dialog").classList.add('modal-dialog-wide');
-        modal.querySelector(".modal-header").classList.add('d-none');
-        modal.querySelector(".modal-footer").classList.add('d-none');
-        modal.querySelector(".modal-body").innerHTML = html;
-        _this.modalCont.show();
+
+        // let click = document.querySelector(".print-order[data-id='"+e.currentTarget.dataset.id+"']");
+
+
+        // click.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data)));
+
+        // e.currentTarget.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+JSON.stringify(data));
+
+        console.log('kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data)));
+
+        toast(__('Printing j'));
+
+        // return true;
+
+        location.href = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
+
+        return false;
         
-        // modal.querySelector(".modal-header .modal-title").innerHTML =  _this.state.orderSingle['from'];
-        // modal.querySelector(".modal-footer .btn-primary").innerHTML = _this.state.orderSingle._id == "new" ? __('Create') : __('Update');
-        // modal.querySelector(".btn-primary").dataset.loading = false;
-        // modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
+        // window.location.href = 'kenzapprint://kenzapprint.app?data='+JSON.stringify(data);
+        // simulateClick(click);
 
         
-        // modal.addEventListener('hide.bs.modal', function (e) {
-           
-        //     if (window.location.href.indexOf("#editing")==-1) return;
-
-        //     history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search);
-            
-        //     // history.pushState({pageID: 'orders'}, 'Orders', window.location.href);
-        //     // if(_this.modalOpen) history.back();
-
-        //     // _this.modalCont = null;
-        // });
-
-        window.print();
     }
 }
