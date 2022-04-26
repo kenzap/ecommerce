@@ -153,29 +153,9 @@ export const formatStatus = (__, st) => {
     return priceF;
 }
 
-/**
-    * Normalize number variables mostly to cover malformed data cases
-    * @public
-    */
-// export const makeNumber = function(price) {
-
-//     price = price == "" ? 0 : price;
-
-//     return price;
-// }
-
-// export const formatPrice = (price) => {
-
-//     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: "USD", });
-//     if(typeof(price) === 'undefined' || price == '') price = 0;
-//     price = parseFloat(price);
-//     price = formatter.format(price);
-//     return price;
-// }
-
 export const makeNumber = function(price) {
 
-    price = price == "" ? 0 : price;
+    price = price ? price : 0;
     price = parseFloat(price);
     return price;
 }
