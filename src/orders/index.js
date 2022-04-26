@@ -154,6 +154,10 @@ const _this = {
                     text: __('New'),
                     class: 'btn-warning text-dark fw-light'
                 },
+                'paid': { 
+                    text: __('Paid'),
+                    class: 'btn-primary fw-light'
+                },
                 'processing': { 
                     text: __('Processing'),
                     class: 'btn-primary fw-light'
@@ -168,6 +172,10 @@ const _this = {
                 },
                 'failed': { 
                     text: __('Failed'),
+                    class: 'btn-danger fw-light'
+                },
+                'refunded': { 
+                    text: __('Refunded'),
                     class: 'btn-danger fw-light'
                 }
             };

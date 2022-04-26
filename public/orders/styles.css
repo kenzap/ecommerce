@@ -90,6 +90,11 @@ footer {
   border-top: 0;
 }
 
+.modal-body-cont {
+  max-width: 840px;
+  margin: auto;
+}
+
 .product_body {
   display: block;
 }

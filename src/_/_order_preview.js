@@ -69,7 +69,7 @@ export const preview = {
         </div>`;
 
         // structure modal
-        modal.querySelector(".modal-dialog").classList.add('modal-dialog-wide');
+        modal.querySelector(".modal-dialog").classList.add('modal-fullscreen');
         modal.querySelector(".modal-header .modal-title").innerHTML =  _this.state.orderSingle['from'];
         modal.querySelector(".modal-footer .btn-primary").innerHTML = _this.state.orderSingle._id == "new" ? __('Create') : __('Update');
         modal.querySelector(".btn-primary").dataset.loading = false;
@@ -111,7 +111,7 @@ export const preview = {
         }
 
         html += '';
-        modal.querySelector(".modal-body").innerHTML = html;
+        modal.querySelector(".modal-body").innerHTML = '<div class="modal-body-cont">' + html + '</div>';
         _this.modalCont.show();
 
         // table order item listners (remove, add note, adjust variations, etc)
@@ -132,6 +132,9 @@ export const preview = {
         // focus on item input fields
         if(_this.state.orderSingle._id == 'new') setTimeout(() => { document.querySelector('.edit-item').focus(); }, 300);
         
+        // prevent modal closure if user clicks on white space areas
+        // if(modal) modal.addEventListener('click', (e)=>{ e.preventDefault(); return false; });
+
         // save changes to orders
         _this.listeners.modalSuccessBtnFunc = (e) => {
 
