@@ -137,8 +137,6 @@ const _this = {
                 case 'radio': document.querySelector("[name='"+field+"'][value='"+response.settings[field]+"']").checked = true; break;
             }
         }
-
-
     },
     initListeners: () => {
 

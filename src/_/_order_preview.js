@@ -1,5 +1,5 @@
-import { headers, showLoader, hideLoader, onClick, onKeyUp, parseApiError, spaceID } from '@kenzap/k-cloud';
-import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape, humanID } from "../_/_helpers.js"
+import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID } from '@kenzap/k-cloud';
+import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape, printReceipt } from "../_/_helpers.js"
 
 export const preview = {
 
@@ -53,26 +53,35 @@ export const preview = {
         }
 
         // console.log(_this.state.orderSingle);
-
         let items = '';
 
         // get order status
         Object.keys(_this.state.statuses).forEach((key, index) => { items += `<li><a class="dppi dropdown-item" data-key="${ key }" href="#">${ _this.state.statuses[key].text }</a></li>` })
         let statusSelect = `
-        <div class="st-modal st-opts mb-3 me-1 me-sm-3 dropdown">
-            <a class="btn btn-sm ${ _this.state.statuses[_this.state.orderSingle['status']].class } dropdown-toggle order-form" data-id="status" data-type="key" data-value="${ _this.state.orderSingle['status'] }" href="#" role="button" id="order-status-modal" data-bs-toggle="dropdown" aria-expanded="false" >
-                ${ _this.state.statuses[_this.state.orderSingle['status']].text }
+        <div class="d-flex justify-content-between">
+            <div class="st-modal st-opts mb-3 me-1 me-sm-3 dropdown">
+                <a class="btn btn-sm ${ _this.state.statuses[_this.state.orderSingle['status']].class } dropdown-toggle order-form" data-id="status" data-type="key" data-value="${ _this.state.orderSingle['status'] }" href="#" role="button" id="order-status-modal" data-bs-toggle="dropdown" aria-expanded="false" >
+                    ${ _this.state.statuses[_this.state.orderSingle['status']].text }
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="order-status-modal">
+                    ${ items }
+                </ul>
+            </div>
+            <a href="#" data-index="0" class="print-order text-success">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"></path>
+                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"></path>
+                </svg>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="order-status-modal">
-                ${ items }
-            </ul>
-        </div>`;
+        </div>
+        `;
+        // kenzapprint://kenzapprint.app?data=%7B%22print%22%3A%22%5BC%5D%3Cu%3E%3Cfont%20size%3D%5C%22big%5C%22%3EORDER%7B%7Border_id_short%7D%7D%3C%2Ffont%3E%3C%2Fu%3E%5Cn%5BC%5DFu%20Zhen%20Seafood%5Cn%5BC%5D%3Cu%20type%3Ddouble%3E%7B%7Bdate_time%7D%7D%3C%2Fu%3E%5Cn%5BC%5D%5Cn%5BC%5D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%5C%22%20%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EBEAUTIFUL%20SHIRT%3C%2Fb%3E%5BR%5D9.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%20S%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EAWESOME%20HAT%3C%2Fb%3E%5BR%5D24.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%2057%2F58%5Cn%5BL%5D%5Cn%5BC%5D--------------------------------%5Cn%5BR%5DTOTAL%20PRICE%20%3A%5BR%5D34.98%E2%82%AC%5Cn%5BR%5DTAX%20%3A%5BR%5D4.23%E2%82%AC%22%7D" data-id="72b42ad9111e7767aa68174227ba20b5e11d26e4
 
         // structure modal
         modal.querySelector(".modal-dialog").classList.add('modal-fullscreen');
         modal.querySelector(".modal-header .modal-title").innerHTML =  _this.state.orderSingle['from'];
-        modal.querySelector(".modal-footer .btn-primary").innerHTML = _this.state.orderSingle._id == "new" ? __('Create') : __('Update');
-        modal.querySelector(".btn-primary").dataset.loading = false;
+        modal.querySelector(".modal-footer .btn-confirm").innerHTML = _this.state.orderSingle._id == "new" ? __('Create') : __('Update');
+        modal.querySelector(".btn-confirm").dataset.loading = false;
         modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
 
         let html = statusSelect;
@@ -81,7 +90,7 @@ export const preview = {
         // console.log(_this.state.orderSingle._id);
 
         // _id: {l: __("System ID")},
-        let fields = { id: {l: __("ID")}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "text"}, total_tax: {l: __("Tax"), e: "text"}, total_with_tax: {l: __("Amount Payable"), e: "text"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
+        let fields = { id: {l: __("ID"), classList: "order-form"},  from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "price", classList: "order-form"}, total_tax: {l: __("Tax"), e: "price", classList: "order-form"}, total_with_tax: {l: __("Amount Payable"), e: "price", classList: "order-form"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
 
         // order table details
         for(let x in fields){
@@ -91,24 +100,10 @@ export const preview = {
             let val = _this.state.orderSingle[x];
             let field = fields[x].l;
 
-            switch(x){
-
-                case 'total':
-                case 'total_tax':
-
-                    // field = _this.state.settings.tax_display + " ("+ _this.state.settings.tax_rate +"%):";
-            
-                case 'total_with_tax':
-
-                    val = priceFormat(_this, val); 
-                    
-                default:
-
-                    html += `
-                    <div class="mb-3 mt-3 order-row keyx-${ x } ${ x == '_id' || x == 'from' ? "elipsized": "" }" >
-                        <b>${ field }</b>${ preview.renderField(_this, fields[x], val, x) }
-                    </div>`;
-            }
+            html += `
+            <div class="mb-3 mt-3 order-row keyx-${ x } ${ x == '_id' || x == 'from' ? "elipsized": "" }"  >
+                <b>${ field }</b>${ preview.renderField(_this, fields[x], val, x) }
+            </div>`;
         }
 
         html += '';
@@ -135,6 +130,15 @@ export const preview = {
         
         // prevent modal closure if user clicks on white space areas
         // if(modal) modal.addEventListener('click', (e)=>{ e.preventDefault(); return false; });
+
+        onClick('.print-order', (e) => {
+
+            e.preventDefault();
+            
+            simulateClick(modal.querySelector(".btn-confirm"));
+
+            _this.state.printLink = true;
+        });
 
         // save changes to orders
         _this.listeners.modalSuccessBtnFunc = (e) => {
@@ -185,6 +189,10 @@ export const preview = {
         switch(a.e){
             
             // case 'text': return '<input type="text" class="form-control pv" id="'+x+'" value="'+b+'">';
+            case 'price': 
+
+                html = `<div data-id="${x}" data-type="key-number" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}" data-value="${ item }">${ priceFormat(_this, item) }</div>`;
+                return html;
             case 'text': 
 
                 html = `<div data-id="${x}" data-type="text" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}">${ item }</div>`;

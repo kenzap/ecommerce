@@ -70,7 +70,7 @@ export const HTMLContent = (__) => {
               
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary"></button>
+                <button type="button" class="btn btn-primary btn-confirm"></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"></button>
               </div>
           </div>

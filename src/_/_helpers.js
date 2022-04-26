@@ -1,17 +1,5 @@
 import { getCookie, getSiteId } from '@kenzap/k-cloud';
 
-export const humanID = (id) => {
-
-    let encode = '';
-    for (let i = 0; i < id.length; i++) {
-
-      let x = id.slice(i, i+1);
-      encode += x.charCodeAt(0);
-    }
-
-    return encode;
-}
-
 export const mt = (val) => {
 
     return (""+val).length < 2 ? "0"+val : val;
@@ -315,6 +303,97 @@ export const unescape = (htmlStr) => {
     htmlStr = htmlStr.replace(/&#39;/g , "\'");   
     htmlStr = htmlStr.replace(/&amp;/g , "&");
     return htmlStr;
+}
+
+export const printReceipt = (_this, order) => {
+
+    // vars
+    let o = order, data = {}, date = new Date();
+
+    // 58mm wide thermal printers are best to display 24 chars per line
+    let row = (txt) => {
+
+        let output = '', max_char = 20, max_ofst = 3, ofst_prev = 0, ofst = 0;
+        for(let i = 0; i < Math.ceil(txt.length / max_char); i++){
+
+            if(i>0) output += '\n[L]';
+
+            ofst = 0;
+            for(let e = -1 * max_ofst; e < max_ofst; e++){
+
+                let ci = ((max_char + ofst_prev) * i) + max_char + e;
+                if(txt[ci] == ' ' || ci == txt.length){ ofst += e; break; }
+            }
+
+            output += txt.substr((max_char + ofst_prev) * i, max_char + ofst);
+
+            ofst_prev = ofst;
+        }
+
+        return output;
+    };
+
+    // debug vs actual print
+    data.debug = false;
+
+    // get receipt template
+    data.print = _this.state.settings.receipt_template;
+
+    // order id
+    data.print = data.print.replace(/{{order_id}}/g, o.id);
+
+    // current time
+    data.print = data.print.replace(/{{date_time}}/g, date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short', }));
+
+    // order items
+    let items = '';
+    for(let i in o.items){
+
+        items += `[L]<b>${ o.items[i].qty } X ${ row(o.items[i].title) }</b>[R]${ priceFormat(_this, o.items[i].priceF) }\n`;
+        for(let v in o.items[i].variations){
+
+            items += `[L]  ${ row(o.items[i].variations[v].title) }:`;
+            for(let l in  o.items[i].variations[v].list) items += ` ${ o.items[i].variations[v].list[l].title },`;
+
+            if(items.endsWith(',')) items = items.substring(0, items.length - 1) + '\n';
+
+            // parse variation list
+            // let list = ''; for(let l in item[x].variations[v].list) list += item[x].variations[v].list[l].title + " ";
+            // vars += '<div><b>' + item[x].variations[v].title + "</b> <span>" + list + "</span></div> ";
+    
+            // // meal note
+            // if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";
+        }
+    }
+    if(items.endsWith('\n')) items = items.substring(0, items.length - 2);
+    data.print = data.print.replace(/{{order_items}}/g, items);
+
+    // order note
+    let note = o.note.length == 0 || o.note == '<br>' ? '' : o.note;
+    if(note.length>0){
+        //  data.print += '[C]================================';
+        data.print = data.print.replace(/{{order_note}}/g, '[C]================================\n' + note + '\n[C]================================\n');
+    }
+    // if(note.length>0) data.print += '[C]================================';
+
+    // order totals
+    data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.total));
+    data.print = data.print.replace(/{{total_tax}}/g, priceFormat(_this, o.total_tax));
+    data.print = data.print.replace(/{{total_with_tax}}/g, priceFormat(_this, o.total_with_tax));
+    
+
+
+    // let click = document.querySelector(".print-order[data-id='"+e.currentTarget.dataset.id+"']");
+
+    // click.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data)));
+
+    // e.currentTarget.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+JSON.stringify(data));
+
+    let str = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
+    
+    if(data.debug) { console.log(data.print); console.log(str); }
+
+    return str;
 }
 
 export const getCurrencies = () => {
