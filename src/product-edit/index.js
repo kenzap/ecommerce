@@ -148,7 +148,7 @@ const _this = {
         // init categories
         let pcats = document.querySelector('#p-cats');
         if (product.cats) pcats.setAttribute('data-simple-tags', product.cats);
-        const tags = new simpleTags(pcats);
+        const tags = new simpleTags(_this, pcats);
     },
     initListeners: (type = 'partial') => {
 

@@ -296,6 +296,15 @@ export const preview = {
                       key:        'ecommerce-product',
                       fields:     ['_id', 'id', 'img', 'status', 'variations', 'price', 'title'],
                       limit:      _this.state.slist,
+                      // only suggesting products with status public
+                      term:       [
+                                    {
+                                        type: "string",
+                                        field: "status",
+                                        relation: "=",
+                                        value: "1",
+                                    }
+                                  ],
                       offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.slist - _this.state.slist,    // automatically calculate the offset of table pagination
                       search:     {                                                           // if s is empty search query is ignored
                                       field: 'title',
@@ -457,7 +466,7 @@ export const preview = {
 
     html = `<div class="order-total">${ html }</div>`;
 
-    document.querySelector('.modal-body').insertAdjacentHTML("beforeend", html);
+    document.querySelector('.modal-body-cont').insertAdjacentHTML("beforeend", html);
 
     // return html;
   },

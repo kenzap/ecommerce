@@ -123,7 +123,7 @@ return `
                             <div class="landing_status"></div>
                             <input type="hidden" class="form-control" id="landing-slug" value="">
 
-                            <h4 id="elan" class="card-title mb-4">Status</h4>
+                            <h4 id="elan" class="card-title mb-4">${ __('Status') }</h4>
                             <div id="status-cont" class="mb-3">
 
                                 <div class="col-sm-12">
@@ -146,7 +146,7 @@ return `
                                 </div>
                             </div>
 
-                            <h4 id="elan" class="card-title mb-4">Categories</h4>
+                            <h4 id="elan" class="card-title mb-4">${ __('Categories') }</h4>
                             <div id="p-cats" class="simple-tags mb-4" data-simple-tags=""></div>
                             <div class="clearfix"> </div>
 
