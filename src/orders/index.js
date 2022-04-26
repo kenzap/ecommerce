@@ -1,5 +1,5 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link, onChange, spaceID } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange } from '@kenzap/k-cloud';
 import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, humanID } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { print } from "../_/_order_print.js"
@@ -217,7 +217,7 @@ const _this = {
             <tr class="${ classN }">
               <td class="details">
                 <div class="ps-1 view-order" data-id="${ response.orders[i]._id }" data-index="${ i }">
-                  <b class="">${ (response.orders[i]._id.substr(0,4)) }</b> ${ response.orders[i].from }
+                  <b class="">${ (response.orders[i].id) }</b> ${ response.orders[i].from }
                   <div class=" elipsized fst-italic">${ response.orders[i].note ? response.orders[i].note : "" }</div>
                   <div class=" d-sm-none"> <span class="me-2">${ _this.getStatus(response.orders[i].status) }</span> <span class="text-muted">${ timeConverterAgo(__, response.meta.time, response.orders[i].created) }</span> </div>
                 </div>
@@ -408,7 +408,7 @@ const _this = {
                             type:       'delete',
                             key:        'ecommerce-order',   
                             id:         e.currentTarget.dataset.id,  
-                            sid:        getSiteId(),
+                            sid:        spaceID(),
                         }
                     }
                 })
@@ -433,7 +433,6 @@ const _this = {
             });
         },
         // printOrder: (e) => {
-
 
 
         // },
@@ -530,18 +529,17 @@ const _this = {
 
             // additional required fields
             data['name'] = data['from'];
-
-            // send data
+            
+            // get last order ID number
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
                 headers: headers,
                 body: JSON.stringify({
                     query: {
-                        order: {
-                            type:       'create',
-                            key:        'ecommerce-order',        
-                            sid:        spaceID(),
-                            data:       data
+                        settings: {
+                            type:       'get',
+                            key:        'ecommerce-settings',
+                            fields:     ['last_order_id'],
                         }
                     }
                 })
@@ -551,22 +549,64 @@ const _this = {
 
                 if (response.success){
 
-                    _this.modalCont.hide();
+                    data['id'] = makeNumber(response.settings.last_order_id) + 1;
 
-                    toast( __('Order created') );
+                    console.log("number: " + data['id']);
 
-                    // _this.makeOrderID
+                    // create new order
+                    fetch('https://api-v1.kenzap.cloud/', {
+                        method: 'post',
+                        headers: headers,
+                        body: JSON.stringify({
+                            query: {
+                                order: {
+                                    type:       'create',
+                                    key:        'ecommerce-order',        
+                                    sid:        spaceID(),
+                                    data:       data
+                                }
+                            }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(response => {
 
-                    _this.getData();
+                        if (response.success){
 
-                }else{
+                            _this.modalCont.hide();
 
-                    parseApiError(response);
-                }
+                            toast( __('Order created') );
+
+                            _this.getData();
+
+                        }else{ parseApiError(response); }
+                    })
+                    .catch(error => { parseApiError(error); });
+
+                    // save next assigned number
+                    fetch('https://api-v1.kenzap.cloud/', {
+                        method: 'post',
+                        headers: headers,
+                        body: JSON.stringify({
+                            query: {
+                                settings: {
+                                    type:       'set',
+                                    key:        'ecommerce-settings',        
+                                    sid:        spaceID(),
+                                    data:       {
+                                        last_order_id: data['id']
+                                    }
+                                }
+                            }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(response => { if (!response.success){ parseApiError(response); } })
+                    .catch(error => {  parseApiError(error); });   
+                
+                }else{ parseApiError(response); }
             })
-            .catch(error => {
-                parseApiError(error);
-            });
+            .catch(error => { parseApiError(error); });
 
         // update existing order
         }else{
@@ -580,7 +620,7 @@ const _this = {
                         order: {
                             type:       'update',
                             key:        'ecommerce-order',        
-                            sid:        getSiteId(),
+                            sid:        spaceID(),
                             id:         id,
                             data:       data
                         }

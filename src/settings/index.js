@@ -8,6 +8,7 @@ const _this = {
    
     state:{
         firstLoad: true,
+        response: null,
         limit: 10, // number of records to load per table
     },
     init: () => {
@@ -97,6 +98,8 @@ const _this = {
         document.querySelector('#contents').innerHTML = HTMLContent(__);
     },
     renderPage: (response) => {
+
+        _this.state.response = response;
 
         if(_this.state.firstLoad){
 
@@ -236,6 +239,12 @@ const _this = {
             }
         }
 
+        // do not save last_order_id if it was unchanged. Avoids conflicts.
+        if(_this.state.response.settings.last_order_id == data.last_order_id){
+
+            delete data.last_order_id;
+        }
+        
         // console.log(data);
 
         // send data

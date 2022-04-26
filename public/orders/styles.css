@@ -122,7 +122,7 @@ table.items .qty {
 }
 table.items .edit-qty {
   text-align: right;
-  max-width: 150px;
+  max-width: 200px;
 }
 table.items .tp {
   text-align: right;

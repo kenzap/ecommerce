@@ -27,7 +27,7 @@ export const HTMLContent = (__) => {
                           <label class="col-sm-3 col-form-label">${ __('Order ID') }</label>
                           <div class="col-sm-9">
                             <input id="last_order_id" type="text" class="form-control inp" name="last_order_id" data-type="emails">
-                            <p class="form-text">${ __('Define new order ID number.') }</p>
+                            <p class="form-text">${ __('Define next new order ID number.') }</p>
                           </div>
                         </div>
                       </div>
