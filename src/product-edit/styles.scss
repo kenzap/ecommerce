@@ -1,8 +1,10 @@
 @import "../_/_global.scss";
 
 /* dependency simple tags */
-.simple-tags{background-color:#fff;border:0px solid #1941df;-webkit-border-radius:3px;border-radius:3px;-webkit-box-sizing:border-box;box-sizing:border-box;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;font-size:14px}.simple-tags>ul{list-style:none;padding:0;margin:0;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap}.simple-tags ul li{margin:0.5em 0.2em;padding:0.5em;color:#fff;background-color:#1941df;-webkit-border-radius:3px;border-radius:3px}.simple-tags ul li a{margin:0.5em 0.2em;text-decoration:none;color:inherit;cursor:pointer}.simple-tags input{padding:0.9em 0.5em;-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;border:none;outline:none;font-size:inherit;font-family:inherit;color:inherit}
-        
+.simple-tags{background-color:#fff;border:0px solid #1941df;-webkit-border-radius:3px;border-radius:3px;-webkit-box-sizing:border-box;box-sizing:border-box;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;font-size:14px}.simple-tags>ul{list-style:none;padding:0;margin:0;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap}.simple-tags ul li{margin:0.5em 0.2em;padding:0.5em;color:#fff;background-color:#1941df;-webkit-border-radius:3px;border-radius:3px}.simple-tags ul li a{margin:0.5em 0.2em;text-decoration:none;color:inherit;cursor:pointer}.simple-tags input{max-width:90px;padding:0.9em 0.5em;-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;border:none;outline:none;font-size:inherit;font-family:inherit;color:inherit}
+.simple-tags input{transition: max-width 0.3s; text-overflow:ellipsis!important;}
+.simple-tags input:focus{max-width:200px;}
+
 .file-img img{border:1px solid #f1f1f1;}
 .note-fontname{display: none!important;}
 // .card-description{color:#76838f;}

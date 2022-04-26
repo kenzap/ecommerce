@@ -1,6 +1,18 @@
 import { getCookie, getSiteId } from '@kenzap/k-cloud';
 
-export const mt = (val) =>{
+export const humanID = (id) => {
+
+    let encode = '';
+    for (let i = 0; i < id.length; i++) {
+
+      let x = id.slice(i, i+1);
+      encode += x.charCodeAt(0);
+    }
+
+    return encode;
+}
+
+export const mt = (val) => {
 
     return (""+val).length < 2 ? "0"+val : val;
 }
@@ -170,6 +182,9 @@ export const makeNumber = function(price) {
 
 export const formatTime = (__, timestamp) => {
 	
+    const d = new Date(parseInt(timestamp) * 1000);
+    return d.toLocaleDateString();
+
     let a = new Date(timestamp * 1000);
     let months = [__('Jan'), __('Feb'), __('Mar'), __('Apr'), __('May'), __('Jun'), __('Jul'), __('Aug'), __('Sep'), __('Oct'), __('Nov'), __('Dec')];
     let year = a.getFullYear();

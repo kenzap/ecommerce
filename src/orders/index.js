@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link, onChange, spaceID } from '@kenzap/k-cloud';
-import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, humanID } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
@@ -217,7 +217,7 @@ const _this = {
             <tr class="${ classN }">
               <td class="details">
                 <div class="ps-1 view-order" data-id="${ response.orders[i]._id }" data-index="${ i }">
-                  <b class="">${ response.orders[i].from }</b>
+                  <b class="">${ (response.orders[i]._id.substr(0,4)) }</b> ${ response.orders[i].from }
                   <div class=" elipsized fst-italic">${ response.orders[i].note ? response.orders[i].note : "" }</div>
                   <div class=" d-sm-none"> <span class="me-2">${ _this.getStatus(response.orders[i].status) }</span> <span class="text-muted">${ timeConverterAgo(__, response.meta.time, response.orders[i].created) }</span> </div>
                 </div>
@@ -523,7 +523,7 @@ const _this = {
         data['created_ym'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1);
         data['created_y'] = dateObj.getUTCFullYear() + '';
 
-        console.log(data);
+        // console.log(data);
 
         // create new order
         if(id == 'new'){
@@ -554,6 +554,8 @@ const _this = {
                     _this.modalCont.hide();
 
                     toast( __('Order created') );
+
+                    // _this.makeOrderID
 
                     _this.getData();
 

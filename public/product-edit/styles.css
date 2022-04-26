@@ -60,6 +60,7 @@ footer {
 }
 
 .simple-tags input {
+  max-width: 90px;
   padding: 0.9em 0.5em;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -72,6 +73,15 @@ footer {
   font-size: inherit;
   font-family: inherit;
   color: inherit;
+}
+
+.simple-tags input {
+  transition: max-width 0.3s;
+  text-overflow: ellipsis !important;
+}
+
+.simple-tags input:focus {
+  max-width: 200px;
 }
 
 .file-img img {

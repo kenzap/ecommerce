@@ -1,5 +1,5 @@
 import { headers, showLoader, hideLoader, onClick, onKeyUp, parseApiError, spaceID } from '@kenzap/k-cloud';
-import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape } from "../_/_helpers.js"
+import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape, humanID } from "../_/_helpers.js"
 
 export const preview = {
 
@@ -33,12 +33,12 @@ export const preview = {
             _this.state.orderSingle = {
                 _id: "new",
                 created: 1649831099,
-                from: "from",
+                from: "no name",
                 id: "",
                 idd: "",
                 items: [],
                 kid: "0",
-                name: "from",
+                name: "no name",
                 note: "",
                 sid: spaceID,
                 status: "new",
@@ -225,7 +225,7 @@ export const preview = {
                 return html;
             default: 
             
-                if(x == '_id') item = item.substr(0, 5);
+                if(x == '_id') item = item.substr(0, 4);
 
                 html = `<div data-id="${x}" data-type="text" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}">${ item }</div>`;
                 return html;

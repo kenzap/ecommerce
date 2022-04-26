@@ -11,15 +11,29 @@ export const HTMLContent = (__) => {
               <div class="card border-white shadow-sm p-sm-3 ">
                 <nav class="nav tab-content mb-4" role="tablist">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-link active" id="nav-notifications-link" data-bs-toggle="tab" data-bs-target="#nav-notifications" type="button" role="tab" aria-controls="nav-notifications" aria-selected="true" href="#">${ __('Notifications') }</a>
+                        <a class="nav-link active" id="nav-notifications-link" data-bs-toggle="tab" data-bs-target="#nav-notifications" type="button" role="tab" aria-controls="nav-notifications" aria-selected="true" href="#">${ __('General') }</a>
                         <a class="nav-link" id="nav-currency-link" data-bs-toggle="tab" data-bs-target="#nav-currency" type="button" role="tab" aria-controls="nav-currency" aria-selected="true" href="#">${ __('Currency &amp; Tax') }</a>
                         <a class="nav-link" id="nav-payout-link" data-bs-toggle="tab" data-bs-target="#nav-payout" type="button" role="tab" aria-controls="nav-payout" aria-selected="true"  href="#">${ __('Payout') }</a>
                         <a class="nav-link" id="nav-tax-link" data-bs-toggle="tab" data-bs-target="#nav-tax" type="button" role="tab" aria-controls="nav-tax" aria-selected="true"  href="#">${ __('Legal') }</a>
                     </div>
                 </nav>
                 <div class="card-body tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-notifications" role="tabpanel" aria-labelledby="nav-notifications-link">
-                    <h4 id="gen" class="card-title mb-4">${ __('Notification settings') }</h4>
+                  <div class="tab-pane fade show active" id="nav-notifications" role="tabpanel" aria-labelledby="nav-notifications-link">
+                    
+                    <h4 id="gen" class="card-title mb-4">${ __('Orders') }</h4>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${ __('Order ID') }</label>
+                          <div class="col-sm-9">
+                            <input id="last_order_id" type="text" class="form-control inp" name="last_order_id" data-type="emails">
+                            <p class="form-text">${ __('Define new order ID number.') }</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <h4 id="gen" class="card-title mb-4 mt-4">${ __('Notifications') }</h4>
                     <div class="row">
                       <div class="col-lg-6">
                         <div class="form-group row mb-3 mt-1">
@@ -140,7 +154,7 @@ export const HTMLContent = (__) => {
                     <hr>
                     <br>
                     <br>
-                    </div>
+                  </div>
                     <div class="tab-pane fade" id="nav-currency" role="tabpanel" aria-labelledby="nav-currency-link">
                       <h4 id="gen" class="card-title mb-4">${ __('Currency settings') }</h4>
                       <div class="row">
@@ -273,7 +287,7 @@ export const HTMLContent = (__) => {
                     </div>
                     
                     <div class="tab-pane fade" id="nav-tax" role="tabpanel" aria-labelledby="nav-tax-link">
-                    <h4 id="tax" class="card-title mb-4">${ __('Your tax informatio') }</h4>
+                    <h4 id="tax" class="card-title mb-4">${ __('Your tax information') }</h4>
                     <p class="card-description"> ${ __('Invoice info (this information will be not revealed public)') } </p>
 
                     <div class="row">
@@ -397,7 +411,7 @@ export const HTMLContent = (__) => {
                     <div class="row">
                       <div class="col-lg-6">
                         <div class="form-group row mb-3 mt-1">
-                          <label class="col-sm-3 col-form-label">${ __('Bank account holder\'s name') }</label>
+                          <label class="col-sm-3 col-form-label">${ __("Bank account holder's name") }</label>
                           <div class="col-sm-9">
                             <input id="y1" type="text" class="form-control inp" name="y1" minlength="2" data-type="text">
                           </div>
