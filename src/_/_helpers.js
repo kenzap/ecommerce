@@ -212,7 +212,7 @@ export const onClick = (sel, fn) => {
 }
 
 // time elapsed since creation 
-export const timeConverterAgo = (now, time) => {
+export const timeConverterAgo = (__, now, time) => {
 
     // console.log(now + " " + time);
 
@@ -223,9 +223,9 @@ export const timeConverterAgo = (now, time) => {
 
     // parse as elapsed time
     let past = now - time;
-    if(past < 60) return 'moments ago';
-    if(past < 3600) return parseInt(past / 60) + ' minutes ago';
-    if(past < 86400) return parseInt(past / 60 / 24) + ' hours ago';
+    if(past < 60) return __('moments ago');
+    if(past < 3600) return parseInt(past / 60) + __(' minutes ago');
+    if(past < 86400) return parseInt(past / 60 / 24) + __(' hours ago');
 
     // process as normal date
     var a = new Date(time * 1000);
@@ -243,7 +243,6 @@ export const timeConverterAgo = (now, time) => {
 export const parseVariations = (_this, product) => {
 
     let html_vars = '';
-    console.log(product.variations);
     if(typeof(product.variations !== 'undefined'))
     for(let v in product.variations){
 
@@ -251,9 +250,6 @@ export const parseVariations = (_this, product) => {
         let type = '';	
         if(product.variations[v].type=='checkbox') type = 'check';
         if(product.variations[v].type=='radio')    type = 'radio';
-
-        // update cart state
-        // if(typeof(cart.state.product.variations[v]) === 'undefined') cart.state.product.variations[v] = {title: product.variations[v].title, required: product.variations[v].required, allow: product.variations[v].required == '1'?false:true };	
 
         // struct variation
         html_vars += '\

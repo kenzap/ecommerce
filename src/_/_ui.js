@@ -1,5 +1,5 @@
 // categories input tags
-export const simpleTags = (_this, element) => {
+export const simpleTags = (__, element) => {
 
     if (!element) {
         throw new Error("DOM Element is undifined! Please choose HTML target element.")

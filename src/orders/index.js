@@ -219,7 +219,7 @@ const _this = {
                 <div class="ps-1 view-order" data-id="${ response.orders[i]._id }" data-index="${ i }">
                   <b class="">${ response.orders[i].from }</b>
                   <div class=" elipsized fst-italic">${ response.orders[i].note ? response.orders[i].note : "" }</div>
-                  <div class=" d-sm-none"> <span class="me-2">${ _this.getStatus(response.orders[i].status) }</span> <span class="text-muted">${ timeConverterAgo(response.meta.time, response.orders[i].created) }</span> </div>
+                  <div class=" d-sm-none"> <span class="me-2">${ _this.getStatus(response.orders[i].status) }</span> <span class="text-muted">${ timeConverterAgo(__, response.meta.time, response.orders[i].created) }</span> </div>
                 </div>
               </td>
               <td class="d-none d-sm-table-cell">
@@ -229,7 +229,7 @@ const _this = {
                 <span style="font-size:18px;">${ priceFormat(_this, response.orders[i].total) }</span>
               </td>
               <td class="d-none d-sm-table-cell">
-                <span style="font-size:18px;">${ timeConverterAgo(response.meta.time, response.orders[i].created) }</span>
+                <span style="font-size:18px;">${ timeConverterAgo(__, response.meta.time, response.orders[i].created) }</span>
               </td>
               <td class="last">
                 <a href="#" data-id="${ response.orders[i]._id }" data-index="${ i }" class="view-order text-success d-none me-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
