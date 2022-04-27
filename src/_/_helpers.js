@@ -310,22 +310,28 @@ export const printReceipt = (_this, order) => {
     // vars
     let o = order, data = {}, date = new Date();
 
-    // 58mm wide thermal printers are best to display 24 chars per line
-    let row = (txt) => {
+    // 58mm wide thermal printers are best to display 32 chars per line
+    let row = (txt, end_ofst) => {
 
-        let output = '', max_char = 20, max_ofst = 3, ofst_prev = 0, ofst = 0;
+        let output = '', max_char = 32 - end_ofst, max_ofst = 4, ofst_prev = 0, ofst = 0, ci = 0;
+        // console.log(max_char);
         for(let i = 0; i < Math.ceil(txt.length / max_char); i++){
 
+            // add new line print from second loop only
             if(i>0) output += '\n[L]';
 
-            ofst = 0;
-            for(let e = -1 * max_ofst; e < max_ofst; e++){
+            // ofst store first available whitespace break in words
+            ofst = ci = 0;
+            for(let e = max_ofst; e > -1 * max_ofst; e--){
 
-                let ci = ((max_char + ofst_prev) * i) + max_char + e;
-                if(txt[ci] == ' ' || ci == txt.length){ ofst += e; break; }
+                ci = ((max_char + ofst_prev) * i) + max_char + e; if(txt[ci] == ' ' || ci == txt.length){ ofst += e; break; }
             }
 
+            // add line row
             output += txt.substr((max_char + ofst_prev) * i, max_char + ofst);
+
+            // line ends earlier than expected, skip loop
+            if(ci == txt.length) break;
 
             ofst_prev = ofst;
         }
@@ -349,10 +355,12 @@ export const printReceipt = (_this, order) => {
     let items = '';
     for(let i in o.items){
 
-        items += `[L]<b>${ o.items[i].qty } X ${ row(o.items[i].title) }</b>[R]${ priceFormat(_this, o.items[i].priceF) }\n`;
+        let priceF = priceFormat(_this, o.items[i].priceF);
+        let end_ofst = (o.items[i].qty+"").length + (priceF+"").length + 3;
+        items += `[L]<b>${ o.items[i].qty } X ${ row(o.items[i].title, end_ofst) }</b>[R]${ priceF }\n`;
         for(let v in o.items[i].variations){
 
-            items += `[L]  ${ row(o.items[i].variations[v].title) }:`;
+            items += `[L] ${ row(o.items[i].variations[v].title, 1) }:`;
             for(let l in  o.items[i].variations[v].list) items += ` ${ o.items[i].variations[v].list[l].title },`;
 
             if(items.endsWith(',')) items = items.substring(0, items.length - 1) + '\n';

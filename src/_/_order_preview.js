@@ -20,11 +20,6 @@ export const preview = {
             if (window.location.href.indexOf("#editing")==-1) return;
 
             history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search);
-            
-            // history.pushState({pageID: 'orders'}, 'Orders', window.location.href);
-            // if(_this.modalOpen) history.back();
-
-            // _this.modalCont = null;
         });
         
         // is new order ?
@@ -85,9 +80,6 @@ export const preview = {
         modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
 
         let html = statusSelect;
-
-        // console.log(i);
-        // console.log(_this.state.orderSingle._id);
 
         // _id: {l: __("System ID")},
         let fields = { id: {l: __("ID"), classList: "order-form"},  from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "price", classList: "order-form"}, total_tax: {l: __("Tax"), e: "price", classList: "order-form"}, total_with_tax: {l: __("Amount Payable"), e: "price", classList: "order-form"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
@@ -285,11 +277,16 @@ export const preview = {
             
     onKeyUp('.edit-item', (e) => {
         
-      // disbale some key for better UX
+      // disable some key for better UX
       var key = e.keyCode || e.charCode;
       if (key >= 34 && key <= 45) { return; }
 
       let s  = e.currentTarget.value;
+
+      if(s.length == 1) document.querySelector('.modal-body').scrollTo({
+        top: (document.querySelector('.edit-item').getBoundingClientRect().top - document.querySelector('.modal-body-cont').getBoundingClientRect().top) - 20,
+        behavior: "smooth"
+      });
 
       // empty search string
       if(s.length==0 || e.currentTarget !==document.activeElement) { document.querySelector('.s-list').dataset.toggle = false; return; }
@@ -333,7 +330,7 @@ export const preview = {
           // hide UI loader
           hideLoader();
 
-          console.log(response);
+          // console.log(response);
 
           if(response.success){
 
