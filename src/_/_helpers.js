@@ -1,4 +1,4 @@
-import { getCookie, getSiteId } from '@kenzap/k-cloud';
+import { getCookie, getSiteId, headers } from '@kenzap/k-cloud';
 
 export const mt = (val) => {
 
@@ -131,20 +131,21 @@ export const formatStatus = (__, st) => {
 
     price = makeNumber(price);
 
-    let priceF = (Math.round(parseFloat(price) * 100)/100).toFixed(2);
+    price = (Math.round(parseFloat(price) * 100)/100).toFixed(2);
     
     switch(_this.state.settings.currency_symb_loc){
-        case 'left': priceF = _this.state.settings.currency_symb + priceF; break;
-        case 'right': priceF = priceF + _this.state.settings.currency_symb; break;
+        case 'left': price = _this.state.settings.currency_symb + price; break;
+        case 'right': price = price + _this.state.settings.currency_symb; break;
     }
 
-    return priceF;
+    return price;
 }
 
 export const makeNumber = function(price) {
 
     price = price ? price : 0;
     price = parseFloat(price);
+    price = Math.round(price * 100) / 100;
     return price;
 }
 
@@ -305,6 +306,101 @@ export const unescape = (htmlStr) => {
     return htmlStr;
 }
 
+export const ecommerceUpdates = (_this, source, cb) => {
+
+    // do API query
+    fetch('https://api-v1.kenzap.cloud/ecommerce/', {
+        method: 'post',
+        headers: headers,
+        body: JSON.stringify({
+            query: {
+                updates: {
+                    type:       'updates',
+                    source:     source,
+                }
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+
+        if(response.success){
+
+            // parse notifications
+            renderNotifications(response.messages);
+
+            // do callback
+            cb(response);
+            
+        }else{
+
+
+        }
+    })
+    .catch(error => { // parseApiError(error); 
+    });
+}
+
+export const renderNotifications = (messages) => {
+
+    let html = '';
+
+    // html
+    messages.forEach(msg => {
+
+        if(!document.querySelector('#contents .container [data-id="'+msg._id+'"]')) html += `
+
+        <div class="alert alert-${ msg.color } alert-dismissible fade show" role="alert" data-id="${ msg._id }">
+            <div class="d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-square flex-shrink-0 me-2" viewBox="0 0 16 16">
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                    <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                </svg>
+                <div>
+                ${ msg.msg }
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-dismiss-notify" data-bs-dismiss="alert" aria-label="Close" data-id="${ msg._id }"></button>
+        </div>`;
+
+    });
+
+    if(document.querySelector('#contents .container')) document.querySelector('#contents .container').insertAdjacentHTML("afterbegin", html);
+
+    // listeners
+    onClick('.btn-dismiss-notify', (e) => {
+
+        // do API query
+        fetch('https://api-v1.kenzap.cloud/ecommerce/', {
+            method: 'post',
+            headers: headers,
+            body: JSON.stringify({
+                query: {
+                    updates: {
+                        type:       'dismiss',
+                        id:         e.currentTarget.dataset.id,
+                    }
+                }
+            })
+        })
+        .then(response => response.json())
+        .then(response => {
+
+            if(response.success){
+
+
+            }else{
+
+
+            }
+        })
+        .catch(error => { // parseApiError(error); 
+        });
+
+
+    });
+}
+
 export const printReceipt = (_this, order) => {
 
     // vars
@@ -355,9 +451,9 @@ export const printReceipt = (_this, order) => {
     let items = '';
     for(let i in o.items){
 
-        let priceF = priceFormat(_this, o.items[i].priceF);
-        let end_ofst = (o.items[i].qty+"").length + (priceF+"").length + 3;
-        items += `[L]<b>${ o.items[i].qty } X ${ row(o.items[i].title, end_ofst) }</b>[R]${ priceF }\n`;
+        let total = priceFormat(_this, o.items[i].total);
+        let end_ofst = (o.items[i].qty+"").length + (total+"").length + 3;
+        items += `[L]<b>${ o.items[i].qty } X ${ row(o.items[i].title, end_ofst) }</b>[R]${ total }\n`;
         for(let v in o.items[i].variations){
 
             items += `[L] ${ row(o.items[i].variations[v].title, 1) }:`;
@@ -385,11 +481,9 @@ export const printReceipt = (_this, order) => {
     // if(note.length>0) data.print += '[C]================================';
 
     // order totals
-    data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.total));
-    data.print = data.print.replace(/{{total_tax}}/g, priceFormat(_this, o.total_tax));
-    data.print = data.print.replace(/{{total_with_tax}}/g, priceFormat(_this, o.total_with_tax));
-    
-
+    data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.price.total));
+    data.print = data.print.replace(/{{total_tax}}/g, priceFormat(_this, o.price.tax_total));
+    data.print = data.print.replace(/{{grand_total}}/g, priceFormat(_this, o.price.grand_total));
 
     // let click = document.querySelector(".print-order[data-id='"+e.currentTarget.dataset.id+"']");
 

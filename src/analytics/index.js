@@ -480,7 +480,7 @@ const _this = {
                             <tbody>`;
 
                 // let html = `<table class="items order-form" data-type="items"><tr><th><div class="me-1 me-sm-3">${ __('Product') }</div></th><th class="qty"><div class="me-1 me-sm-3">${ __('Qty') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __('Total') }</div></th><th></th></tr>`;
-                let s = [], totals = {qty: 0, priceF: 0};
+                let s = [], totals = {qty: 0, total: 0};
                 response.products.forEach(o => {
 
                     if(Array.isArray(o.items)){
@@ -489,11 +489,11 @@ const _this = {
 
                             if(!s[p.id]){
                                 
-                                s[p.id] = {id: p.id, title: p.title, qty: p.qty, qty: p.qty, priceF: p.priceF};
+                                s[p.id] = {id: p.id, title: p.title, qty: p.qty, qty: p.qty, total: p.total};
                             }else{
 
                                 s[p.id].qty += p.qty;
-                                s[p.id].priceF += p.priceF;
+                                s[p.id].total += p.total;
                             }
                         });
                     }
@@ -529,7 +529,7 @@ const _this = {
                                     </div>
                                 </td>
                                 <td class="tp">
-                                    ${  priceFormat(_this, i.priceF) }
+                                    ${  priceFormat(_this, i.total) }
                                 </td>
                                 <td class="align-middle text-center"> 
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="24" height="24" class="bi bi-plus-circle text-success align-middle add-item"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>
@@ -537,14 +537,14 @@ const _this = {
                             </tr>`;
 
                             totals.qty += i.qty;
-                            totals.priceF += i.priceF;
+                            totals.total += i.total;
                 });
 
                 // list is empty 
                 if(list.length == 0) html += `<tr><td colspan="4">${ __('No data to display') }</td></tr>`;
 
                 // add totals row
-                if(list.length > 0) html += `<tr><td><b>${ __('Totals') }</b></td><td>${ totals.qty }</td><td>${ priceFormat(_this, totals.priceF) }</td><td> </td></tr>`;
+                if(list.length > 0) html += `<tr><td><b>${ __('Totals') }</b></td><td>${ totals.qty }</td><td>${ priceFormat(_this, totals.total) }</td><td> </td></tr>`;
 
                 html += `</tbody>
                     </table>

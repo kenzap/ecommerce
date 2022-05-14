@@ -31,7 +31,11 @@
 .p-edit .offer-pricef{padding: 0; list-style-type: none; display:block; }
 .p-edit .offer-pricef li{list-style-type: none;}
 
+// discounts list
+.discount-blocks .remove-discount{display:block;float:right;cursor:pointer;}
+
 // .add-mix-ctn a.add-mix-block{font-size: .875rem;}
+.add-mix-block{text-decoration: none;}
 .var-block{border-left: 2px solid #ccc;padding-left: 16px;}
 .var-block .edit-block{cursor:pointer;}
 .var-block .remove-block{cursor:pointer;}
@@ -39,8 +43,7 @@
 .var-block .add-mix{font-size: .875rem;}
 .var-block .card-description{font-size: .875rem;}
 .var-block .form-check{display:inline-block;}
-.var-block .form-check-input{margin-top:1px;}
-.var-block .remove-option{display:inline-block;float:right;cursor:pointer;}
+.var-block .remove-option{display:block;float:right;cursor:pointer;}
 
 /* single product right pane */
 #p-status0:focus{border-color: rgb(255, 193, 7); box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.30);}

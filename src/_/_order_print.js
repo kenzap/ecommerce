@@ -39,7 +39,7 @@ export const print = {
         let items = '';
         for(let i in o.items){
 
-            items += `[L]<b>${ o.items[i].qty } X ${ o.items[i].title }</b>[R]${ priceFormat(_this, o.items[i].priceF) }\n`;
+            items += `[L]<b>${ o.items[i].qty } X ${ o.items[i].title }</b>[R]${ priceFormat(_this, o.items[i].total) }\n`;
             for(let v in o.items[i].variations){
     
                 items += `[L]| ${ o.items[i].variations[v].title }:`;
@@ -67,9 +67,9 @@ export const print = {
         // if(note.length>0) data.print += '[C]================================';
 
         // order totals
-        data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.total));
-        data.print = data.print.replace(/{{total_tax}}/g, priceFormat(_this, o.total_tax));
-        data.print = data.print.replace(/{{total_with_tax}}/g, priceFormat(_this, o.total_with_tax));
+        data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.price.total));
+        data.print = data.print.replace(/{{total_tax}}/g, priceFormat(_this, o.price.tax_total));
+        data.print = data.print.replace(/{{grand_total}}/g, priceFormat(_this, o.price.grand_total));
         
         // debug vs actual print
         data.debug = false;

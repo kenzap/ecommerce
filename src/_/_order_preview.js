@@ -28,12 +28,12 @@ export const preview = {
             _this.state.orderSingle = {
                 _id: "new",
                 created: 1649831099,
-                from: "no name",
+                from: "dine-in",
                 id: "",
                 idd: "",
                 items: [],
                 kid: "0",
-                name: "no name",
+                name: "dine-in",
                 note: "",
                 sid: spaceID,
                 status: "new",
@@ -82,7 +82,9 @@ export const preview = {
         let html = statusSelect;
 
         // _id: {l: __("System ID")},
-        let fields = { id: {l: __("ID"), classList: "order-form"},  from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, total: {l: __("Total"), e: "price", classList: "order-form"}, total_tax: {l: __("Tax"), e: "price", classList: "order-form"}, total_with_tax: {l: __("Amount Payable"), e: "price", classList: "order-form"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
+        let fields = { id: {l: __("ID"), classList: "order-form"},  from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
+
+        // total: {l: __("Total"), e: "price", classList: "order-form"}, total_tax: {l: __("Tax"), e: "price", classList: "order-form"}, total_with_tax: {l: __("Amount Payable"), e: "price", classList: "order-form"}, 
 
         // order table details
         for(let x in fields){
@@ -97,6 +99,9 @@ export const preview = {
                 <b>${ field }</b>${ preview.renderField(_this, fields[x], val, x) }
             </div>`;
         }
+
+        // totals
+        setTimeout(() => { preview.refreshTotals(); }, 100);
 
         html += '';
         modal.querySelector(".modal-body").innerHTML = '<div class="modal-body-cont">' + html + '</div>';
@@ -268,7 +273,7 @@ export const preview = {
     }
 
     output += '<tr class="order-item-row-active" data-x="'+x+'" data-id="'+item[x].id+'" data-vars="'+escape(JSON.stringify(item[x].variations))+'">';
-    output += '<td ><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-pricef" data-price="'+item[x].price+'" data-value="'+item[x].priceF+'" >' + priceFormat(_this, item[x].priceF) + '</div><td class="'+(options?'':'d-none')+'">'+preview.itemOptions(item[x])+'</td></td>';
+    output += '<td ><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="'+item[x].price+'" data-value="'+item[x].total+'" >' + priceFormat(_this, item[x].total) + '</div><td class="'+(options?'':'d-none')+'">'+preview.itemOptions(item[x])+'</td></td>';
     output += '</tr>';
 
     return output;
@@ -362,11 +367,11 @@ export const preview = {
                   document.querySelector('.edit-tp').dataset.price = _this.state.productsSuggestions[index].price;
                   document.querySelector('.s-list').dataset.toggle = false;
 
-                  let calcPriceF = () => {
+                  let calcItemTotal = () => {
 
-                      let priceF = parseFloat(document.querySelector('.edit-qty').value) * parseFloat(document.querySelector('.edit-qty').dataset.price);
-                      if(isNaN(priceF)) priceF = "";
-                      document.querySelector('.edit-tp').value = priceF;
+                      let total = parseFloat(document.querySelector('.edit-qty').value) * parseFloat(document.querySelector('.edit-qty').dataset.price);
+                      if(isNaN(total)) total = "";
+                      document.querySelector('.edit-tp').value = total;
                   }
 
                   // auto update price when quantity is changed
@@ -384,7 +389,7 @@ export const preview = {
                   document.querySelector('.edit-qty').addEventListener('keydown', (e)=>{
 
                       // console.log('keydown');
-                      setTimeout(() => { calcPriceF(); }, 300);
+                      setTimeout(() => { calcItemTotal(); }, 300);
 
                   });
 
@@ -444,38 +449,52 @@ export const preview = {
   },
   refreshTotals: () => {
 
-    // clear previous calculations
-    if(document.querySelector('.order-total')) document.querySelector('.order-total').remove();
-    if(document.querySelector('.keyx-total')) document.querySelector('.keyx-total').remove();
-    if(document.querySelector('.keyx-total_tax')) document.querySelector('.keyx-total_tax').remove();
-    if(document.querySelector('.keyx-total_with_tax')) document.querySelector('.keyx-total_with_tax').remove();
+    let html = ``, grand_total_temp = 0;
 
-    let html = "", totals = { total: { title: __('Total'), amount: 0 }, total_tax: { title: __('Tax'), amount: 0 }, total_with_tax: { title: __('Paid'), amount: 0 } };
-    for(let price of document.querySelectorAll('.item-pricef')){
+    // calc grand_total_temp
+    for(let price of document.querySelectorAll('.item-total')){ grand_total_temp += makeNumber(price.dataset.value); };
 
-        let tax = makeNumber(price.dataset.value) * 0.09;
-        totals['total'].amount += makeNumber(price.dataset.value);
-        totals['total_tax'].amount += tax
-        totals['total_with_tax'].amount += (makeNumber(price.dataset.value) + tax);
-    };
+    // defaults
+    let price = { grand_total: 0, total: makeNumber(grand_total_temp), discount_percent: 0, discount_total: 0, fee_total: 0, tax_total: 0, tax_percent: 0 };
 
-    for(let i in totals){
+    // subtotal
+    html += `<div class="mb-2 mt-2 order-row text-right elipsized keyx-total">
+                <b>${ __('Subtotal') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.total) }</div>
+             </div>`;
 
-        let display = totals[i].title;
-        if(i == 'total_tax') display = preview._this.state.settings.tax_display + " (" + preview._this.state.settings.tax_rate + "%):";
+    // service charge
+    if(preview._this.state.settings.fee_calc == "1"){
 
-        html += `
-        <div class="mb-3 mt-3 order-row elipsized keyx-${i}">
-            <b>${ display }</b><div class="order-form ms-2 d-inline-block" data-id="${ i }" data-type="key-number" data-value="${ totals[i].amount }">${ priceFormat(preview._this, totals[i].amount) }</div>
-        </div>`;
+        price.fee_total = makeNumber((preview._this.state.settings.fee_percent)*price.total)/100;
+        price.fee_percent = makeNumber(preview._this.state.settings.fee_percent);
+        html += `<div class="mb-2 mt-2 order-row text-right elipsized">
+                    <b>${ __(preview._this.state.settings.fee_display) }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.fee_total) }</div>
+                 </div>`;
+
+        grand_total_temp += price.fee_total;
+    }
+    
+    // tax 
+    if(preview._this.state.settings.tax_calc == "1"){
+
+        price.tax_total = makeNumber((price.fee_total + price.total) * makeNumber(preview._this.state.settings.tax_percent)/100);
+        price.tax_percent = makeNumber(preview._this.state.settings.tax_percent);
+        html += `<div class="mb-2 mt-2 order-row text-right elipsized">
+                    <b>${ preview._this.state.settings.tax_display }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.tax_total) }</div>
+                 </div>`;
+        grand_total_temp += price.tax_total;
     }
 
-    html = `<div class="order-total">${ html }</div>`;
+    // grand total
+    price.grand_total = makeNumber(grand_total_temp);
+    html += `<div class="mb-2 mt-2 order-row text-right elipsized">
+                <b>${ __('Grand Total') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.grand_total) }</div>
+             </div>`;
 
-    document.querySelector('.modal-body-cont').insertAdjacentHTML("beforeend", html);
-
-    // return html;
+    if(document.querySelector('.order-total')) document.querySelector('.order-total').remove(); document.querySelector('.modal-body-cont').insertAdjacentHTML("beforeend", `<div class="mt-5 order-total order-form text-end" data-type="price" data-price="${ encodeURIComponent(JSON.stringify(price)) }">${ html }</div>`);
   },
+
+
   /*
   order JSON structure example
   {
@@ -485,7 +504,12 @@ export const preview = {
       "sid": "1000452",
       "from": "1 - WP Asia",
       "name": "WP Asia",
+      "customer": {
+
+
+      },
       "note": "",
+      "note_vendor": "",
       "step": 1,
       "items": [
           {
@@ -497,7 +521,7 @@ export const preview = {
               "price": 10,
               "sdesc": "Deep Fried Gyoza with Mentai Sauce",
               "title": "11. MENTAI GYOZA",
-              "priceF": 20,
+              "total": 20,
               "variations": []
           },
           {
@@ -509,7 +533,7 @@ export const preview = {
               "price": 8,
               "sdesc": "Deep-fried Sweet Prawn",
               "title": "8. AMAEBI KARAAGE",
-              "priceF": 8,
+              "total": 8,
               "variations": []
           }
       ],
@@ -528,7 +552,7 @@ export const preview = {
 
       item.id = document.querySelector('.edit-item').dataset.id;   
       item.title = document.querySelector('.edit-item').value;   
-      item.priceF = parseFloat(document.querySelector('.edit-tp').value);
+      item.total = parseFloat(document.querySelector('.edit-tp').value);
       item.price = parseInt(document.querySelector('.edit-tp').dataset.price);
       item.qty = parseInt(document.querySelector('.edit-qty').value);
       item.note = "";
@@ -554,7 +578,7 @@ export const preview = {
                 // cache selected variations
                 item.variations[v].list["_"+inp.dataset.index] = { title: inp.dataset.title, price: parseFloat(inp.dataset.price) }; 
 
-                item.priceF += item.qty * parseFloat(inp.dataset.price);
+                item.total += item.qty * parseFloat(inp.dataset.price);
                 
                 count +=1;
             }

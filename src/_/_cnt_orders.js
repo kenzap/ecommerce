@@ -43,7 +43,7 @@ export const HTMLContent = (__) => {
                       <tr>
                         <th><span class="ps-1">${ __('From') }</span></th>
                         <th class="d-none d-sm-table-cell">${ __('Status') }</th>
-                        <th>${ __('Total') }</th>
+                        <th>${ __('Subtotal') }</th>
                         <th class="d-none d-sm-table-cell">${ __('Time') }</th>
                         <th></th>
                       </tr>

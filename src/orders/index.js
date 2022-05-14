@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange } from '@kenzap/k-cloud';
-import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, printReceipt } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, printReceipt, ecommerceUpdates } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
@@ -20,21 +20,88 @@ const _this = {
         orders: [], // where all requested orders are cached
         settings: {}, // where all requested settings are cached
         orderSingle: [], // where single order is stored during preview
+        lastOrderID: '',
         playTitleTimer: null,
         refreshTimer: null,
         statuses: [],
         audio: new Audio('https://kenzap.com/static/swiftly.mp3'),
         limit: 50, // number of records to load per table
         slistLimit: 10, // product suggestion fetch search limit
-        productsSuggestions: [],
-        // orderPreviewIndex: null
+        productsSuggestions: []
     },
     init: () => {
          
+        // load data
         _this.getData();
 
-        // _this.state.refreshTimer = setInterval(() => { _this.getData(); }, 7000);
+        // get latest orders and notifications
+        let cb = (response) => { 
+
+            console.log(response);
+
+            if(response.last_order_id != _this.state.lastOrderID && !_this.state.firstLoad){
+
+                console.log(response.last_order_id+'new orders'+_this.state.lastOrderID);
+                 _this.getData();
+
+                 _this.state.lastOrderID = response.last_order_id;
+            }
+        };
+
+        // ecommerceUpdates(_this, ['messages', 'last_order_id'], cb);
+
+        // turn on data polling for new orders
+        _this.state.refreshTimer = setInterval(() => { ecommerceUpdates(_this, ['messages', 'last_order_id'], cb); }, 5000);
+        // _this.state.refreshTimer = setInterval(() => { _this.getDataNew(); }, 10000);
+        // _this.state.refreshTimer = setInterval(() => { _this.getDataNew(); }, 10000);
     },
+    // getDataNew: () => {
+
+    //     // do API query
+    //     fetch('https://api-v1.kenzap.cloud/', {
+    //         method: 'post',
+    //         headers: headers,
+    //         body: JSON.stringify({
+    //             query: {
+    //                 orders: {
+    //                     type:       'find',
+    //                     key:        'ecommerce-order',
+    //                     fields:     '*',
+    //                     term:       [
+    //                         {
+    //                             type: "string",
+    //                             field: "status",
+    //                             relation: "=",
+    //                             value: "new",
+    //                         },
+    //                         {
+    //                             type: "string",
+    //                             field: "status",
+    //                             relation: "=",
+    //                             value: "paid",
+    //                         }
+    //                     ],
+    //                     limit:      1,
+    //                 }
+    //             }
+    //         })
+    //     })
+    //     .then(response => response.json())
+    //     .then(response => {
+
+    //         if(response.success){
+
+    //             if(response.orders.length){ console.log(response.orders); _this.getData(); }
+
+    //         }else{
+
+    //             // parseApiError(response);
+    //         }
+    //     })
+    //     .catch(error => { // parseApiError(error); 
+    //     });
+
+    // },
     getData: () => {
 
         // show loader during first load
@@ -83,7 +150,7 @@ const _this = {
                     settings: {
                         type:       'get',
                         key:        'ecommerce-settings',
-                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display', 'receipt_template'],
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'receipt_template'],
                     }
                 }
             })
@@ -157,7 +224,7 @@ const _this = {
                     text: __('New'),
                     class: 'btn-warning text-dark fw-light'
                 },
-                'paid': { 
+                'paid': {
                     text: __('Paid'),
                     class: 'btn-primary fw-light'
                 },
@@ -203,6 +270,9 @@ const _this = {
 
         let list = '', count_new = 0;
         for (let i in response.orders){
+
+            // save last order ID for ecommerceUpdates
+            // if(i==0) _this.state.lastOrderID = response.orders[i]._id;
 
             let img = 'https://cdn.kenzap.com/loading.png';
             orderIDsTemp.push(response.orders[i]._id);
@@ -376,13 +446,14 @@ const _this = {
                 list = _this.state.statuses[key].class.split(' ');
                 list.forEach((key) => { 
                     os.classList.remove(key);
-                });    
+                });
+                os.classList.remove('btn-outline-secondary');
             });
 
             // add new classes
             if(e.currentTarget.dataset.key==''){
                 
-                os.classList.add('btn-primary');
+                os.classList.add('btn-outline-secondary');
             }else{
                 list = _this.state.statuses[e.currentTarget.dataset.key].class.split(' ');
                 list.forEach((key) => { 
@@ -495,10 +566,11 @@ const _this = {
                                 "note": item.querySelector('.item-note').innerHTML,
                                 "type": "new",
                                 "index": "0",
-                                "price": parseFloat(item.querySelector('.item-pricef').dataset.price),
+                                "price": parseFloat(item.querySelector('.item-total').dataset.price),
                                 "sdesc": item.querySelector('.item-title').dataset.sdesc,
                                 "title": item.querySelector('.item-title').dataset.value,
-                                "priceF": parseFloat(item.querySelector('.item-pricef').dataset.value),
+                                // "priceF": parseFloat(item.querySelector('.item-total').dataset.value),
+                                "total": parseFloat(item.querySelector('.item-total').dataset.value),
                                 "variations": id == 'new' ? [] : vars ? vars : [],
                             }
                         );
@@ -517,101 +589,147 @@ const _this = {
                 case 'radio': 
                     data[s.id] = s.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; 
                     break;
+                case 'price':
+                    data['price'] = JSON.parse(decodeURIComponent(s.dataset.price));
+                    data['total'] = data['price']['total'];
+                    data['total_all'] = data['price']['grand_total'];
+                    break;
             }
         }
 
+
+        // we use this data to generate analytical reports
         let dateObj = new Date();
         data['created_ymd'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1) + '' + mt(dateObj.getUTCDate());
         data['created_ym'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1);
         data['created_y'] = dateObj.getUTCFullYear() + '';
 
-        console.log(data);
+        // console.log(data);
 
         // create new order
         if(id == 'new'){
 
             // additional required fields
             data['name'] = data['from'];
+            data['customer'] = {
+                "first_name": data['from'],
+                "last_name": "",
+                "kid": 0,
+            };
             
             // get last order ID number
-            fetch('https://api-v1.kenzap.cloud/', {
+            fetch('https://api-v1.kenzap.cloud/ecommerce/', {
                 method: 'post',
                 headers: headers,
                 body: JSON.stringify({
                     query: {
-                        settings: {
-                            type:       'get',
-                            key:        'ecommerce-settings',
-                            fields:     ['last_order_id'],
+                        order: {
+                            type:       'create-order',
+                            key:        'ecommerce-order',        
+                            // sid:        localStorage.sid,
+                            data:       data
                         }
                     }
                 })
             })
             .then(response => response.json())
             .then(response => {
-
+                
                 if (response.success){
 
-                    data['id'] = makeNumber(response.settings.last_order_id) + 1;
+                    _this.modalCont.hide();
 
-                    // console.log("number: " + data['id']);
+                    toast( __('Order created') );
 
-                    // create new order
-                    fetch('https://api-v1.kenzap.cloud/', {
-                        method: 'post',
-                        headers: headers,
-                        body: JSON.stringify({
-                            query: {
-                                order: {
-                                    type:       'create',
-                                    key:        'ecommerce-order',        
-                                    sid:        spaceID(),
-                                    data:       data
-                                }
-                            }
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(response => {
+                    if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
 
-                        if (response.success){
-
-                            _this.modalCont.hide();
-
-                            toast( __('Order created') );
-
-                            if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
-
-                            _this.getData();
-
-                        }else{ parseApiError(response); }
-                    })
-                    .catch(error => { parseApiError(error); });
-
-                    // save next assigned number
-                    fetch('https://api-v1.kenzap.cloud/', {
-                        method: 'post',
-                        headers: headers,
-                        body: JSON.stringify({
-                            query: {
-                                settings: {
-                                    type:       'set',
-                                    key:        'ecommerce-settings',        
-                                    sid:        spaceID(),
-                                    data:       {
-                                        last_order_id: data['id']
-                                    }
-                                }
-                            }
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(response => { if (!response.success){ parseApiError(response); } })
-                    .catch(error => {  parseApiError(error); });   
-                
+                    _this.getData();
+                                    
                 }else{ parseApiError(response); }
             })
             .catch(error => { parseApiError(error); });
+
+
+
+            // // get last order ID number
+            // fetch('https://api-v1.kenzap.cloud/', {
+            //     method: 'post',
+            //     headers: headers,
+            //     body: JSON.stringify({
+            //         query: {
+            //             settings: {
+            //                 type:       'get',
+            //                 key:        'ecommerce-settings',
+            //                 fields:     ['last_order_id'],
+            //             }
+            //         }
+            //     })
+            // })
+            // .then(response => response.json())
+            // .then(response => {
+
+            //     if (response.success){
+
+            //         data['id'] = makeNumber(response.settings.last_order_id) + 1;
+
+            //         // console.log("number: " + data['id']);
+
+            //         // create new order
+            //         fetch('https://api-v1.kenzap.cloud/', {
+            //             method: 'post',
+            //             headers: headers,
+            //             body: JSON.stringify({
+            //                 query: {
+            //                     order: {
+            //                         type:       'create',
+            //                         key:        'ecommerce-order',        
+            //                         sid:        spaceID(),
+            //                         data:       data
+            //                     }
+            //                 }
+            //             })
+            //         })
+            //         .then(response => response.json())
+            //         .then(response => {
+
+            //             if (response.success){
+
+            //                 _this.modalCont.hide();
+
+            //                 toast( __('Order created') );
+
+            //                 if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
+
+            //                 _this.getData();
+
+            //             }else{ parseApiError(response); }
+            //         })
+            //         .catch(error => { parseApiError(error); });
+
+            //         // save next assigned number
+            //         fetch('https://api-v1.kenzap.cloud/', {
+            //             method: 'post',
+            //             headers: headers,
+            //             body: JSON.stringify({
+            //                 query: {
+            //                     settings: {
+            //                         type:       'set',
+            //                         key:        'ecommerce-settings',        
+            //                         sid:        spaceID(),
+            //                         data:       {
+            //                             last_order_id: data['id']
+            //                         }
+            //                     }
+            //                 }
+            //             })
+            //         })
+            //         .then(response => response.json())
+            //         .then(response => { if (!response.success){ parseApiError(response); } })
+            //         .catch(error => {  parseApiError(error); });   
+                
+            //     }else{ parseApiError(response); }
+            // })
+            // .catch(error => { parseApiError(error); });
 
         // update existing order
         }else{

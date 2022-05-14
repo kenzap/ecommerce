@@ -170,6 +170,16 @@ footer {
   list-style-type: none;
 }
 
+.discount-blocks .remove-discount {
+  display: block;
+  float: right;
+  cursor: pointer;
+}
+
+.add-mix-block {
+  text-decoration: none;
+}
+
 .var-block {
   border-left: 2px solid #ccc;
   padding-left: 16px;
@@ -199,12 +209,8 @@ footer {
   display: inline-block;
 }
 
-.var-block .form-check-input {
-  margin-top: 1px;
-}
-
 .var-block .remove-option {
-  display: inline-block;
+  display: block;
   float: right;
   cursor: pointer;
 }
