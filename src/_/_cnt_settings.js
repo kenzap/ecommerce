@@ -212,7 +212,7 @@ export const HTMLContent = (__) => {
                           <div class="form-group row mb-3 mt-1">
                             <label class="col-sm-3 col-form-label">${ __('Currency symbol') }</label>
                             <div class="col-sm-9">
-                              <input id="currency_symb" type="text" class="form-control inp" name="currency_symb" data-type="text">
+                              <input id="currency_symb" type="text" class="form-control inp" name="currency_symb" value="" data-type="text">
                             </div>
                           </div>
                         </div>

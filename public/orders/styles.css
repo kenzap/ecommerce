@@ -59,8 +59,45 @@ footer {
     min-width: 500px;
   }
 }
+.order-details,
 .view-order {
   cursor: pointer;
+}
+
+.row-mark0 {
+  background-color: transparent;
+}
+
+.row-mark1 {
+  background-color: #fff9e6;
+}
+
+.row-mark2 {
+  background-color: #fff2cc;
+}
+
+.row-mark3 {
+  background-color: #ffecb3;
+}
+
+.row-mark4 {
+  background-color: #ffe699;
+}
+
+.row-mark5 {
+  background-color: #ffdf80;
+}
+
+.row-mark6 {
+  background-color: #ffd966;
+}
+
+.row-mark7 {
+  background-color: #ffd24d;
+}
+
+.row-mark8 {
+  background-color: #ffcc33;
 }
 
 /* table filtering */
@@ -110,7 +147,6 @@ table.list td {
 table.items {
   width: 100%;
   display: table;
-  font-size: 0.9rem;
   /* order preview mode/suggestions */
 }
 table.items td {

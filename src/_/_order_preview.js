@@ -9,17 +9,17 @@ export const preview = {
         let modal = document.querySelector(".order-modal");
         _this.modalCont = new bootstrap.Modal(modal);
         _this.modalOpen = true;
-        let i = e.currentTarget.dataset.index; // _this.state.orderPreviewIndex = i;
+        _this.rowMark = -1;
+        let i = e.currentTarget.dataset.index;
         
         // to properly handle back button on mobiles
-        // window.history.pushState(null, 'editing');
-        history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search + "#editing");
+        history.pushState({ pageID: 'orders' }, 'Orders', window.location.pathname + window.location.search + "#editing");
 
         modal.addEventListener('hide.bs.modal', function (e) {
            
             if (window.location.href.indexOf("#editing")==-1) return;
-
-            history.pushState({pageID: 'orders'}, 'Orders', window.location.pathname + window.location.search);
+ 
+            history.pushState({ pageID: 'orders' }, 'Orders', window.location.pathname + window.location.search);
         });
         
         // is new order ?
@@ -42,6 +42,7 @@ export const preview = {
                 total: 0,
                 updated: 1649833845
             }
+
         }else{
 
             _this.state.orderSingle = _this.state.orders[i];
@@ -82,7 +83,7 @@ export const preview = {
         let html = statusSelect;
 
         // _id: {l: __("System ID")},
-        let fields = { id: {l: __("ID"), classList: "order-form"},  from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
+        let fields = { id: {l: __("ID"), classList: "order-form"}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
 
         // total: {l: __("Total"), e: "price", classList: "order-form"}, total_tax: {l: __("Tax"), e: "price", classList: "order-form"}, total_with_tax: {l: __("Amount Payable"), e: "price", classList: "order-form"}, 
 
@@ -204,7 +205,7 @@ export const preview = {
                 // add row for manual product entry
                 html += `<tr class="new-item-row">
                             <td>
-                                <div class="me-1 me-sm-3">
+                                <div class="me-1 me-sm-3 mt-2">
                                     <input type="text" value="" autocomplete="off" placeholder="${ __('Search..') }" class="form-control edit-item" data-id="" data-index="" list="item-suggestions">
                                     <span class="select-list-group__toggle"> </span>
                                     <ul class="s-list my-1 shadow-sm" data-toggle="false"></ul>
@@ -212,16 +213,16 @@ export const preview = {
                                 </div>
                             </td>
                             <td class="qty">
-                                <div class="me-1 me-sm-3">
+                                <div class="me-1 me-sm-3 mt-2">
                                     <input type="text" value="" autocomplete="off" class="form-control text-right edit-qty">
                                 </div>
                             </td>
                             <td class="tp">
-                                <div class="me-1 me-sm-3">
+                                <div class="me-1 me-sm-3 mt-2">
                                     <input type="text" value="" autocomplete="off" class="form-control edit-tp">
                                 </div>
                             </td>
-                            <td class="align-middle text-center"> 
+                            <td class="align-middle text-center pt-2"> 
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="24" height="24" class="bi bi-plus-circle text-success align-middle add-item"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>
                             </td>
                         </tr>`;
@@ -258,7 +259,11 @@ export const preview = {
   },
   structOrderItemTable: (_this, x, item, isNew = false, options = true) => {
 
-    // console.log(item[x].variations);
+    // console.log(item[x]);
+
+    if(_this.created != item[x].created){ _this.rowMark +=1; }
+
+    _this.created = item[x].created;
 
     // parse variations
     let vars = '', output = ''
@@ -272,8 +277,8 @@ export const preview = {
         if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";
     }
 
-    output += '<tr class="order-item-row-active" data-x="'+x+'" data-id="'+item[x].id+'" data-vars="'+escape(JSON.stringify(item[x].variations))+'">';
-    output += '<td ><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="'+item[x].price+'" data-value="'+item[x].total+'" >' + priceFormat(_this, item[x].total) + '</div><td class="'+(options?'':'d-none')+'">'+preview.itemOptions(item[x])+'</td></td>';
+    output += '<tr class="order-item-row-active row-mark'+_this.rowMark+'" data-created="'+item[x].created+'" data-x="'+x+'" data-id="'+item[x].id+'" data-vars="'+escape(JSON.stringify(item[x].variations))+'">';
+    output += '<td><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="'+item[x].price+'" data-value="'+item[x].total+'" >' + priceFormat(_this, item[x].total) + '</div><td class="'+(options?'':'d-none')+'">'+preview.itemOptions(item[x])+'</td></td>';
     output += '</tr>';
 
     return output;
@@ -556,6 +561,7 @@ export const preview = {
       item.price = parseInt(document.querySelector('.edit-tp').dataset.price);
       item.qty = parseInt(document.querySelector('.edit-qty').value);
       item.note = "";
+      item.created = Date.now() / 1000 | 0;
       item.variations = [];
 
       // working
@@ -621,7 +627,6 @@ export const preview = {
       preview.tableOrderItemListeners();
 
       // calculate totals for new orders only
-      // if(_this.state.orderSingle._id == 'new') 
       preview.refreshTotals();
 
       // clear fields

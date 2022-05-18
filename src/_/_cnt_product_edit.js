@@ -55,7 +55,7 @@ return `
                                         <p class="form-text"> </p>
                                     </div>
 
-                                    <div class="bg-light price_group mt-3 mb-3 p-4">
+                                    <div class="price_group mt-3 mb-3">
                                         <h4 class="card-title mb-3">${ __('Price') }</h4>
                                         <div class="price_group_base">
                                             <div class="mb-3">
@@ -73,8 +73,8 @@ return `
                                                             ${ __('discount') }
                                                         </a>
                                                         <div class="d-none">
-                                                        <label for="p-priced pe-3 mb-3" class="form-label">${ __('Discounted') } <span class="lang"></span></label>
-                                                        <input id="p-priced" type="text" class="form-control inp" placeholder="45.00" autocomplete="off">
+                                                            <label for="p-priced pe-3 mb-3" class="form-label">${ __('Discounted') } <span class="lang"></span></label>
+                                                            <input id="p-priced" type="text" class="form-control" placeholder="45.00" autocomplete="off">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -131,8 +131,6 @@ return `
                                 <div class="desc-repeater-cont">
 
                                 </div>
-
-                                <p class="form-text"> &nbsp;</p>
 
                             </div>
                         </div>

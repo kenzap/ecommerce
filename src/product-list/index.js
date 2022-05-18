@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime } from "../_/_helpers.js"
+import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime, onlyNumbers } from "../_/_helpers.js"
 import { productListContent } from "../_/_cnt_product_list.js"
 
 // where everything happens
@@ -43,7 +43,7 @@ const _this = {
                     settings: {
                         type:       'get',
                         key:        'ecommerce-settings',
-                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display'],
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display'],
                     },
                     products: {
                         type:       'find',
@@ -308,37 +308,39 @@ const _this = {
         modal.querySelector(".btn-secondary").innerHTML = __('Cancel');
         let d = ""; 
         let title = '', sdesc = '', price = '';
-        let modalHTml = `\
-        <div class="form-cont">\
-            <div class="form-group mb-3">\
-                <label for="p-title" class="form-label">${ __('Title') }</label>\
-                <input type="text" class="form-control" id="p-title" autocomplete="off" placeholder="" value="${ title }">\
-            </div>\
-            <div class="form-group mb-3">\
-                <label for="p-sdesc" class="form-label">${ __('Short description') }</label>\
-                <input type="text" class="form-control" id="p-sdesc" autocomplete="off" placeholder="" value="${ sdesc }">\
-            </div>\
-            <div class="form-group mb-3">\
-                <label for="p-price" class="form-label">${ __('Price') }</label>\
-                <input type="text" class="form-control" id="p-price" autocomplete="off" placeholder="" value="${ price }">\
-            </div>\
+        let modalHTml = `
+        <div class="form-cont">
+            <div class="form-group mb-3">
+                <label for="p-title" class="form-label">${ __('Title') }</label>
+                <input type="text" class="form-control" id="p-title" autocomplete="off" placeholder="" value="${ title }">
+            </div>
+            <div class="form-group mb-3">
+                <label for="p-sdesc" class="form-label">${ __('Short description') }</label>
+                <input type="text" class="form-control" id="p-sdesc" autocomplete="off" placeholder="" value="${ sdesc }">
+            </div>
+            <div class="form-group mb-3">
+                <label for="p-price" class="form-label">${ __('Price') }</label>
+                <input type="text" class="form-control" id="p-price" autocomplete="off" placeholder="" value="${ price }">
+            </div>
         </div>`;
 
         modal.querySelector(".modal-body").innerHTML = modalHTml;
+
+        onlyNumbers('#p-price', [8, 46]);
 
         _this.listeners.modalSuccessBtnFunc = (e) => {
 
             e.preventDefault();
 
             let data = {};
-            data.title = modal.querySelector("#p-title").value;
-            data.sdesc = modal.querySelector("#p-sdesc").value;
-            data.price = modal.querySelector("#p-price").value;
+            data.title = modal.querySelector("#p-title").value.trim();
+            data.sdesc = modal.querySelector("#p-sdesc").value.trim();
+            data.price = modal.querySelector("#p-price").value.trim();
             data.status = "0";
             data.img = [];
             data.cats = [];
 
-            if(data.title.length<2){ alert(__('Please provide longer title')); return; }
+            if(data.title.length<2){ alert( __('Please provide longer title') ); return; }
 
             // send data
             fetch('https://api-v1.kenzap.cloud/', {

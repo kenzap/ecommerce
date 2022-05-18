@@ -1,4 +1,4 @@
-import { getCookie, getSiteId, headers } from '@kenzap/k-cloud';
+import { getCookie, getSiteId, simulateClick, headers } from '@kenzap/k-cloud';
 
 export const mt = (val) => {
 
@@ -79,6 +79,7 @@ export const getPagination = (__, meta, cb) => {
 
     let page_link = document.querySelectorAll(".page-link");
     for (const l of page_link) {
+        
         l.addEventListener('click', function(e) {
 
             let p = parseInt(getPageNumber());
@@ -166,6 +167,24 @@ export const formatTime = (__, timestamp) => {
     return time;
 }
 
+// numbers only with allowed exceptions
+export const onlyNumbers = (sel, chars) => {
+
+    if(!document.querySelector(sel)) return;
+    
+    document.querySelector(sel).addEventListener('keypress', (e) => {
+
+        console.log(e.which);
+
+        if((!chars.includes(e.which) && isNaN(String.fromCharCode(e.which))) || e.which == 32 || (document.querySelector(sel).value.includes(String.fromCharCode(e.which)) && chars.includes(e.which))){
+
+            // stop character from entering input
+            e.preventDefault(); 
+            return false;
+        }
+    });
+}
+
 // nums only validation
 export const numsOnly = (e, max) => {
 
@@ -198,22 +217,18 @@ export const onClick = (sel, fn) => {
 // time elapsed since creation 
 export const timeConverterAgo = (__, now, time) => {
 
-    // console.log(now + " " + time);
-
     now = parseInt(now);
     time = parseInt(time);
-
-    // console.log(now + " " + time);
 
     // parse as elapsed time
     let past = now - time;
     if(past < 60) return __('moments ago');
-    if(past < 3600) return parseInt(past / 60) + __(' minutes ago');
-    if(past < 86400) return parseInt(past / 60 / 24) + __(' hours ago');
+    if(past < 3600) return parseInt(past / 60) + ' ' + __('minutes ago');
+    if(past < 86400) return parseInt(past / 60 / 60) + ' ' + __('hours ago');
 
     // process as normal date
     var a = new Date(time * 1000);
-    var months = [__('Jan'), __('Feb'), __('Mar'), __('Apr'), __('May'), __('Jun'), __('Jul'), __('Aug'), __('Sep'), __('Oct'), __('Nov'), __('Dec')];
+    var months = [ __('Jan'), __('Feb'), __('Mar'), __('Apr'), __('May'), __('Jun'), __('Jul'), __('Aug'), __('Sep'), __('Oct'), __('Nov'), __('Dec') ];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
@@ -326,11 +341,11 @@ export const ecommerceUpdates = (_this, source, cb) => {
 
         if(response.success){
 
-            // parse notifications
-            renderNotifications(response.messages);
-
             // do callback
             cb(response);
+            
+            // parse notifications
+            renderNotifications(_this, response.messages);
             
         }else{
 
@@ -341,29 +356,80 @@ export const ecommerceUpdates = (_this, source, cb) => {
     });
 }
 
-export const renderNotifications = (messages) => {
+export const isMobile = () => {
+
+    const nav = navigator.userAgent.toLowerCase();
+    return (
+        nav.match(/iphone/i) || nav.match(/ipod/i) || nav.match(/ipad/i) || nav.match(/android/i)
+    );
+}
+
+// play notification sound. Ex.: when new order received
+export const playSound = (_this, max) => {
+ 
+    // if(!max) max = _this.state.playSound.max_times;
+
+    _this.state.playSound.n = 0;
+
+    if(_this.state.playSound.timer) clearInterval(_this.state.playSound.timer);
+
+    if(_this.state.playSound.allowed) _this.state.playSound.audio.play();
+
+    try{
+        if(_this.state.playSound.allowed && isMobile()) window.navigator.vibrate(200);
+    }catch{
+
+    }
+
+    if(max==1) return;
+
+    _this.state.playSound.timer = setInterval(() => {
+
+        if(!_this.state.playSound.allowed) return;
+         
+        _this.state.playSound.audio.play();
+
+        if(_this.state.playSound.n > max){ clearInterval(_this.state.playSound.timer) }
+
+        _this.state.playSound.n += 1;
+
+    }, 5000);
+
+    // console.log('playSound');
+}
+
+export const renderNotifications = (_this, messages) => {
 
     let html = '';
+
+    let play = false;
 
     // html
     messages.forEach(msg => {
 
-        if(!document.querySelector('#contents .container [data-id="'+msg._id+'"]')) html += `
+        if(!_this.state.playSound.nids.includes(msg._id)){ _this.state.playSound.nids.push(msg._id); play = true; }
 
-        <div class="alert alert-${ msg.color } alert-dismissible fade show" role="alert" data-id="${ msg._id }">
-            <div class="d-flex align-items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-square flex-shrink-0 me-2" viewBox="0 0 16 16">
-                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                    <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-                </svg>
-                <div>
-                ${ msg.msg }
+        if(!document.querySelector('#contents .container [data-id="'+msg._id+'"]')){
+        
+            html += `
+
+            <div class="alert alert-${ msg.color } alert-dismissible fade show" role="alert" data-id="${ msg._id }">
+                <div class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-square flex-shrink-0 me-2" viewBox="0 0 16 16">
+                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                    </svg>
+                    <div>
+                    ${ msg.msg }
+                    </div>
                 </div>
-            </div>
-            <button type="button" class="btn-close btn-dismiss-notify" data-bs-dismiss="alert" aria-label="Close" data-id="${ msg._id }"></button>
-        </div>`;
-
+                <button type="button" class="btn-close btn-dismiss-notify" data-bs-dismiss="alert" aria-label="Close" data-id="${ msg._id }"></button>
+            </div>`;
+        }
     });
+
+    // play sound
+    if(play){ console.log('notify play sound'); playSound(_this, 1); _this.getData(); }
 
     if(document.querySelector('#contents .container')) document.querySelector('#contents .container').insertAdjacentHTML("afterbegin", html);
 
@@ -389,6 +455,7 @@ export const renderNotifications = (messages) => {
             if(response.success){
 
 
+
             }else{
 
 
@@ -396,9 +463,23 @@ export const renderNotifications = (messages) => {
         })
         .catch(error => { // parseApiError(error); 
         });
-
-
     });
+
+    // order open listener
+    if(document.querySelector('.order-details')) for( let el of document.querySelectorAll('.order-details') ){
+
+        if(el.dataset.assigned == "1") return;
+
+        el.dataset.assigned = 1;
+
+        el.addEventListener('click', (e) => {
+
+            let el = document.querySelector(".view-order[data-id='"+e.currentTarget.dataset.id+"']");
+
+            simulateClick(el);
+
+        }, true);
+    }
 }
 
 export const printReceipt = (_this, order) => {

@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange } from '@kenzap/k-cloud';
-import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, printReceipt, ecommerceUpdates } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, printReceipt, playSound, ecommerceUpdates } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
@@ -13,8 +13,7 @@ const _this = {
         firstTouch: true,
         modalCont: null,
         modalOpen: false,
-        playSoundNow: false,
-        newOrderCount: 0,
+        playSound: { allowed: false, ids: null, nids: [], n: 0, max_times: 5, timer: null, audio: new Audio('https://kenzap.com/static/swiftly.mp3') },
         orderIDs: [],
         printLink: null, // storing receipt print pending order 
         orders: [], // where all requested orders are cached
@@ -24,8 +23,7 @@ const _this = {
         playTitleTimer: null,
         refreshTimer: null,
         statuses: [],
-        audio: new Audio('https://kenzap.com/static/swiftly.mp3'),
-        limit: 50, // number of records to load per table
+        limit: 25, // number of records to load per table
         slistLimit: 10, // product suggestion fetch search limit
         productsSuggestions: []
     },
@@ -37,71 +35,24 @@ const _this = {
         // get latest orders and notifications
         let cb = (response) => { 
 
-            console.log(response);
-
+            // refresh if order list changes
             if(response.last_order_id != _this.state.lastOrderID && !_this.state.firstLoad){
 
-                console.log(response.last_order_id+'new orders'+_this.state.lastOrderID);
-                 _this.getData();
+                playSound(_this, 1);
 
-                 _this.state.lastOrderID = response.last_order_id;
+                _this.getData();
+                 
+                _this.state.lastOrderID = response.last_order_id;
             }
         };
+
+        // _this.playSound();
 
         // ecommerceUpdates(_this, ['messages', 'last_order_id'], cb);
 
         // turn on data polling for new orders
         _this.state.refreshTimer = setInterval(() => { ecommerceUpdates(_this, ['messages', 'last_order_id'], cb); }, 5000);
-        // _this.state.refreshTimer = setInterval(() => { _this.getDataNew(); }, 10000);
-        // _this.state.refreshTimer = setInterval(() => { _this.getDataNew(); }, 10000);
     },
-    // getDataNew: () => {
-
-    //     // do API query
-    //     fetch('https://api-v1.kenzap.cloud/', {
-    //         method: 'post',
-    //         headers: headers,
-    //         body: JSON.stringify({
-    //             query: {
-    //                 orders: {
-    //                     type:       'find',
-    //                     key:        'ecommerce-order',
-    //                     fields:     '*',
-    //                     term:       [
-    //                         {
-    //                             type: "string",
-    //                             field: "status",
-    //                             relation: "=",
-    //                             value: "new",
-    //                         },
-    //                         {
-    //                             type: "string",
-    //                             field: "status",
-    //                             relation: "=",
-    //                             value: "paid",
-    //                         }
-    //                     ],
-    //                     limit:      1,
-    //                 }
-    //             }
-    //         })
-    //     })
-    //     .then(response => response.json())
-    //     .then(response => {
-
-    //         if(response.success){
-
-    //             if(response.orders.length){ console.log(response.orders); _this.getData(); }
-
-    //         }else{
-
-    //             // parseApiError(response);
-    //         }
-    //     })
-    //     .catch(error => { // parseApiError(error); 
-    //     });
-
-    // },
     getData: () => {
 
         // show loader during first load
@@ -115,6 +66,9 @@ const _this = {
 
         // search term 
         let term = document.querySelector('#order-status') ? document.querySelector('#order-status').dataset.value: '';
+
+        // skip refresh if modal is open
+        if(document.querySelector('body.modal-open')){ return; }
         
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
@@ -268,7 +222,7 @@ const _this = {
         let orderIDsTemp = [];
         _this.state.newOrderCount = [];
 
-        let list = '', count_new = 0;
+        let list = '', new_ids = '';
         for (let i in response.orders){
 
             // save last order ID for ecommerceUpdates
@@ -279,11 +233,8 @@ const _this = {
 
             if(typeof(response.orders[i].status) === 'undefined') response.orders[i].status = 'new';
 
-            if(response.orders[i].status == 'new') count_new ++;
-            // if(typeof(response.products[i].img) === 'undefined') response.products[i].img = [];
-            // // if(typeof(response.products[i].img) !== 'undefined' && response.products[i].img[0] == 'true') img = 'https://preview.kenzap.cloud/S1000452/_site/images/product-'+response.products[i].id+'-1-100x100.jpeg?1630925420';
-            // if(response.products[i].img[0]) img = CDN + '/S'+sid+'/product-'+response.products[i]._id+'-1-100x100.jpeg?'+response.products[i].updated;
-                
+            if(response.orders[i].status == 'new') new_ids += response.orders[i].id;
+     
             let applink = {"print":"[C]<u><font size=\"big\">ORDER{{order_id_short}}</font></u>\n[C]Fu Zhen Seafood\n[C]<u type=double>{{date_time}}</u>\n[C]\n[C]================================\" \n[L]\n[L]<b>BEAUTIFUL SHIRT</b>[R]9.99€\n[L]  + Size : S\n[L]\n[L]<b>AWESOME HAT</b>[R]24.99€\n[L]  + Size : 57/58\n[L]\n[C]--------------------------------\n[R]TOTAL PRICE :[R]34.98€\n[R]TAX :[R]4.23€"};
             let classN = ((_this.state.orderIDs.includes(response.orders[i]._id) || _this.state.firstLoad)?'':'new');
             list += `
@@ -314,7 +265,7 @@ const _this = {
                     <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
                     <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
                 </svg></a>
-                <a href="#" data-id="${ response.orders[i]._id }" data-index="${ i }" class="remove-order text-danger me-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <a href="#" data-id="${ response.orders[i]._id }" data-index="${ i }" class="remove-order text-danger me-2"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                     <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                 </svg></a>
@@ -322,12 +273,15 @@ const _this = {
             </tr>`;
         }
         
-        _this.state.playSoundNow = count_new > 0 ? true : false;
+        // _this.state.playSoundNow = count_new > 0 ? true : false;
+        // if(_this.state.playSound.ids != new_ids && !document.querySelector('body.modal-open')){ console.log('reload no'); }else{ console.log('reload yes'); _this.getData(); }
 
-        // if(_this.state.playSoundNow) _this.playSound();
-        // if(_this.state.newOrderCount>0) _this.playTitle('('+_this.state.newOrderCount+') new orders.');
+        // if(_this.state.playSound.ids){  }
 
-        // _this.state.firstLoad = false;
+        if(_this.state.playSound.ids && _this.state.playSound.ids!=new_ids && _this.state.playSound.ids.length < new_ids.length){ playSound(_this, 3); }
+
+        _this.state.playSound.ids = new_ids;
+        
         _this.state.orderIDs = orderIDsTemp;
 
         // provide result to the page
@@ -337,32 +291,6 @@ const _this = {
     getStatus: (status) => {
     
         return `<div class="badge ${ _this.state.statuses[status].class }">${ _this.state.statuses[status].text }</div>`;
-    },
-    // play notification sound. Ex.: when new order received
-    playSound: () => {
- 
-        
-        // var audiosWeWantToUnlock = [];
-        // audiosWeWantToUnlock.push(new Audio('https://kenzap.com/static/swiftly.mp3'))
-       
-        //where earlier you did:var audiosWeWantToUnlock = []audiosWeWantToUnlock.push(new Audio('mySoundEffect.wav'))audiosWeWantToUnlock.push(new Audio('myOtherSoundEffect.wav'))
-
-        console.log('playSound');
-
-        // const audio = new Audio("https://kenzap.com/static/swiftly.mp3");
-        _this.state.audio.play();
-
-    },
-    playTitle: (msg) => {
-
-        // if(_this.state.playTitleTimer) clearInterval(_this.state.playTitleTimer);
-        // _this.state.playTitleTimer = setInterval(() => { if(_this.state.playSoundNow) _this.playSound(); }, 6500);
-
-        // if(_this.state.playTitleTimer) clearInterval(_this.state.playTitleTimer);
-        // if(_this.state.playTitleTimer2) clearInterval(_this.state.playTitleTimer2);
-    
-        // _this.state.playTitleTimer = setInterval(() => { document.title = "Orders - Kenzap Cloud"; }, 1000);
-        // _this.state.playTitleTimer2 = setInterval(() => {  document.title = msg; }, 2050);    
     },
     initListeners: () => {
 
@@ -390,25 +318,9 @@ const _this = {
         
         // search orders
         onKeyUp('.search-input', _this.listeners.searchOrders);
-        // add product modal
-        // onClick('.btn-save', _this.saveSettings);
-        
-        document.body.addEventListener('touchstart', function() {
 
-            if(_this.state.firstTouch){
-
-                _this.state.audio.play();
-                _this.state.audio.pause();
-                _this.state.audio.currentTime = 0
-                _this.state.firstTouch = false;
-            }else{
-
-                // _this.playTitle();
-                if(_this.state.playTitleTimer) clearInterval(_this.state.playTitleTimer);
-                _this.state.playTitleTimer = setInterval(() => { if(_this.state.playSoundNow) _this.playSound(); }, 6500);
-            }
-
-        }, false);
+        // track first touch iteration to allow sound to play
+        document.body.addEventListener('touchstart', function(){ if(_this.state.firstTouch)  _this.state.playSound.allowed = true ; }, false);
 
         // android back pressed
         window.addEventListener("hashchange", function(e) {
@@ -473,14 +385,13 @@ const _this = {
             if(!c) return;
   
             // send data
-            fetch('https://api-v1.kenzap.cloud/', {
+            fetch('https://api-v1.kenzap.cloud/ecommerce/', {
                 method: 'post',
                 headers: headers,
                 body: JSON.stringify({
                     query: {
                         product: {
-                            type:       'delete',
-                            key:        'ecommerce-order',   
+                            type:       'delete-order',
                             id:         e.currentTarget.dataset.id,  
                             sid:        spaceID(),
                         }
@@ -649,102 +560,19 @@ const _this = {
             })
             .catch(error => { parseApiError(error); });
 
-
-
-            // // get last order ID number
-            // fetch('https://api-v1.kenzap.cloud/', {
-            //     method: 'post',
-            //     headers: headers,
-            //     body: JSON.stringify({
-            //         query: {
-            //             settings: {
-            //                 type:       'get',
-            //                 key:        'ecommerce-settings',
-            //                 fields:     ['last_order_id'],
-            //             }
-            //         }
-            //     })
-            // })
-            // .then(response => response.json())
-            // .then(response => {
-
-            //     if (response.success){
-
-            //         data['id'] = makeNumber(response.settings.last_order_id) + 1;
-
-            //         // console.log("number: " + data['id']);
-
-            //         // create new order
-            //         fetch('https://api-v1.kenzap.cloud/', {
-            //             method: 'post',
-            //             headers: headers,
-            //             body: JSON.stringify({
-            //                 query: {
-            //                     order: {
-            //                         type:       'create',
-            //                         key:        'ecommerce-order',        
-            //                         sid:        spaceID(),
-            //                         data:       data
-            //                     }
-            //                 }
-            //             })
-            //         })
-            //         .then(response => response.json())
-            //         .then(response => {
-
-            //             if (response.success){
-
-            //                 _this.modalCont.hide();
-
-            //                 toast( __('Order created') );
-
-            //                 if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
-
-            //                 _this.getData();
-
-            //             }else{ parseApiError(response); }
-            //         })
-            //         .catch(error => { parseApiError(error); });
-
-            //         // save next assigned number
-            //         fetch('https://api-v1.kenzap.cloud/', {
-            //             method: 'post',
-            //             headers: headers,
-            //             body: JSON.stringify({
-            //                 query: {
-            //                     settings: {
-            //                         type:       'set',
-            //                         key:        'ecommerce-settings',        
-            //                         sid:        spaceID(),
-            //                         data:       {
-            //                             last_order_id: data['id']
-            //                         }
-            //                     }
-            //                 }
-            //             })
-            //         })
-            //         .then(response => response.json())
-            //         .then(response => { if (!response.success){ parseApiError(response); } })
-            //         .catch(error => {  parseApiError(error); });   
-                
-            //     }else{ parseApiError(response); }
-            // })
-            // .catch(error => { parseApiError(error); });
-
         // update existing order
         }else{
 
             // send data
-            fetch('https://api-v1.kenzap.cloud/', {
+            fetch('https://api-v1.kenzap.cloud/ecommerce/', {
                 method: 'post',
                 headers: headers,
                 body: JSON.stringify({
                     query: {
                         order: {
-                            type:       'update',
-                            key:        'ecommerce-order',        
+                            type:       'update-order',
+                            id:         id,         
                             sid:        spaceID(),
-                            id:         id,
                             data:       data
                         }
                     }

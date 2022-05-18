@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getProductId, makeNumber, priceFormat } from "../_/_helpers.js"
+import { getProductId, makeNumber, numsOnly, priceFormat, onlyNumbers } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
 
@@ -119,9 +119,9 @@ const _this = {
         d.querySelector("#p-ldesc").value = product.ldesc;
 
         // price section
-        d.querySelector("#p-price").value = product.price;
-        d.querySelector("#p-priced").value = product.priced;
-        d.querySelector("#p-price-symb").innerHTML = _this.state.settings['currency_symb'];
+        d.querySelector("#p-price").value = product.price; onlyNumbers('#p-price', [8, 46]);
+        // d.querySelector("#p-priced").value = product.priced;
+        d.querySelector("#p-price-symb").innerHTML = _this.state.settings['currency_symb'] ? _this.state.settings['currency_symb'] : "";
 
         // discounts 
         document.querySelector(".discount-blocks").dataset.data = encodeURIComponent(JSON.stringify(product.discounts ? product.discounts : []));
@@ -594,50 +594,18 @@ const _this = {
             });
 
             // percent number only
-            document.querySelector('#discount-percent').addEventListener('keypress', (e)=>{
-
-                // console.log(e.which);
-                if(e.which != 8 && isNaN(String.fromCharCode(e.which))){
-
-                    e.preventDefault(); // stop character from entering input
-                    return false;
-                }
-            });
+            onlyNumbers('#discount-percent', [8]);
 
             // value number only
-            document.querySelector('#discount-value').addEventListener('keypress', (e)=>{
-
-                // console.log(e.which);
-                if(e.which != 8 && e.which != 46 && isNaN(String.fromCharCode(e.which))){
-
-                    e.preventDefault(); // stop character from entering input
-                    return false;
-                }
-            });
+            onlyNumbers('#discount-value', [8, 46]);
 
             // time from number only
-            document.querySelector('#discount-hour-from').addEventListener('keypress', (e)=>{
-
-                // console.log(e.which);
-                if(e.which != 8 && e.which != 58 && isNaN(String.fromCharCode(e.which))){
-
-                    e.preventDefault(); // stop character from entering input
-                    return false;
-                }
-            });
-
+            onlyNumbers('#discount-hour-from', [8, 58]);
+            
             // time to number only
-            document.querySelector('#discount-hour-to').addEventListener('keypress', (e)=>{
+            onlyNumbers('#discount-hour-to', [8, 58]);
 
-                console.log(e.which)
-                // console.log(e.which);
-                if(e.which != 8 && e.which != 58 && isNaN(String.fromCharCode(e.which))){
-
-                    e.preventDefault(); // stop character from entering input
-                    return false;
-                }
-            });
-
+            // discount type
             onChange('#discount-type', (e) => {
                 
                 // discount-availability
@@ -789,7 +757,7 @@ const _this = {
             // iterate through input fields
             for( let inp of document.querySelectorAll('.inp') ){
 
-                data[inp.id.replace("p-","")] = inp.value;
+                data[inp.id.replace("p-","")] = inp.value.trim();
             }
 
             // map categories
@@ -848,7 +816,7 @@ const _this = {
                 block_index++;
             }
 
-            console.log(data);
+            // console.log(data);
         
             let id = getProductId();
             let sid = getSiteId();
@@ -878,13 +846,6 @@ const _this = {
 
                     // upload desc images
                     _this.uploadImages();
-            
-                    // successfully changed
-                    // if(ajaxQueue==0){
-            
-                    // iqwerty.toast.toast('changes applied', toast);
-                    // // $( "#loader" ).fadeOut( "fast" );
-                    // }
                     
                 }else{
 
@@ -907,23 +868,20 @@ const _this = {
             e.preventDefault();
 
             let input = e.currentTarget;
-            let toast = new bootstrap.Toast(document.querySelector('.p-toast'));
 
             if (input.files && input.files[0]) {
 
                 // check image type
                 if(input.files[0].type != 'image/jpeg' && input.files[0].type != 'image/jpg' && input.files[0].type != 'image/png'){
 
-                    document.querySelector('.p-toast .toast-body').innerHTML = __('Please provide image in JPEG format');  
-                    toast.show();
+                    toast( __("Please provide image in JPEG format") );
                     return;
                 }
           
                 // check image size
                 if(input.files[0].size > 5000000){
 
-                    document.querySelector('.p-toast .toast-body').innerHTML = __('Please provide image less than 5 MB in size!');  
-                    toast.show();
+                    toast( __("Please provide image less than 5 MB in size!") );
                     return;
                 }
 
@@ -931,7 +889,7 @@ const _this = {
                 let reader = new FileReader();
                 reader.onload = function(e) {
                   
-                    console.log('target '+e.currentTarget.result);
+                    // console.log('target '+e.currentTarget.result);
                     document.querySelector('.images-'+index).setAttribute('src', e.currentTarget.result);
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -1105,9 +1063,7 @@ const _this = {
                 _this.state.ajaxQueue -= 1;
                 if(response.success && _this.state.ajaxQueue == 0){
 
-                    let toast = new bootstrap.Toast(document.querySelector('.toast'));
-                    document.querySelector('.toast .toast-body').innerHTML = __('Product updated');  
-                    toast.show();
+                    toast( __("Product updated") );
 
                     // hide UI loader
                     hideLoader();
@@ -1118,9 +1074,7 @@ const _this = {
         // image upload notice
         if(_this.state.ajaxQueue == 0){
 
-            let toast = new bootstrap.Toast(document.querySelector('.toast'));
-            document.querySelector('.toast .toast-body').innerHTML = __('Product updated');  
-            toast.show();
+            toast( __("Product updated") );
 
             hideLoader();
         }

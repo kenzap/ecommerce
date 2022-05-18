@@ -12,6 +12,7 @@ export const simpleTags = (__, element) => {
     let arrayOfList
 
     function DOMCreate() {
+        
         let ul = document.createElement("ul")
         let input = document.createElement("input")
 
@@ -27,11 +28,14 @@ export const simpleTags = (__, element) => {
     }
 
     function DOMRender() {
+
         // clear the entire <li> inside <ul>
         DOMList.innerHTML = ""
 
         // render each <li> to <ul>
         arrayOfList.forEach((currentValue, index) => {
+
+            currentValue = currentValue.trim();
 
             if (currentValue) {
 
@@ -49,6 +53,7 @@ export const simpleTags = (__, element) => {
     }
 
     function onKeyUp() {
+
         DOMInput.addEventListener("keyup", function (event) {
             let text = this.value.trim()
 
@@ -68,6 +73,7 @@ export const simpleTags = (__, element) => {
     }
 
     function onDelete(id) {
+
         arrayOfList = arrayOfList.filter(function (currentValue, index) {
             if (index === id) {
                 return false
@@ -79,6 +85,7 @@ export const simpleTags = (__, element) => {
     }
 
     function getAttribute() {
+
         dataAttribute = DOMParent.getAttribute("data-simple-tags")
         dataAttribute = dataAttribute.split(",")
 
