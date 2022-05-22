@@ -10,7 +10,7 @@ const _this = {
   
     state: {
         firstLoad: true,
-        firstTouch: true,
+        // firstTouch: true,
         modalCont: null,
         modalOpen: false,
         playSound: { allowed: false, ids: null, nids: [], n: 0, max_times: 5, timer: null, audio: new Audio('https://kenzap.com/static/swiftly.mp3') },
@@ -19,7 +19,7 @@ const _this = {
         orders: [], // where all requested orders are cached
         settings: {}, // where all requested settings are cached
         orderSingle: [], // where single order is stored during preview
-        lastOrderID: '',
+        updates: { last_order_id: '', last_order_update: 0 },
         playTitleTimer: null,
         refreshTimer: null,
         statuses: [],
@@ -35,14 +35,21 @@ const _this = {
         // get latest orders and notifications
         let cb = (response) => { 
 
+            if(_this.state.firstLoad){ 
+
+                _this.state.updates.last_order_id = response.last_order_id;
+                _this.state.updates.last_order_update = response.last_order_update;
+            }
+
             // refresh if order list changes
-            if(response.last_order_id != _this.state.lastOrderID && !_this.state.firstLoad){
+            if(response.last_order_update != _this.state.updates.last_order_update){
 
                 playSound(_this, 1);
 
                 _this.getData();
                  
-                _this.state.lastOrderID = response.last_order_id;
+                _this.state.updates.last_order_id = response.last_order_id;
+                _this.state.updates.last_order_update = response.last_order_update;
             }
         };
 
@@ -320,7 +327,8 @@ const _this = {
         onKeyUp('.search-input', _this.listeners.searchOrders);
 
         // track first touch iteration to allow sound to play
-        document.body.addEventListener('touchstart', function(){ if(_this.state.firstTouch)  _this.state.playSound.allowed = true ; }, false);
+        document.body.addEventListener('touchstart', function(){ _this.state.playSound.allowed = true ; }, false);
+        document.body.addEventListener('mousedown', function(){ _this.state.playSound.allowed = true ; }, false);
 
         // android back pressed
         window.addEventListener("hashchange", function(e) {

@@ -204,7 +204,7 @@ const _this = {
                             "updated",
                             "created_ymd"
                         ],
-                        sum:["total","total_tax","total_with_tax"],
+                        sum:["total","total_all"],
                         count:["total"],
                         term:[
                             {
@@ -251,11 +251,11 @@ const _this = {
 
                 //console.log(response.sales);
 
-                let ds = [['Period','Tax', 'Total']];
-                let obj = {total: 0, total_tax: 0, total_with_tax: 0};
-                let obj_txt = {total: __('Total'), total_tax: __('Total tax'), total_with_tax: __('Total with tax')};
+                let ds = [['Period', 'Tax', 'Total']];
+                let obj = {total: 0, total_all: 0}; // total_tax: 0, 
+                let obj_txt = {total: __('Subtotal'), total_all: __('Grand Total')}; // total_tax: __('Total tax'),
 
-                if(response.sales.length == 0) { document.querySelector(".modal-body").innerHTML = __('No data to display'); return; }
+                if(response.sales.length == 0){ document.querySelector(".modal-body").innerHTML = __('No data to display'); return; }
 
                 response.sales.forEach(el => {
 
@@ -263,14 +263,14 @@ const _this = {
                     if(el.created_ymd){
 
                         el.total_sum = el.total_sum ? el.total_sum : 0;
-                        el.total_tax_sum = el.total_tax_sum ? el.total_tax_sum : 0;
-                        el.total_with_tax_sum = el.total_with_tax_sum ? el.total_with_tax_sum : 0;
+                        //el.total_tax_sum = el.total_tax_sum ? el.total_tax_sum : 0;
+                        el.total_all_sum = el.total_all_sum ? el.total_all_sum : 0;
 
                         obj.total += el.total_sum;
-                        obj.total_tax += el.total_tax_sum;
-                        obj.total_with_tax += el.total_with_tax_sum;
-
-                        ds.push([el.created_ymd, el.total_tax_sum, el.total_with_tax_sum]);
+                        //obj.total_tax += el.total_tax_sum;
+                        obj.total_all += el.total_all_sum;
+                        
+                        ds.push([el.created_ymd, el.total_sum, el.total_all_sum]); // el.total_tax_sum,
                     }
                 });
 

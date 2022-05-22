@@ -174,7 +174,7 @@ export const onlyNumbers = (sel, chars) => {
     
     document.querySelector(sel).addEventListener('keypress', (e) => {
 
-        console.log(e.which);
+        // console.log(e.which);
 
         if((!chars.includes(e.which) && isNaN(String.fromCharCode(e.which))) || e.which == 32 || (document.querySelector(sel).value.includes(String.fromCharCode(e.which)) && chars.includes(e.which))){
 
@@ -374,6 +374,8 @@ export const playSound = (_this, max) => {
     if(_this.state.playSound.timer) clearInterval(_this.state.playSound.timer);
 
     if(_this.state.playSound.allowed) _this.state.playSound.audio.play();
+
+    console.log("playing " + _this.state.playSound.allowed);
 
     try{
         if(_this.state.playSound.allowed && isMobile()) window.navigator.vibrate(200);

@@ -1,9 +1,10 @@
 import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID } from '@kenzap/k-cloud';
-import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape, printReceipt } from "../_/_helpers.js"
+import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, onlyNumbers, unescape, printReceipt } from "../_/_helpers.js"
 
 export const preview = {
 
-    _this: null,
+    _this: null, 
+    state: { orderSingle: null },
     renderOrder: (_this, e) => {
 
         let modal = document.querySelector(".order-modal");
@@ -37,6 +38,7 @@ export const preview = {
                 note: "",
                 sid: spaceID,
                 status: "new",
+                price: { 'discount_percent': 0 },
                 step: 1,
                 table: "1",
                 total: 0,
@@ -48,7 +50,9 @@ export const preview = {
             _this.state.orderSingle = _this.state.orders[i];
         }
 
-        // console.log(_this.state.orderSingle);
+        preview.state.orderSingle = _this.state.orderSingle;
+
+        console.log(preview.state.orderSingle);
         let items = '';
 
         // get order status
@@ -75,7 +79,7 @@ export const preview = {
 
         // structure modal
         modal.querySelector(".modal-dialog").classList.add('modal-fullscreen');
-        modal.querySelector(".modal-header .modal-title").innerHTML =  _this.state.orderSingle['from'];
+        modal.querySelector(".modal-header .modal-title").innerHTML =  isNaN(_this.state.orderSingle['from']) ? _this.state.orderSingle['from'] : '#' + _this.state.orderSingle['from'];
         modal.querySelector(".modal-footer .btn-confirm").innerHTML = _this.state.orderSingle._id == "new" ? __('Create') : __('Update');
         modal.querySelector(".btn-confirm").dataset.loading = false;
         modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
@@ -460,43 +464,191 @@ export const preview = {
     for(let price of document.querySelectorAll('.item-total')){ grand_total_temp += makeNumber(price.dataset.value); };
 
     // defaults
-    let price = { grand_total: 0, total: makeNumber(grand_total_temp), discount_percent: 0, discount_total: 0, fee_total: 0, tax_total: 0, tax_percent: 0 };
+    let price = { grand_total: 0, total: makeNumber(grand_total_temp), discount_percent: document.querySelector('.discount-percent-inp') ? parseInt(document.querySelector('.discount-percent-inp').value) : preview.state.orderSingle['price']['discount_percent'] ? preview.state.orderSingle['price']['discount_percent'] : 0, discount_value: document.querySelector('.discount-value-inp') ? parseFloat(document.querySelector('.discount-value-inp').value) : preview.state.orderSingle['price']['discount_value'] ? preview.state.orderSingle['price']['discount_value'] : 0, discount_total: 0, fee_total: 0, tax_total: 0, tax_percent: 0 };
+
+    console.log(price);
 
     // subtotal
-    html += `<div class="mb-2 mt-2 order-row text-right elipsized keyx-total">
+    let ordertotalsubtotal =
+            `<div class="mb-2 mt-2 order-total-subtotal order-row text-right elipsized keyx-total">
                 <b>${ __('Subtotal') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.total) }</div>
              </div>`;
+
+    html += ordertotalsubtotal;
+
+    if(document.querySelector('.order-total-subtotal')){ document.querySelector('.order-total-subtotal').outerHTML = ordertotalsubtotal; }
+
+    // discount
+    html += `<div class="mb-2 mt-2 order-total-discount d-flex align-items-center justify-content-end bd-highlight order-row keyx-total">
+                <div class="dropdown">
+                    <button class="btn border-0 dropdown-toggle fw-bold" type="button" id="discount-type" data-bs-toggle="dropdown" aria-expanded="false">
+                    ${ parseFloat(price.discount_value) > 0 ? __('Discount by value') : __('Discount by %') }
+                    </button>
+                    <ul class="dropdown-menu discount-type-option" aria-labelledby="discount-type">
+                        <li><a class="dropdown-item" data-type="percent" href="#">${ __('Discount by %') }</a></li>
+                        <li><a class="dropdown-item" data-type="value" href="#">${ __('Discount by value') }</a></li>
+                    </ul>
+                </div>
+                <div class="ms-2 d-inline-block" data-type="key-number" >
+                    <input type="text" autocomplete="off" maxlength="3" class="discount-percent-inp form-control form-control-sm text-end ${ parseFloat(price.discount_value) > 0 ? 'd-none' : '' }" value="${ price.discount_percent }" style="max-width:50px;">
+                    <input type="text" autocomplete="off" class="discount-value-inp ${ parseFloat(price.discount_value) > 0 ? '' : 'd-none' } form-control form-control-sm text-end" value="${ price.discount_value }" style="max-width:120px;">
+                </div>
+            </div>`;
+    
+    // let discount_type
+    // if(document.querySelector("#discount-type").dataset.type == 'percent'){
+    if(parseInt(price.discount_percent) > 0){
+
+        if(parseInt(price.discount_percent) > 0 && parseInt(price.discount_percent) <= 100){
+
+            price.discount_total = makeNumber((parseInt(price.discount_percent))*price.total)/100;
+            grand_total_temp -= price.discount_total;
+        }
+    }
+
+    // }else if(document.querySelector("#discount-type").dataset.type == 'value'){
+    if(parseFloat(price.discount_value) > 0){
+
+        if(parseFloat(price.discount_value) > 0){
+
+            grand_total_temp -= price.discount_value;
+        }
+    }
 
     // service charge
     if(preview._this.state.settings.fee_calc == "1"){
 
-        price.fee_total = makeNumber((preview._this.state.settings.fee_percent)*price.total)/100;
+        // price.fee_total = makeNumber((preview._this.state.settings.fee_percent)*price.total)/100;
+        price.fee_total = makeNumber((preview._this.state.settings.fee_percent) * grand_total_temp)/100;
         price.fee_percent = makeNumber(preview._this.state.settings.fee_percent);
-        html += `<div class="mb-2 mt-2 order-row text-right elipsized">
+  
+        let ordertotalfee =
+                `<div class="mb-2 mt-2 order-total-fee order-row text-right elipsized">
                     <b>${ __(preview._this.state.settings.fee_display) }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.fee_total) }</div>
                  </div>`;
 
+        html += ordertotalfee;
+
+        if(document.querySelector('.order-total-fee')){ document.querySelector('.order-total-fee').outerHTML = ordertotalfee; }
+
+        // console.log(price.fee_total);
+        
         grand_total_temp += price.fee_total;
     }
     
     // tax 
     if(preview._this.state.settings.tax_calc == "1"){
 
-        price.tax_total = makeNumber((price.fee_total + price.total) * makeNumber(preview._this.state.settings.tax_percent)/100);
+        // console.log(grand_total_temp + ' '  + parseFloat(preview._this.state.settings.tax_percent/100));
+        price.tax_total = makeNumber(((grand_total_temp) * parseFloat(preview._this.state.settings.tax_percent))/100);
         price.tax_percent = makeNumber(preview._this.state.settings.tax_percent);
-        html += `<div class="mb-2 mt-2 order-row text-right elipsized">
+        let ordertotaltax =
+                `<div class="mb-2 mt-2 order-total-tax order-row text-right elipsized">
                     <b>${ preview._this.state.settings.tax_display }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.tax_total) }</div>
                  </div>`;
+
+        html += ordertotaltax;
+
+        if(document.querySelector('.order-total-tax')){ document.querySelector('.order-total-tax').outerHTML = ordertotaltax; }
+
         grand_total_temp += price.tax_total;
     }
 
     // grand total
     price.grand_total = makeNumber(grand_total_temp);
-    html += `<div class="mb-2 mt-2 order-row text-right elipsized">
+    let ordertotalgrandtotal =
+            `<div class="mb-2 mt-2 order-total-grandtotal order-row text-right elipsized">
                 <b>${ __('Grand Total') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.grand_total) }</div>
              </div>`;
 
-    if(document.querySelector('.order-total')) document.querySelector('.order-total').remove(); document.querySelector('.modal-body-cont').insertAdjacentHTML("beforeend", `<div class="mt-5 order-total order-form text-end" data-type="price" data-price="${ encodeURIComponent(JSON.stringify(price)) }">${ html }</div>`);
+    html += ordertotalgrandtotal;
+
+    if(document.querySelector('.order-total-grandtotal')){ document.querySelector('.order-total-grandtotal').outerHTML = ordertotalgrandtotal; }
+
+    // if(document.querySelector('.order-total')) document.querySelector('.order-total').remove(); 
+    if(document.querySelector('.order-total')){
+        
+        document.querySelector('.order-total').dataset.price = encodeURIComponent(JSON.stringify(price));
+    }else{
+
+        // document.querySelector('.order-total').remove(); 
+        document.querySelector('.modal-body-cont').insertAdjacentHTML("beforeend", `<div class="mt-5 order-total order-form text-end" data-type="price" data-price="${ encodeURIComponent(JSON.stringify(price)) }">${ html }</div>`);
+
+        onClick('.discount-type-option li a', (e) => {
+
+            e.preventDefault();
+
+            document.querySelector('#discount-type').dataset.type = e.currentTarget.dataset.type;
+
+            console.log(e.currentTarget.dataset.type);
+
+            switch(e.currentTarget.dataset.type){
+
+                case 'value':
+
+                    document.querySelector('#discount-type').innerHTML = __('Discount by value');
+                    document.querySelector('.discount-value-inp').style.maxWidth = '120px';
+                    document.querySelector('.discount-value-inp').classList.remove('d-none');
+                    document.querySelector('.discount-percent-inp').classList.add('d-none');
+                    document.querySelector('.discount-percent-inp').value = 0;
+                    break;
+                case 'percent':
+
+                    document.querySelector('#discount-type').innerHTML = __('Discount by %');
+                    document.querySelector('.discount-percent-inp').style.maxWidth = '70px';
+                    document.querySelector('.discount-value-inp').classList.add('d-none');
+                    document.querySelector('.discount-percent-inp').classList.remove('d-none');
+                    document.querySelector('.discount-value-inp').value = 0;
+                    break;
+            }
+
+            preview.refreshTotals();
+        });
+
+        // restrict discount percent input fields
+        onlyNumbers('.discount-percent-inp', [8]);
+        onKeyUp('.discount-percent-inp', (e) => {
+
+            if(parseInt(e.currentTarget.value) > 100 || parseInt(e.currentTarget.value) < 0){
+
+                // console.log(e.currentTarget.value)
+                e.currentTarget.setCustomValidity("wrong percent value");
+            }else{
+
+                e.currentTarget.setCustomValidity("");
+            }
+
+            // if(e.currentTarget.value=='') e.currentTarget.value = 0;
+
+            e.currentTarget.parentElement.classList.add("was-validated"); 
+
+            e.currentTarget.style.maxWidth = '70px';
+
+            preview.refreshTotals();
+        });
+
+        // restrict discount value input fields
+        onlyNumbers('.discount-value-inp', [8, 46]);
+        onKeyUp('.discount-value-inp', (e) => {
+
+            if(parseInt(e.currentTarget.value) < 0 || parseInt(e.currentTarget.value) > price.total){
+
+                // console.log(e.currentTarget.value)
+                e.currentTarget.setCustomValidity("wrong discount value");
+            }else{
+
+                e.currentTarget.setCustomValidity("");
+            }
+
+            // if(e.currentTarget.value=='') e.currentTarget.value = 0;
+
+            e.currentTarget.parentElement.classList.add("was-validated"); 
+
+            e.currentTarget.style.maxWidth = '120px';
+
+            preview.refreshTotals();
+        });
+    }
   },
 
 
@@ -561,7 +713,7 @@ export const preview = {
       item.price = parseInt(document.querySelector('.edit-tp').dataset.price);
       item.qty = parseInt(document.querySelector('.edit-qty').value);
       item.note = "";
-      item.created = Date.now() / 1000 | 0;
+      item.created = preview.state.orderSingle.updated; // Date.now() / 1000 | 0;  
       item.variations = [];
 
       // working
