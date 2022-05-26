@@ -1,6 +1,6 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange } from '@kenzap/k-cloud';
-import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, printReceipt, playSound, ecommerceUpdates } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, printReceipt, printQR, playSound, ecommerceUpdates } from "../_/_helpers.js"
 import { preview } from "../_/_order_preview.js"
 import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
@@ -18,6 +18,7 @@ const _this = {
         printLink: null, // storing receipt print pending order 
         orders: [], // where all requested orders are cached
         settings: {}, // where all requested settings are cached
+        qr_settings: {}, // where all requested settings are cached
         orderSingle: [], // where single order is stored during preview
         updates: { last_order_id: '', last_order_update: 0 },
         playTitleTimer: null,
@@ -108,10 +109,15 @@ const _this = {
                             order: 'DESC'
                         }
                     },
+                    qr_settings: {
+                        type:       'get',
+                        key:        'qrmenu-settings',
+                        fields:     ['slug'],
+                    },
                     settings: {
                         type:       'get',
                         key:        'ecommerce-settings',
-                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'receipt_template'],
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'receipt_template', 'qr_print', 'qr_template'],
                     }
                 }
             })
@@ -217,9 +223,15 @@ const _this = {
         
         // cache settings globally
         _this.state.settings = response.settings;
+        _this.state.qr_settings = response.qr_settings;
+
+        console.log(_this.state.settings);
+
+        // enable QR priting
+        if(_this.state.settings.qr_print == "1"){ document.querySelector(".qr-print-cnt").classList.remove('d-none'); }
 
         // no orders in the list
-        if (response.orders.length == 0) {
+        if (response.orders.length == 0){
 
             document.querySelector(".table tbody").innerHTML = `<tr><td colspan="5">${ __("No orders to display.") }</td></tr>`;
             return;
@@ -325,6 +337,9 @@ const _this = {
         
         // search orders
         onKeyUp('.search-input', _this.listeners.searchOrders);
+
+        // print custom QR code
+        onClick('.print-qr', _this.listeners.printQR);
 
         // track first touch iteration to allow sound to play
         document.body.addEventListener('touchstart', function(){ _this.state.playSound.allowed = true ; }, false);
@@ -439,6 +454,19 @@ const _this = {
 
             // console.log('search products ' +e.currentTarget.value);
         },
+
+        printQR: (e) => {
+        
+            e.preventDefault();
+
+            let str = printQR(_this, []);
+
+            window.location.href = str;
+
+            console.log(str);
+
+            // _this.state.settings.
+        },
         
         modalSuccessBtn: (e) => {
             
@@ -447,7 +475,6 @@ const _this = {
 
         modalSuccessBtnFunc: null
     },
-    
     updateOrder: (i, id) => {
 
         let modal = document.querySelector(".modal");

@@ -519,10 +519,12 @@ export const printReceipt = (_this, order) => {
     };
 
     // debug vs actual print
-    data.debug = false;
+    data.debug = true;
 
     // get receipt template
     data.print = _this.state.settings.receipt_template;
+
+    console.log(data.print);
 
     // order id
     data.print = data.print.replace(/{{order_id}}/g, o.id);
@@ -565,18 +567,58 @@ export const printReceipt = (_this, order) => {
 
     // order totals
     data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.price.total));
-    data.print = data.print.replace(/{{total_tax}}/g, priceFormat(_this, o.price.tax_total));
+    data.print = data.print.replace(/{{tax_total}}/g, priceFormat(_this, o.price.tax_total));
+    data.print = data.print.replace(/{{discount_total}}/g, priceFormat(_this, o.price.discount_total));
     data.print = data.print.replace(/{{grand_total}}/g, priceFormat(_this, o.price.grand_total));
 
+
+    let order_totals  = '';
+    order_totals += '[R]Subtotal:[R]' + priceFormat(_this, o.price.total) + '\n';
+    if(o.price.discount_total > 0) order_totals += '[R]'+__('Discount')+'[R]-' + priceFormat(_this, o.price.discount_total) + '\n';
+    if(o.price.fee_total > 0) order_totals += '[R]'+_this.state.settings.fee_display+'[R]' + priceFormat(_this, o.price.fee_total) + '\n';
+    if(o.price.tax_total > 0) order_totals += '[R]'+_this.state.settings.tax_display+'[R]' + priceFormat(_this, o.price.tax_total) + '\n';
+    if(o.price.grand_total > 0) order_totals += '[R]'+__('Grand Total')+'[R]' + priceFormat(_this, o.price.grand_total);
+
+    data.print = data.print.replace(/{{order_totals}}/g, order_totals);
+
+    // qr link
+    data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
+    data.print = data.print.replace(/{{qr_number}}/g, document.querySelector('#qr-number').value);
+
+        
     // let click = document.querySelector(".print-order[data-id='"+e.currentTarget.dataset.id+"']");
 
     // click.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data)));
 
     // e.currentTarget.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+JSON.stringify(data));
 
+    // alert(data.print);
+
     let str = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
     
     if(data.debug) { console.log(data.print); console.log(str); }
+
+    return str;
+}
+
+export const printQR = (_this, order) => {
+
+    // vars
+    let o = order, data = {}, date = new Date();
+
+    // debug vs actual print
+    data.debug = false;
+
+    // get qr template
+    data.print = _this.state.settings.qr_template;
+
+    // qr link
+    data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
+    data.print = data.print.replace(/{{qr_number}}/g, document.querySelector('#qr-number').value);
+
+    if(data.debug) { console.log(data.print); console.log(str); }
+
+    let str = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
 
     return str;
 }

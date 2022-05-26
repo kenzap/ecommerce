@@ -454,6 +454,33 @@ export const HTMLContent = (__) => {
                           </div>
                         </div>
                       </div>
+
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="form-group row mb-3 mt-1">
+                            <label class="col-sm-3 col-form-label">${ __('QR code') }</label>
+                            <div class="col-sm-9">
+                              <div class="form-check">
+                                <input id="qr_print" class="form-check-input inp" name="qr_print" type="checkbox" value="1" data-type="checkbox">
+                                <label class="form-check-label" for="qr_print">
+                                  ${ __('QR code printing') }
+                                </label>
+                              </div>
+                              <p class="form-text">${ __('Allow "Scan me to order" QR-code printing from orders dashboard.') }</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="form-group row mb-3 mt-1">
+                            <label class="col-sm-3 col-form-label">${ __('QR printing') }</label>
+                            <div class="col-sm-9">
+                              <textarea id="qr_template" class="form-control inp" name="qr_template" rows="10" data-type="text" style="font-size:13px;font-family: monospace;"></textarea>
+                              <p class="form-text">${ __('Default "Scan me to order" template for printers.') }</p>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+
                       <br>
                       <hr>
                       <br>
