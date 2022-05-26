@@ -225,8 +225,6 @@ const _this = {
         _this.state.settings = response.settings;
         _this.state.qr_settings = response.qr_settings;
 
-        console.log(_this.state.settings);
-
         // enable QR priting
         if(_this.state.settings.qr_print == "1"){ document.querySelector(".qr-print-cnt").classList.remove('d-none'); }
 
@@ -463,7 +461,7 @@ const _this = {
 
             window.location.href = str;
 
-            console.log(str);
+            // console.log(str);
 
             // _this.state.settings.
         },

@@ -5,11 +5,12 @@ footer {
     margin-top: 32px;
     margin-bottom: 32px;
 }
-.po{cursor:pointer;}
+.po{
+    cursor:pointer;
+}
 @media (max-width: 500px){
 
     .toast{ 
         width: auto;
     }
 }
-
