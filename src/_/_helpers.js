@@ -519,7 +519,7 @@ export const printReceipt = (_this, order) => {
     };
 
     // debug vs actual print
-    data.debug = true;
+    data.debug = false;
 
     // get receipt template
     data.print = _this.state.settings.receipt_template;
