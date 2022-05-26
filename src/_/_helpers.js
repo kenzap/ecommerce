@@ -573,11 +573,11 @@ export const printReceipt = (_this, order) => {
 
 
     let order_totals  = '';
-    order_totals += '[R]Subtotal:[R]' + priceFormat(_this, o.price.total) + '\n';
-    if(o.price.discount_total > 0) order_totals += '[R]'+__('Discount')+'[R]-' + priceFormat(_this, o.price.discount_total) + '\n';
-    if(o.price.fee_total > 0) order_totals += '[R]'+_this.state.settings.fee_display+'[R]' + priceFormat(_this, o.price.fee_total) + '\n';
-    if(o.price.tax_total > 0) order_totals += '[R]'+_this.state.settings.tax_display+'[R]' + priceFormat(_this, o.price.tax_total) + '\n';
-    if(o.price.grand_total > 0) order_totals += '[R]'+__('Grand Total')+'[R]' + priceFormat(_this, o.price.grand_total);
+    order_totals += '[L]Subtotal[R]' + priceFormat(_this, o.price.total) + '\n';
+    if(o.price.discount_total > 0) order_totals += '[L]'+__('Discount')+'[R]-' + priceFormat(_this, o.price.discount_total) + '\n';
+    if(o.price.fee_total > 0) order_totals += '[L]'+_this.state.settings.fee_display+'[R]' + priceFormat(_this, o.price.fee_total) + '\n';
+    if(o.price.tax_total > 0) order_totals += '[L]'+_this.state.settings.tax_display+'[R]' + priceFormat(_this, o.price.tax_total) + '\n';
+    if(o.price.grand_total > 0) order_totals += '[L]'+__('Grand Total')+'[R]' + priceFormat(_this, o.price.grand_total);
 
     data.print = data.print.replace(/{{order_totals}}/g, order_totals);
 
