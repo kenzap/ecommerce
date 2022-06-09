@@ -1,6 +1,6 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getProductId, makeNumber, numsOnly, priceFormat, onlyNumbers } from "../_/_helpers.js"
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, loadScript, toast, link } from '@kenzap/k-cloud';
+import { getProductId, makeNumber, numsOnly, priceFormat, onlyNumbers, loadAddon } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
 
@@ -21,7 +21,7 @@ const _this = {
         showLoader();
 
         let id = getProductId();
-        let sid = getSiteId();
+        let sid = spaceID();
 
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
@@ -42,7 +42,7 @@ const _this = {
                     settings: {
                         type:       'get',
                         key:        'ecommerce-settings',
-                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display'],
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display', 'scripts_product_edit', 'addons'],
                     },
                     locale: {
                         type:       'locale',
@@ -95,6 +95,10 @@ const _this = {
 
                 // footer note
                 initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
+
+                // load addons
+                if(response.settings.addons) if(response.settings.addons.product_edit) response.settings.addons.product_edit.forEach(obj => { loadAddon(obj.src, obj.version); })
+
             }
         })
         .catch(error => { parseApiError(error); });
@@ -819,7 +823,7 @@ const _this = {
             // console.log(data);
         
             let id = getProductId();
-            let sid = getSiteId();
+            let sid = spaceID();
 
             showLoader();
 
@@ -969,11 +973,11 @@ const _this = {
         let lang = 'en';
         let offer_id = '0';
         let id = getProductId();
-        let sid = getSiteId();
+        let sid = spaceID();
         let t = '';
         for(let i=0;i<5;i++){
      
-          let img = (product.img !== undefined && product.img[i] == 'true') ? 'https://preview.kenzap.cloud/S'+getSiteId()+'/_site/images/product-'+product.id+'-'+(i+1)+'-100x100.jpeg?'+product.updated:'https://account.kenzap.com/images/placeholder.jpg';
+          let img = (product.img !== undefined && product.img[i] == 'true') ? 'https://preview.kenzap.cloud/S'+spaceID()+'/_site/images/product-'+product.id+'-'+(i+1)+'-100x100.jpeg?'+product.updated:'https://account.kenzap.com/images/placeholder.jpg';
           t+=`\
           <div class="p-img-cont float-start">\
             <p data-index="${i}">\
@@ -1027,7 +1031,7 @@ const _this = {
             fi += 1;
 
             let id = getProductId();
-            let sid = getSiteId();
+            let sid = spaceID();
 
             // console.log(file);
             let file = fileEl.files[0];

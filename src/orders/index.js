@@ -1,9 +1,11 @@
 // js dependencies
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange } from '@kenzap/k-cloud';
-import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, printReceipt, printQR, playSound, ecommerceUpdates } from "../_/_helpers.js"
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, playSound, ecommerceUpdates } from "../_/_helpers.js"
+import { tables } from "../_/_order_tables.js"
 import { preview } from "../_/_order_preview.js"
-import { print } from "../_/_order_print.js"
+// import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
+import { printReceipt, printQR } from "../_/_print.js"
 
 // where everything happens
 const _this = {
@@ -24,7 +26,7 @@ const _this = {
         playTitleTimer: null,
         refreshTimer: null,
         statuses: [],
-        limit: 25, // number of records to load per table
+        limit: 200, // number of records to load per table
         slistLimit: 10, // product suggestion fetch search limit
         productsSuggestions: []
     },
@@ -117,7 +119,7 @@ const _this = {
                     settings: {
                         type:       'get',
                         key:        'ecommerce-settings',
-                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'receipt_template', 'qr_print', 'qr_template'],
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'receipt_template', 'payment_methods', 'custom_payment_method', 'tables', 'table_list', 'qr_print', 'qr_template'],
                     }
                 }
             })
@@ -220,6 +222,7 @@ const _this = {
 
         // cache orders globally
         _this.state.orders = response.orders;
+        _this.state.meta = response.meta;
         
         // cache settings globally
         _this.state.settings = response.settings;
@@ -256,8 +259,8 @@ const _this = {
             let classN = ((_this.state.orderIDs.includes(response.orders[i]._id) || _this.state.firstLoad)?'':'new');
             list += `
             <tr class="${ classN }">
-              <td class="details">
-                <div class="ps-1 view-order" data-id="${ response.orders[i]._id }" data-index="${ i }">
+              <td class="details view-order" data-id="${ response.orders[i]._id }" data-index="${ i }">
+                <div class="ps-1" >
                   <b class="">${ (response.orders[i].id) }</b> ${ response.orders[i].from }
                   <div class=" elipsized fst-italic">${ response.orders[i].note ? response.orders[i].note : "" }</div>
                   <div class=" d-sm-none"> <span class="me-2">${ _this.getStatus(response.orders[i].status) }</span> <span class="text-muted">${ timeConverterAgo(__, response.meta.time, response.orders[i].created) }</span> </div>
@@ -311,6 +314,9 @@ const _this = {
     },
     initListeners: () => {
 
+        // view table mode
+        tables.render(_this);
+
         // view order
         preview.viewOrder(_this);
         
@@ -318,7 +324,7 @@ const _this = {
         onClick('.remove-order', _this.listeners.removeOrder);
 
         // print order
-        print.viewOrder(_this);
+        // print.viewOrder(_this);
         // onClick('.print-order', _this.listeners.printOrder);
 
         // table status change listener
@@ -502,11 +508,13 @@ const _this = {
                     for(let item of document.querySelectorAll('.order-item-row-active')){
 
                         let vars = JSON.parse(unescape(item.dataset.vars));
+                        let cats = JSON.parse(unescape(item.dataset.cats));
                         // data['items'][item.dataset.id] =
                         data['items'].push(
                             {
                                 "id": item.dataset.id,
                                 "qty": parseInt(item.querySelector('.item-qty').dataset.value),
+                                "cats": cats ? cats : [],
                                 "note": item.querySelector('.item-note').innerHTML,
                                 "type": "new",
                                 "index": "0",
@@ -537,6 +545,7 @@ const _this = {
                     data['price'] = JSON.parse(decodeURIComponent(s.dataset.price));
                     data['total'] = data['price']['total'];
                     data['total_all'] = data['price']['grand_total'];
+                    if(document.querySelector(".payment-method-select")) data['price']['payment_method'] = document.querySelector(".payment-method-select").value;
                     break;
             }
         }
@@ -547,6 +556,7 @@ const _this = {
         data['created_ymd'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1) + '' + mt(dateObj.getUTCDate());
         data['created_ym'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1);
         data['created_y'] = dateObj.getUTCFullYear() + '';
+        data['printed'] = _this.state.printLink ? true : false;
 
         // console.log(data);
 

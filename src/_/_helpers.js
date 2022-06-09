@@ -484,143 +484,55 @@ export const renderNotifications = (_this, messages) => {
     }
 }
 
-export const printReceipt = (_this, order) => {
+/*
+* Load additional JS or CSS depencies
+*
+* @param    dep       dependecy. Ex.: hiebee.min.js 
+* @param    cb        function to call after script is loaded (optional)       
+* @return 	{Boolen} 	result status 
+* 
+*/
+export const loadAddon = (dep, version, cb) => {
 
-    // vars
-    let o = order, data = {}, date = new Date();
-
-    // 58mm wide thermal printers are best to display 32 chars per line
-    let row = (txt, end_ofst) => {
-
-        let output = '', max_char = 32 - end_ofst, max_ofst = 4, ofst_prev = 0, ofst = 0, ci = 0;
-        // console.log(max_char);
-        for(let i = 0; i < Math.ceil(txt.length / max_char); i++){
-
-            // add new line print from second loop only
-            if(i>0) output += '\n[L]';
-
-            // ofst store first available whitespace break in words
-            ofst = ci = 0;
-            for(let e = max_ofst; e > -1 * max_ofst; e--){
-
-                ci = ((max_char + ofst_prev) * i) + max_char + e; if(txt[ci] == ' ' || ci == txt.length){ ofst += e; break; }
-            }
-
-            // add line row
-            output += txt.substr((max_char + ofst_prev) * i, max_char + ofst);
-
-            // line ends earlier than expected, skip loop
-            if(ci == txt.length) break;
-
-            ofst_prev = ofst;
-        }
-
-        return output;
-    };
-
-    // debug vs actual print
-    data.debug = false;
-
-    // get receipt template
-    data.print = _this.state.settings.receipt_template;
-
-    console.log(data.print);
-
-    // order id
-    data.print = data.print.replace(/{{order_id}}/g, o.id);
-
-    // current time
-    data.print = data.print.replace(/{{date_time}}/g, date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short', }));
-
-    // order items
-    let items = '';
-    for(let i in o.items){
-
-        let total = priceFormat(_this, o.items[i].total);
-        let end_ofst = (o.items[i].qty+"").length + (total+"").length + 3;
-        items += `[L]<b>${ o.items[i].qty } X ${ row(o.items[i].title, end_ofst) }</b>[R]${ total }\n`;
-        for(let v in o.items[i].variations){
-
-            items += `[L] ${ row(o.items[i].variations[v].title, 1) }:`;
-            for(let l in  o.items[i].variations[v].list) items += ` ${ o.items[i].variations[v].list[l].title },`;
-
-            if(items.endsWith(',')) items = items.substring(0, items.length - 1) + '\n';
-
-            // parse variation list
-            // let list = ''; for(let l in item[x].variations[v].list) list += item[x].variations[v].list[l].title + " ";
-            // vars += '<div><b>' + item[x].variations[v].title + "</b> <span>" + list + "</span></div> ";
     
-            // // meal note
-            // if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";
-        }
-    }
-    if(items.endsWith('\n')) items = items.substring(0, items.length - 2);
-    data.print = data.print.replace(/{{order_items}}/g, items);
+    const url = new URL(dep);
 
-    // order note
-    let note = o.note.length == 0 || o.note == '<br>' ? '' : o.note;
-    if(note.length>0){
-        //  data.print += '[C]================================';
-        data.print = data.print.replace(/{{order_note}}/g, '[C]================================\n' + note + '\n[C]================================\n');
-    }
-    // if(note.length>0) data.print += '[C]================================';
+    if(getCookie('debug')) dep = 'http://localhost:3000' + url.pathname;
+    
+    console.log(dep);
 
-    // order totals
-    data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.price.total));
-    data.print = data.print.replace(/{{tax_total}}/g, priceFormat(_this, o.price.tax_total));
-    data.print = data.print.replace(/{{discount_total}}/g, priceFormat(_this, o.price.discount_total));
-    data.print = data.print.replace(/{{grand_total}}/g, priceFormat(_this, o.price.grand_total));
+    // dependency already loaded, skip
+    if(document.getElementById(dep)){ if(typeof cb === 'function') cb.call(); return; }
 
-
-    let order_totals  = '';
-    order_totals += '[L]Subtotal[R]' + priceFormat(_this, o.price.total) + '\n';
-    if(o.price.discount_total > 0) order_totals += '[L]'+__('Discount')+'[R]-' + priceFormat(_this, o.price.discount_total) + '\n';
-    if(o.price.fee_total > 0) order_totals += '[L]'+_this.state.settings.fee_display+'[R]' + priceFormat(_this, o.price.fee_total) + '\n';
-    if(o.price.tax_total > 0) order_totals += '[L]'+_this.state.settings.tax_display+'[R]' + priceFormat(_this, o.price.tax_total) + '\n';
-    if(o.price.grand_total > 0) order_totals += '[L]'+__('Grand Total')+'[R]' + priceFormat(_this, o.price.grand_total);
-
-    data.print = data.print.replace(/{{order_totals}}/g, order_totals);
-
-    // qr link
-    data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
-    data.print = data.print.replace(/{{qr_number}}/g, document.querySelector('#qr-number').value);
-
+    // detect dependency type
+    let t = dep.split('.').slice(-1)[0];
+    // console.log(dep+'loadAddon'+t);
+    switch(t){
+      case 'js':
         
-    // let click = document.querySelector(".print-order[data-id='"+e.currentTarget.dataset.id+"']");
+        let js = document.createElement("script");
+        js.setAttribute("src", dep);
+        js.id = dep;
+        js.onload = js.onreadystatechange = function() {
+ 
+          if(!this.readyState || this.readyState == 'complete')
+            if(typeof cb === 'function') cb.call();
+        };
+        document.body.appendChild(js);
+        
+      break;
+      case 'css':
 
-    // click.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data)));
+        var head  = document.getElementsByTagName('head')[0];
+        var css  = document.createElement('link');
+        css.id   = dep;
+        css.rel  = 'stylesheet';
+        css.type = 'text/css';
+        css.href = dep;
+        head.appendChild(css);
 
-    // e.currentTarget.setAttribute('href', 'kenzapprint://kenzapprint.app?data='+JSON.stringify(data));
-
-    // alert(data.print);
-
-    let str = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
-    
-    if(data.debug) { console.log(data.print); console.log(str); }
-
-    return str;
-}
-
-export const printQR = (_this, order) => {
-
-    // vars
-    let o = order, data = {}, date = new Date();
-
-    // debug vs actual print
-    data.debug = false;
-
-    // get qr template
-    data.print = _this.state.settings.qr_template;
-
-    // qr link
-    data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
-    data.print = data.print.replace(/{{qr_number}}/g, document.querySelector('#qr-number').value);
-
-    if(data.debug) { console.log(data.print); console.log(str); }
-
-    let str = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
-
-    return str;
+      break;
+    }
 }
 
 export const getCurrencies = () => {

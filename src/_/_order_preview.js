@@ -1,5 +1,5 @@
 import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID } from '@kenzap/k-cloud';
-import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, onlyNumbers, unescape, printReceipt } from "../_/_helpers.js"
+import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, onlyNumbers, unescape } from "../_/_helpers.js"
 
 export const preview = {
 
@@ -40,7 +40,7 @@ export const preview = {
                 status: "new",
                 price: { 'discount_percent': 0 },
                 step: 1,
-                table: "1",
+                table: e.currentTarget.dataset.table ? e.currentTarget.dataset.table : "-",
                 total: 0,
                 updated: 1649833845
             }
@@ -52,7 +52,7 @@ export const preview = {
 
         preview.state.orderSingle = _this.state.orderSingle;
 
-        console.log(preview.state.orderSingle);
+        // console.log(preview.state.orderSingle);
         let items = '';
 
         // get order status
@@ -68,7 +68,7 @@ export const preview = {
                 </ul>
             </div>
             <a href="#" data-index="0" class="print-order text-success">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
                     <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"></path>
                     <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"></path>
                 </svg>
@@ -86,10 +86,7 @@ export const preview = {
 
         let html = statusSelect;
 
-        // _id: {l: __("System ID")},
-        let fields = { id: {l: __("ID"), classList: "order-form"}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
-
-        // total: {l: __("Total"), e: "price", classList: "order-form"}, total_tax: {l: __("Tax"), e: "price", classList: "order-form"}, total_with_tax: {l: __("Amount Payable"), e: "price", classList: "order-form"}, 
+        let fields = { id: {l: __("ID"), classList: "order-form"}, from: {l: __("From"), e: "text", editable: true, classList: "order-form"}, table: {l: __("Table"), e: "text", editable: true, classList: "order-form"}, items: {l: "", e: "items"}, fname: {l: __("Name"), e: "text"}, lname: {l: __("Surname"), e: "text"}, bios: {l: __("Bios"), e: "textarea"}, avatar: {l: __("Avatar"), e: "text"}, email: {l: __("Email"), e: "text"}, countryr: {l: __("Country"), e: "text"}, cityr: {l: __("City"), e: "text"}, addr1: {l: __("Address 1"), e: "textarea"}, addr2: {l: __("Address 2"), e: "textarea"}, post: {l: __("Post"), e: "text"}, state: {l: __("State"), e: "text"}, c1: {l: __("Whatsapp"), e: "text"}, c2: {l: __("Messenger"), e: "text"}, c3: {l: __("Line"), e: "text"}, c4: {l: __("Email"), e: "text"}, c5: {l: __("Telegram"), e: "text"}, email: {l: __("Email"), e: "text"}, bio: {l: __("Bio"), e: "text"}, y1: {l: __("Name"), e: "text"}, y2: {l: __("IBAN"), e: "text"}, y3: {l: __("SWIFT"), e: "text"}, y4: {l: __("Bank"), e: "text"}, y5: {l: __("Bank city"), e: "text"}, y6: {l: __("Bank country"), e: "text"}, note: {l: __("Note"), e: "textarea"}, s3: {l: __("Link 3"), e: "text"}, company: {l: __("Company"), e: "text"}, vat: {l: __("Tax ID"), e: "text"}, grade: {l: __("Grade"), e: "text"}, kenzap_ida: {l: __("Kenzap IDA"), e: "text"}};
 
         // order table details
         for(let x in fields){
@@ -137,9 +134,9 @@ export const preview = {
 
             e.preventDefault();
             
-            simulateClick(modal.querySelector(".btn-confirm"));
-
             _this.state.printLink = true;
+
+            simulateClick(modal.querySelector(".btn-confirm"));
         });
 
         // save changes to orders
@@ -191,6 +188,7 @@ export const preview = {
         switch(a.e){
             
             // case 'text': return '<input type="text" class="form-control pv" id="'+x+'" value="'+b+'">';
+
             case 'price': 
 
                 html = `<div data-id="${x}" data-type="key-number" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}" data-value="${ item }">${ priceFormat(_this, item) }</div>`;
@@ -210,7 +208,7 @@ export const preview = {
                 html += `<tr class="new-item-row">
                             <td>
                                 <div class="me-1 me-sm-3 mt-2">
-                                    <input type="text" value="" autocomplete="off" placeholder="${ __('Search..') }" class="form-control edit-item" data-id="" data-index="" list="item-suggestions">
+                                    <input type="text" value="" autocomplete="off" placeholder="${ __('Search..') }" class="form-control edit-item" data-id="" data-cats="" data-index="" list="item-suggestions">
                                     <span class="select-list-group__toggle"> </span>
                                     <ul class="s-list my-1 shadow-sm" data-toggle="false"></ul>
                                     <datalist id="item-suggestions" class="fs-12 d-none"></datalist>
@@ -268,6 +266,7 @@ export const preview = {
     if(_this.created != item[x].created){ _this.rowMark +=1; }
 
     _this.created = item[x].created;
+    item[x].cats = item[x].cats ? item[x].cats : [];
 
     // parse variations
     let vars = '', output = ''
@@ -281,7 +280,7 @@ export const preview = {
         if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";
     }
 
-    output += '<tr class="order-item-row-active row-mark'+_this.rowMark+'" data-created="'+item[x].created+'" data-x="'+x+'" data-id="'+item[x].id+'" data-vars="'+escape(JSON.stringify(item[x].variations))+'">';
+    output += '<tr class="order-item-row-active row-mark'+_this.rowMark+'" data-created="'+item[x].created+'" data-x="'+x+'" data-id="'+item[x].id+'" data-vars="'+escape(JSON.stringify(item[x].variations))+'" data-cats="'+escape(JSON.stringify(item[x].cats))+'">';
     output += '<td><div class="item-title" contenteditable="false" data-value="'+item[x].title+'" data-sdesc="'+(item[x].sdesc ? item[x].sdesc : "")+'">' + item[x].title + '</div><div class="item-note text-muted mb-1 '+( (item[x].note.length==0 || item[x].note == '<br>') && !isNew ? "d-none" : "" )+'" contenteditable="true" data-value="'+item[x].note+'">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="'+item[x].qty+'">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="'+item[x].price+'" data-value="'+item[x].total+'" >' + priceFormat(_this, item[x].total) + '</div><td class="'+(options?'':'d-none')+'">'+preview.itemOptions(item[x])+'</td></td>';
     output += '</tr>';
 
@@ -314,7 +313,7 @@ export const preview = {
                   products: {
                       type:       'find',
                       key:        'ecommerce-product',
-                      fields:     ['_id', 'id', 'img', 'status', 'variations', 'price', 'title'],
+                      fields:     ['_id', 'id', 'img', 'status', 'cats', 'variations', 'price', 'title'],
                       limit:      _this.state.slist,
                       // only suggesting products with status public
                       term:       [
@@ -325,8 +324,8 @@ export const preview = {
                                         value: "1",
                                     }
                                   ],
-                      offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.slist - _this.state.slist,    // automatically calculate the offset of table pagination
-                      search:     {                                                           // if s is empty search query is ignored
+                      offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.slist - _this.state.slist,       // automatically calculate the offset of table pagination
+                      search:     {                                                                                 // if s is empty search query is ignored
                                       field: 'title',
                                       s: s
                                   },
@@ -369,6 +368,7 @@ export const preview = {
                   
                   document.querySelector('.edit-item').dataset.index = index;   
                   document.querySelector('.edit-item').dataset.id = _this.state.productsSuggestions[index]._id;   
+                  document.querySelector('.edit-item').dataset.cats = JSON.stringify(_this.state.productsSuggestions[index].cats);   
                   document.querySelector('.edit-item').value = _this.state.productsSuggestions[index].title;   
                   document.querySelector('.edit-qty').value = 1;
                   document.querySelector('.edit-qty').dataset.price = _this.state.productsSuggestions[index].price;
@@ -466,8 +466,6 @@ export const preview = {
     // defaults
     let price = { grand_total: 0, total: makeNumber(grand_total_temp), discount_percent: document.querySelector('.discount-percent-inp') ? parseInt(document.querySelector('.discount-percent-inp').value) : preview.state.orderSingle['price']['discount_percent'] ? preview.state.orderSingle['price']['discount_percent'] : 0, discount_value: document.querySelector('.discount-value-inp') ? parseFloat(document.querySelector('.discount-value-inp').value) : preview.state.orderSingle['price']['discount_value'] ? preview.state.orderSingle['price']['discount_value'] : 0, discount_total: 0, fee_total: 0, tax_total: 0, tax_percent: 0 };
 
-    console.log(price);
-
     // subtotal
     let ordertotalsubtotal =
             `<div class="mb-2 mt-2 order-total-subtotal order-row text-right elipsized keyx-total">
@@ -475,6 +473,30 @@ export const preview = {
              </div>`;
 
     html += ordertotalsubtotal;
+
+    // console.log(preview.state.orderSingle.price);
+
+    // payment method
+    if(preview._this.state.settings.custom_payment_method == "1"){
+        
+        let options = '';
+        preview._this.state.settings.payment_methods.trim().split('\n').forEach((el, i) => {
+
+            options += `<option value="${ el }" ${ preview.state.orderSingle.price['payment_method'] == el ? 'selected' : '' } >${ el }</option>`;
+        });
+
+        let ordertotalpaymentmethod =
+        `<div class="mb-2 mt-2 order-total-payment_method order-row text-right keyx-payment_method">
+            <b>${ __('Payment') }</b>
+            <div class="ms-2 d-inline-block" >
+                <select class="form-select form-select-sm payment-method-select" data-type="select" aria-label="Default payment method">
+                    ${ options }
+                </select>
+            </div>
+        </div>`;
+
+        html += ordertotalpaymentmethod;
+    }
 
     if(document.querySelector('.order-total-subtotal')){ document.querySelector('.order-total-subtotal').outerHTML = ordertotalsubtotal; }
 
@@ -708,6 +730,7 @@ export const preview = {
       let x = 0, itemArr = [], item = {};
 
       item.id = document.querySelector('.edit-item').dataset.id;   
+      item.cats = JSON.parse(document.querySelector('.edit-item').dataset.cats);   
       item.title = document.querySelector('.edit-item').value;   
       item.total = parseFloat(document.querySelector('.edit-tp').value);
       item.price = parseInt(document.querySelector('.edit-tp').dataset.price);

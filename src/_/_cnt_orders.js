@@ -37,7 +37,7 @@ export const HTMLContent = (__) => {
               <input id="qr-number" type="text" class="inp form-control form-control-sm qr-number p-0 px-2 me-2 ms-0" autocomplete="off" style="max-width:100px;" placeholder="${ __('QR number') }">
             </div>
             <div class="d-inline-block">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-qr-code-scan print-qr po" viewBox="0 0 16 16">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-qr-code-scan print-qr po" viewBox="0 0 16 16">
                 <path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0v-3Zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5ZM.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5Zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5ZM4 4h1v1H4V4Z"/>
                 <path d="M7 2H2v5h5V2ZM3 3h3v3H3V3Zm2 8H4v1h1v-1Z"/>
                 <path d="M7 9H2v5h5V9Zm-4 1h3v3H3v-3Zm8-6h1v1h-1V4Z"/>
@@ -46,6 +46,11 @@ export const HTMLContent = (__) => {
               </svg>
             </div>
           </div> 
+        </div>
+
+        <div id="orders-after-header">
+
+
         </div>
 
         <div class="row">
