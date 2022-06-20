@@ -1,5 +1,5 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange, __html } from '@kenzap/k-cloud';
 import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, playSound, ecommerceUpdates } from "../_/_helpers.js"
 import { tables } from "../_/_order_tables.js"
 import { preview } from "../_/_order_preview.js"
@@ -172,7 +172,7 @@ const _this = {
         if(!_this.state.firstLoad) return;
 
         // get core html content 
-        document.querySelector('#contents').innerHTML = HTMLContent(__);
+        document.querySelector('#contents').innerHTML = HTMLContent();
     },
     renderPage: (response) => {
 
@@ -181,40 +181,40 @@ const _this = {
             // initiate breadcrumbs
             initBreadcrumbs(
                 [
-                    { link: link('https://dashboard.kenzap.cloud'), text: __('Dashboard') },
-                    { link: link('/'), text: __('E-commerce') },
-                    { text: __('Orders') }
+                    { link: link('https://dashboard.kenzap.cloud'), text: __html('Dashboard') },
+                    { link: link('/'), text: __html('E-commerce') },
+                    { text: __html('Orders') }
                 ]
             );
 
             // initialize statuses
             _this.state.statuses = {
                 'new': { 
-                    text: __('New'),
+                    text: __html('New'),
                     class: 'btn-warning text-dark fw-light'
                 },
                 'paid': {
-                    text: __('Paid'),
+                    text: __html('Paid'),
                     class: 'btn-primary fw-light'
                 },
                 'processing': { 
-                    text: __('Processing'),
+                    text: __html('Processing'),
                     class: 'btn-primary fw-light'
                 },
                 'completed': { 
-                    text: __('Completed'),
+                    text: __html('Completed'),
                     class: 'btn-success fw-light'
                 },
                 'canceled': { 
-                    text: __('Canceled'),
+                    text: __html('Canceled'),
                     class: 'btn-secondary fw-light'
                 },
                 'failed': { 
-                    text: __('Failed'),
+                    text: __html('Failed'),
                     class: 'btn-danger fw-light'
                 },
                 'refunded': { 
-                    text: __('Refunded'),
+                    text: __html('Refunded'),
                     class: 'btn-danger fw-light'
                 }
             };
@@ -234,7 +234,7 @@ const _this = {
         // no orders in the list
         if (response.orders.length == 0){
 
-            document.querySelector(".table tbody").innerHTML = `<tr><td colspan="5">${ __("No orders to display.") }</td></tr>`;
+            document.querySelector(".table tbody").innerHTML = `<tr><td colspan="5">${ __html("No orders to display.") }</td></tr>`;
             return;
         }
 
@@ -371,7 +371,7 @@ const _this = {
 
             let os = document.querySelector('#order-status');
             if(e.currentTarget.dataset.key == ""){
-                os.innerHTML = __('All')
+                os.innerHTML = __html('All')
                 os.dataset.value = '';
             }else{
                 os.innerHTML = _this.state.statuses[e.currentTarget.dataset.key].text;
@@ -485,7 +485,7 @@ const _this = {
         if(modal.querySelector(".btn-confirm").dataset.loading === 'true') return;
 
         modal.querySelector(".btn-confirm").dataset.loading = true;
-        modal.querySelector(".btn-confirm").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' + __('Loading..');
+        modal.querySelector(".btn-confirm").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' + __html('Loading..');
 
         let data = {};
 
@@ -647,7 +647,6 @@ const _this = {
     initFooter: () => {
         
         initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
-        // initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 

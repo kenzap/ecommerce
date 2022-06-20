@@ -1,4 +1,4 @@
-import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID, __html } from '@kenzap/k-cloud';
 import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, onlyNumbers, unescape } from "../_/_helpers.js"
 
 export const preview = {
@@ -195,7 +195,7 @@ export const preview = {
                 return html;
             case 'text': 
 
-                html = `<div data-id="${x}" data-type="text" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}">${ item }</div>`;
+                html = `<div data-id="${x}" data-type="text" class="${ a.classList ? a.classList : "" } ms-2 d-inline-block p-1" ${ a.editable ? 'contenteditable="true"':'' } data-id="${x}" style="min-width:50px;">${ item }</div>`;
                 return html;
             case 'textarea': return '<textarea type="text" rows="4" class="form-control order-form pv " data-type="textarea" id="'+x+'" value="'+item+'">'+item+'</textarea>';
             case 'items': 
@@ -469,7 +469,7 @@ export const preview = {
     // subtotal
     let ordertotalsubtotal =
             `<div class="mb-2 mt-2 order-total-subtotal order-row text-right elipsized keyx-total">
-                <b>${ __('Subtotal') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.total) }</div>
+                <b>${ __html('Subtotal') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.total) }</div>
              </div>`;
 
     html += ordertotalsubtotal;
@@ -580,7 +580,7 @@ export const preview = {
     price.grand_total = makeNumber(grand_total_temp);
     let ordertotalgrandtotal =
             `<div class="mb-2 mt-2 order-total-grandtotal order-row text-right elipsized">
-                <b>${ __('Grand Total') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.grand_total) }</div>
+                <b>${ __html('Grand Total') }</b><div class="ms-2 d-inline-block" data-type="key-number" >${ priceFormat(preview._this, price.grand_total) }</div>
              </div>`;
 
     html += ordertotalgrandtotal;
@@ -608,7 +608,7 @@ export const preview = {
 
                 case 'value':
 
-                    document.querySelector('#discount-type').innerHTML = __('Discount by value');
+                    document.querySelector('#discount-type').innerHTML = __html('Discount by value');
                     document.querySelector('.discount-value-inp').style.maxWidth = '120px';
                     document.querySelector('.discount-value-inp').classList.remove('d-none');
                     document.querySelector('.discount-percent-inp').classList.add('d-none');
@@ -616,7 +616,7 @@ export const preview = {
                     break;
                 case 'percent':
 
-                    document.querySelector('#discount-type').innerHTML = __('Discount by %');
+                    document.querySelector('#discount-type').innerHTML = __html('Discount by %');
                     document.querySelector('.discount-percent-inp').style.maxWidth = '70px';
                     document.querySelector('.discount-value-inp').classList.add('d-none');
                     document.querySelector('.discount-percent-inp').classList.remove('d-none');
@@ -791,7 +791,7 @@ export const preview = {
     //   }
 
 
-      if(item.title.length<2){ alert(__('Incorrect product data')); return; }
+      if(item.title.length<2){ alert( __('Incorrect product data') ); return; }
 
       itemArr.push(item);
 

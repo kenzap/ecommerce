@@ -1,32 +1,34 @@
-export const HTMLContent = (__) => {
+import { __html } from '@kenzap/k-cloud';
+
+export const HTMLContent = () => {
 
     return `
       <div class="container ec-orders">
         <div class="d-md-flex justify-content-between bd-highlight mb-3">
             <nav class="bc" aria-label="breadcrumb"></nav>
-            <button class="btn btn-primary add-order btn-add mt-3 mb-1 mt-md-0 mb-md-0" type="button">${ __('New order') }</button>
+            <button class="btn btn-primary add-order btn-add mt-3 mb-1 mt-md-0 mb-md-0" type="button">${ __html('New order') }</button>
         </div>
         <div class="d-md-flex justify-content-between bd-highlight mb-3">
           <div>
             <div class="col-md-12 page-title">
               <div class="st-opts st-table dropdown">
                   <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="order-status" data-id="status" data-value="" data-bs-toggle="dropdown" aria-expanded="false">
-                    ${ __('All') }
+                    ${ __html('All') }
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="order-status">
-                    <li><a class="dppi dropdown-item" data-key="" href="#" >${ __('All') }</a></li>
-                    <li><a class="dppi dropdown-item" data-key="new" href="#" >${ __('New') }</a></li>
-                    <li><a class="dppi dropdown-item" data-key="paid" href="#" >${ __('Paid') }</a></li>
-                    <li><a class="dppi dropdown-item" data-key="processing" href="#" >${ __('Processing') }</a></li>
-                    <li><a class="dppi dropdown-item" data-key="completed" href="#" >${ __('Completed') }</a></li>
-                    <li><a class="dppi dropdown-item" data-key="canceled" href="#" >${ __('Canceled') }</a></li>
-                    <li><a class="dppi dropdown-item" data-key="failed" href="#" >${ __('Failed') }</a></li>
-                    <li><a class="dppi dropdown-item" data-key="refunded" href="#" >${ __('Refunded') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="" href="#" >${ __html('All') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="new" href="#" >${ __html('New') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="paid" href="#" >${ __html('Paid') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="processing" href="#" >${ __html('Processing') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="completed" href="#" >${ __html('Completed') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="canceled" href="#" >${ __html('Canceled') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="failed" href="#" >${ __html('Failed') }</a></li>
+                    <li><a class="dppi dropdown-item" data-key="refunded" href="#" >${ __html('Refunded') }</a></li>
                   </ul>
               </div>
               <div class="st-opts" >
                 <div class="input-group-sm mb-0 justify-content-start mb-sm-0" >
-                  <input id="usearch" type="text" class="inp form-control search-input" autocomplete="off" placeholder="${ __('Search order') }">
+                  <input id="usearch" type="text" class="inp form-control search-input" autocomplete="off" placeholder="${ __html('Search order') }">
                 </div>
                 <!-- <a id="viewSum" href="#" style="margin-left:16px;">view summary</a> -->
               </div>
@@ -62,10 +64,10 @@ export const HTMLContent = (__) => {
                   <table class="table table-hover table-borderless align-middle table-striped table-p-list mb-0">
                     <thead>
                       <tr>
-                        <th><span class="ps-1">${ __('From') }</span></th>
-                        <th class="d-none d-sm-table-cell">${ __('Status') }</th>
-                        <th>${ __('Subtotal') }</th>
-                        <th class="d-none d-sm-table-cell">${ __('Time') }</th>
+                        <th><span class="ps-1">${ __html('From') }</span></th>
+                        <th class="d-none d-sm-table-cell">${ __html('Status') }</th>
+                        <th>${ __html('Subtotal') }</th>
+                        <th class="d-none d-sm-table-cell">${ __html('Time') }</th>
                         <th></th>
                       </tr>
                     </thead>

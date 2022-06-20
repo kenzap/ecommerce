@@ -1,4 +1,17 @@
-import { getCookie, getSiteId, simulateClick, headers } from '@kenzap/k-cloud';
+import { getCookie, getSiteId, simulateClick, headers, __html } from '@kenzap/k-cloud';
+
+/* 
+texts to localize
+__('required')
+__('Size')
+__('Small')
+__('Regular')
+__('Large')
+__('Subtotal')
+__('Discount by %')
+__('Discount by value')
+__('Grand Total')
+*/
 
 export const mt = (val) => {
 
@@ -252,7 +265,7 @@ export const parseVariations = (_this, product) => {
 
         // struct variation
         html_vars += '\
-        <b>' + __(product.variations[v].title) + (product.variations[v].required == '1' ? ' <span class="tag">'+__('required')+'</span>':'')+'</b>\
+        <b>' + __html(product.variations[v].title) + (product.variations[v].required == '1' ? ' <span class="tag">'+__html('required')+'</span>':'')+'</b>\
         <div class="kp-'+type+'" >';
 
         // variation labels
@@ -277,7 +290,7 @@ export const parseVariations = (_this, product) => {
                                 <polyline points="4 11 8 15 16 6"></polyline>\
                             </svg>\
                         </div>\
-                        <span>'+__(product.variations[v].data[d]['title'])+'</span>\
+                        <span>'+__html(product.variations[v].data[d]['title'])+'</span>\
                         <div class="price">+ '+priceFormat(_this, product.variations[v].data[d]['price'])+'</div>\
                     </label>';
                 
@@ -287,7 +300,7 @@ export const parseVariations = (_this, product) => {
                 html_vars += '\
                     <label>\
                         <input type="radio" data-required="'+product.variations[v].required+'" data-indexv="'+v+'" name="radio'+v+'" data-index="'+d+'" data-title="'+product.variations[v].data[d]['title']+'" data-titlev="'+__(product.variations[v].title)+'" data-price="'+product.variations[v].data[d]['price']+'" '+(checked?'checked="checked"':'')+' />\
-                        <span>'+__(product.variations[v].data[d]['title'])+'</span>\
+                        <span>'+__html(product.variations[v].data[d]['title'])+'</span>\
                         <div class="price">+ '+priceFormat(_this, product.variations[v].data[d]['price'])+'</div>\
                     </label>';
                 
