@@ -5,7 +5,7 @@ import { tables } from "../_/_order_tables.js"
 import { preview } from "../_/_order_preview.js"
 // import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
-import { printReceipt, printQR } from "../_/_print.js"
+import { printReceipt, printQR, autoPrint } from "../_/_print.js"
 
 // where everything happens
 const _this = {
@@ -332,6 +332,9 @@ const _this = {
 
         // break here if initListeners is called more than once
         if(!_this.state.firstLoad) return;
+
+        // turn on auto printing  
+        setInterval((_this) => { autoPrint(_this); }, 10000, _this);
 
         // add new order listener
         preview.newOrder(_this);

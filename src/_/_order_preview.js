@@ -273,8 +273,8 @@ export const preview = {
     for(let v in item[x].variations){
 
         // parse variation list
-        let list = ''; for(let l in item[x].variations[v].list) list += item[x].variations[v].list[l].title + " ";
-        vars += '<div><b>' + item[x].variations[v].title + "</b> <span>" + list + "</span></div> ";
+        let list = ''; for(let l in item[x].variations[v].list) list += __html(item[x].variations[v].list[l].title) + " ";
+        vars += '<div><b>' + __html(item[x].variations[v].title) + "</b> <span>" + list + "</span></div> ";
 
         // meal note
         if(item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";

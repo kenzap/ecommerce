@@ -83,7 +83,7 @@ export const printReceipt = (_this, order) => {
     data.print = data.print.replace(/{{grand_total}}/g, priceFormat(_this, o.price.grand_total));
 
     let order_totals  = '';
-    order_totals += '[L]Subtotal[R]' + priceFormat(_this, o.price.total) + '\n';
+    order_totals += '[L]'+__('Subtotal')+'[R]' + priceFormat(_this, o.price.total) + '\n';
     if(o.price.discount_total > 0) order_totals += '[L]'+__('Discount')+'[R]-' + priceFormat(_this, o.price.discount_total) + '\n';
     if(o.price.fee_total > 0) order_totals += '[L]'+_this.state.settings.fee_display+'[R]' + priceFormat(_this, o.price.fee_total) + '\n';
     if(o.price.tax_total > 0) order_totals += '[L]'+_this.state.settings.tax_display+'[R]' + priceFormat(_this, o.price.tax_total) + '\n';
@@ -136,11 +136,12 @@ export const row = (txt, end_ofst) => {
 export const getPrintItems = (_this, o, cat) => {
 
     let items = '';
+    // console.log(o.items);
     for(let i in o.items){
 
         // console.log(cat);
         // console.log(o.items[i].cats);
-        // if(!o.items[i].cats) o.items[i].cats = [];
+        if(o.items[i].cats == undefined) o.items[i].cats = [];
 
         if(!o.items[i].cats.includes(cat) && cat.length > 0) continue;
 
@@ -182,6 +183,35 @@ export const printQR = (_this, order) => {
     return str;
 }
 
+export const autoPrint = (_this) => {
+
+    // console.log("autoPrint");
+
+    let last_print_id = localStorage.hasOwnProperty("last_print_id") ? localStorage.getItem("last_print_id") : 0;
+    let i = _this.state.orders.length;
+
+    while (i > 0){
+
+        i--;
+
+        if(_this.state.orders[i].status == "new" && parseInt(_this.state.orders[i].id) > last_print_id){
+
+            _this.state.printLink = printReceipt(_this, _this.state.orders[i]);
+
+            localStorage.setItem("last_print_id", _this.state.orders[i].id);
+
+            window.location.href = _this.state.printLink;
+
+            _this.state.printLink = null;
+
+            toast( __('Printing order #' + _this.state.orders[i].id) );
+
+            // console.log("printing " + _this.state.orders[i].id);
+            // console.log("link " + _this.state.printLink);
+            break;
+        }
+    }
+}
 
 // export const print = {
 

@@ -137,6 +137,21 @@ const _this = {
                 case 'radio': document.querySelector("[name='"+field+"'][value='"+response.settings[field]+"']").checked = true; break;
             }
         }
+
+        // local fields
+        for(let field of document.querySelectorAll('.inp-local')){
+
+            switch(document.querySelector("[name='"+field.name+"']").dataset.type){
+        
+                case 'text':   
+                case 'email':  
+                case 'emails':  
+                case 'select':
+                case 'textarea': field.value = localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) : ""; break;
+                case 'checkbox': console.log(localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) : false); field.checked = localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) == "true" ? true : false : false; break;
+                // case 'radio': document.querySelector("[name='"+field+"'][value='"+response.settings[field]+"']").checked = true; break;
+            }
+        }
     },
     initListeners: () => {
 
@@ -234,6 +249,21 @@ const _this = {
                 case 'textarea': data[s.id] = s.value; break;
                 case 'checkbox': data[s.id] = s.checked ? s.value : ""; break;
                 case 'radio': data[s.name] = s.parentElement.parentElement.parentElement.parentElement.querySelector('input:checked').value; break;
+            }
+        }
+
+        // iterate through local stored fields
+        for(let field of document.querySelectorAll('.inp-local')){
+
+            switch(document.querySelector("[name='"+field.name+"']").dataset.type){
+        
+                case 'text':
+                case 'email':
+                case 'emails':
+                case 'select':
+                case 'textarea': localStorage.setItem(field.name, field.value); break;
+                case 'checkbox': localStorage.setItem(field.name, field.checked); break;
+                // case 'radio': document.querySelector("[name='"+field+"'][value='"+response.settings[field]+"']").checked = true; break;
             }
         }
 
