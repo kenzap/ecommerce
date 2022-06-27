@@ -158,7 +158,7 @@ table.items td {
 }
 table.items .qty {
   text-align: right;
-  max-width: 100px;
+  width: 100px;
 }
 table.items .edit-qty {
   text-align: right;
@@ -166,7 +166,7 @@ table.items .edit-qty {
 }
 table.items .tp {
   text-align: right;
-  max-width: 100px;
+  max-width: 120px;
 }
 table.items .edit-tp {
   text-align: right;

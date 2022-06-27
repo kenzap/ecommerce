@@ -491,6 +491,7 @@ const _this = {
                 <div class="form-group mb-3">
                     <label for="discount-availability" class="form-label">${ __('Availability') }</label>
                     <select id="discount-availability" class="form-control " >
+                        <option ${ availability=='admin'?'selected="selected"':'' } value="admin">${ __('Admin') }</option>
                         <option ${ availability=='always'?'selected="selected"':'' } value="always">${ __('Always') }</option>
                         <option ${ availability=='hourly'?'selected="selected"':'' } value="hourly">${ __('Hourly') }</option>
                         <option ${ availability=='weekly'?'selected="selected"':'' } value="weekly">${ __('Weekly') }</option>
@@ -582,6 +583,10 @@ const _this = {
 
                 switch(e.currentTarget.value){
 
+                    case 'admin':
+                        document.querySelector('#discount-weekly').classList.add('d-none');
+                        document.querySelector('#discount-hourly').classList.add('d-none');
+                    break;
                     case 'always':
                         document.querySelector('#discount-weekly').classList.add('d-none');
                         document.querySelector('#discount-hourly').classList.add('d-none');
@@ -688,6 +693,8 @@ const _this = {
                 obj.availability = document.querySelector("#discount-availability").value;
 
                 if(obj.availability == 'always') {
+
+                }else if(obj.availability == 'admin') {
 
                 }else if(obj.availability == 'hourly') {
                     
@@ -1098,6 +1105,7 @@ const _this = {
             let time = '';
             switch(el.availability){
 
+                case 'admin': time = __('Admin') + ' ' + dv; break;
                 case 'always': time = __('Always') + ' ' + dv; break;
                 case 'hourly': time = el.hours.from + '-' + el.hours.to + ' ' + dv; break;
                 case 'weekly': el.dow.forEach((day, index) => { time += day == true ? dow[index] + ' ' : ''; }); time += '<b>' + el.hours.from + '-' + el.hours.to + '</b> ' + dv; break;

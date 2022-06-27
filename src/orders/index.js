@@ -515,23 +515,27 @@ const _this = {
 
                         let vars = JSON.parse(unescape(item.dataset.vars));
                         let cats = JSON.parse(unescape(item.dataset.cats));
-                        // data['items'][item.dataset.id] =
-                        data['items'].push(
-                            {
-                                "id": item.dataset.id,
-                                "qty": parseInt(item.querySelector('.item-qty').dataset.value),
-                                "cats": cats ? cats : [],
-                                "note": item.querySelector('.item-note').innerHTML,
-                                "type": "new",
-                                "index": "0",
-                                "price": parseFloat(item.querySelector('.item-total').dataset.price),
-                                "sdesc": item.querySelector('.item-title').dataset.sdesc,
-                                "title": item.querySelector('.item-title').dataset.value,
-                                // "priceF": parseFloat(item.querySelector('.item-total').dataset.value),
-                                "total": parseFloat(item.querySelector('.item-total').dataset.value),
-                                "variations": id == 'new' ? [] : vars ? vars : [],
-                            }
-                        );
+                        let obj = {
+                            "id": item.dataset.id,
+                            "qty": parseInt(item.querySelector('.item-qty').dataset.value),
+                            "cats": cats ? cats : [],
+                            "note": item.querySelector('.item-note').innerHTML,
+                            "type": "new",
+                            "index": "0",
+                            "price": parseFloat(item.querySelector('.item-total').dataset.price),
+                            "sdesc": item.querySelector('.item-title').dataset.sdesc,
+                            "title": item.querySelector('.item-title').dataset.value,
+                            // "priceF": parseFloat(item.querySelector('.item-total').dataset.value),
+                            "total": parseFloat(item.querySelector('.item-total').dataset.value),
+                            "variations": id == 'new' ? [] : vars ? vars : [],
+                        }
+
+                        // get discount
+                        // let discount_type = document.querySelector('.edit-discount').options[document.querySelector('.edit-discount').selectedIndex].dataset.type;
+                        if (item.querySelector('.item-total').dataset.discount_percent) { obj.discount_percent = item.querySelector('.item-total').dataset.discount_percent; }
+                        if (item.querySelector('.item-total').dataset.discount_value) { obj.discount_value = item.querySelector('.edit-total').dataset.discount_value; }
+                    
+                        data['items'].push(obj);
                     }
                     
                 break
@@ -564,7 +568,7 @@ const _this = {
         data['created_y'] = dateObj.getUTCFullYear() + '';
         data['printed'] = _this.state.printRequest ? true : false;
 
-        // console.log(data);
+        console.log(data);
 
         // create new order
         if(id == 'new'){
