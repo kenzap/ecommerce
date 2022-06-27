@@ -5,7 +5,7 @@ import { tables } from "../_/_order_tables.js"
 import { preview } from "../_/_order_preview.js"
 // import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
-import { printReceipt, printQR, autoPrint } from "../_/_print.js"
+import { printQR, printReceipt, autoPrint, isPrintQREnabled } from "../_/_print.js"
 
 // where everything happens
 const _this = {
@@ -18,6 +18,8 @@ const _this = {
         playSound: { allowed: false, ids: null, nids: [], n: 0, max_times: 5, timer: null, audio: new Audio('https://kenzap.com/static/swiftly.mp3') },
         orderIDs: [],
         printLink: null, // storing receipt print pending order 
+        printRequest: null, // storing receipt print pending order 
+        user: {}, // where user data is cached
         orders: [], // where all requested orders are cached
         settings: {}, // where all requested settings are cached
         qr_settings: {}, // where all requested settings are cached
@@ -69,7 +71,13 @@ const _this = {
         if (_this.state.firstLoad) showLoader();
 
         // check if any print pending receipts
-        if (_this.state.printLink){ window.location.href = _this.state.printLink; _this.state.printLink = null; }
+        // if (_this.state.printLink){ window.location.href = _this.state.printLink; _this.state.printLink = null; }
+        // if (_this.state.printLink){
+
+        //     printReceipt(_this); 
+        //     // window.location.href = _this.state.printLink; _this.state.printLink = null; 
+        // }
+        if(_this.state.printRequest){ printReceipt(_this, _this.state.printRequest, "user"); }
 
         // search content
         let s = document.querySelector('.search-input') ? document.querySelector('.search-input').value : '';
@@ -88,7 +96,7 @@ const _this = {
                 query: {
                     user: {
                         type:       'authenticate',
-                        fields:     ['avatar'],
+                        fields:     ['avatar', 'id'],
                         token:      getCookie('kenzap_token')
                     },
                     locale: {
@@ -119,7 +127,7 @@ const _this = {
                     settings: {
                         type:       'get',
                         key:        'ecommerce-settings',
-                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'receipt_template', 'payment_methods', 'custom_payment_method', 'tables', 'table_list', 'qr_print', 'qr_template'],
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'payment_methods', 'custom_payment_method', 'tables', 'table_list', 'templates'],
                     }
                 }
             })
@@ -221,15 +229,19 @@ const _this = {
         }
 
         // cache orders globally
+        _this.state.user = response.user;
         _this.state.orders = response.orders;
         _this.state.meta = response.meta;
         
         // cache settings globally
         _this.state.settings = response.settings;
-        _this.state.qr_settings = response.qr_settings;
+        // _this.state.qr_settings = response.qr_settings;
+
+        if (!_this.state.settings['templates']){ _this.state.settings['templates'] = []; }
 
         // enable QR priting
-        if(_this.state.settings.qr_print == "1"){ document.querySelector(".qr-print-cnt").classList.remove('d-none'); }
+        _this.state.settings.qr_print = isPrintQREnabled(_this);
+        if (_this.state.settings.qr_print){ document.querySelector(".qr-print-cnt").classList.remove('d-none'); }
 
         // no orders in the list
         if (response.orders.length == 0){
@@ -333,8 +345,8 @@ const _this = {
         // break here if initListeners is called more than once
         if(!_this.state.firstLoad) return;
 
-        // turn on auto printing  
-        setInterval((_this) => { autoPrint(_this); }, 10000, _this);
+        // turn on auto printing 
+        autoPrint(_this);
 
         // add new order listener
         preview.newOrder(_this);
@@ -344,9 +356,6 @@ const _this = {
         
         // search orders
         onKeyUp('.search-input', _this.listeners.searchOrders);
-
-        // print custom QR code
-        onClick('.print-qr', _this.listeners.printQR);
 
         // track first touch iteration to allow sound to play
         document.body.addEventListener('touchstart', function(){ _this.state.playSound.allowed = true ; }, false);
@@ -462,18 +471,12 @@ const _this = {
             // console.log('search products ' +e.currentTarget.value);
         },
 
-        printQR: (e) => {
+        // printQR: (e) => {
         
-            e.preventDefault();
+        //     e.preventDefault();
 
-            let str = printQR(_this, []);
-
-            window.location.href = str;
-
-            // console.log(str);
-
-            // _this.state.settings.
-        },
+        //     printQR(_this,  e.currentTarget.dataset.qrnum);
+        // },
         
         modalSuccessBtn: (e) => {
             
@@ -559,7 +562,7 @@ const _this = {
         data['created_ymd'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1) + '' + mt(dateObj.getUTCDate());
         data['created_ym'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1);
         data['created_y'] = dateObj.getUTCFullYear() + '';
-        data['printed'] = _this.state.printLink ? true : false;
+        data['printed'] = _this.state.printRequest ? true : false;
 
         // console.log(data);
 
@@ -598,7 +601,10 @@ const _this = {
 
                     toast( __('Order created') );
 
-                    if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
+                    if(_this.state.printRequest == 'new') _this.state.printRequest = data._id;
+                    
+                    // if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
+                    // if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
 
                     _this.getData();
                                     
@@ -633,7 +639,8 @@ const _this = {
 
                     toast( __('Order updated') );
 
-                    if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
+                    // _this.state.printRequest
+                    // if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
                     
                     _this.getData();
 

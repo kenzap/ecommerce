@@ -2,6 +2,7 @@
 import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, toast, link } from '@kenzap/k-cloud';
 import { getCurrencies } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_settings.js"
+import { printerSettings } from "../_/_printer_settings.js"
 
 // where everything happens
 const _this = {
@@ -33,6 +34,10 @@ const _this = {
                         type:       'authenticate',
                         fields:     ['avatar'],
                         token:      getCookie('kenzap_token')
+                    },
+                    users: {
+                        type:       'users',
+                        fields:     ['id', 'name'],
                     },
                     locale: {
                         type:       'locale',
@@ -95,7 +100,7 @@ const _this = {
         if(!_this.state.firstLoad) return;
 
         // get core html content 
-        document.querySelector('#contents').innerHTML = HTMLContent(__);
+        document.querySelector('#contents').innerHTML = HTMLContent();
     },
     renderPage: (response) => {
 
@@ -152,6 +157,9 @@ const _this = {
                 // case 'radio': document.querySelector("[name='"+field+"'][value='"+response.settings[field]+"']").checked = true; break;
             }
         }
+
+        // printer settings
+        printerSettings.init(_this);
     },
     initListeners: () => {
 
@@ -272,8 +280,14 @@ const _this = {
 
             delete data.last_order_id;
         }
-        
-        // console.log(data);
+
+        // normalize price array
+        if(data['printers']) data['printers'] = JSON.parse(data['printers']);
+
+        // get templates
+        data = printerSettings.save(_this, data);
+
+        console.log(data);
 
         // send data
         fetch('https://api-v1.kenzap.cloud/', {

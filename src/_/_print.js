@@ -2,20 +2,33 @@ import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parse
 import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, parseVariations, escape, unescape } from "../_/_helpers.js"
 
 
-export const printReceipt = (_this, order) => {
+export const printReceipt = (_this, _id, type, template) => {
 
-    // console.log(order.items);
+    let o = _this.state.orders.filter(order => { return order._id == _id; })[0], data = {}, date = new Date();
 
-    // vars
-    let o = order, data = {}, date = new Date();
+    // console.log(o);
 
     // debug vs actual print
     data.debug = false;
 
-    // get receipt template
-    data.print = _this.state.settings.receipt_template;
+    // find receipt template if none is provided
+    if(!template){
 
-    // console.log(data.print);
+        // any user designated templates?
+        let templates = _this.state.settings['templates'].filter(template => { return template.type == "receipt" && (template.user == _this.state.user.id); });
+        
+        // get default templagte
+        if(templates.length == 0) templates = _this.state.settings['templates'].filter(template => { return template.type == "receipt" && (template.user == ""); });
+
+        // assign template
+        data.print = templates.length > 0 ? templates[0].template : "Kenzap Cloud: no receipt template found";
+
+        // default
+        template = templates.length > 0 ? templates[0] : {};
+    }else{
+
+        data.print = template.template;
+    }
 
     // order id
     data.print = data.print.replace(/{{order_id}}/g, o.id);
@@ -95,13 +108,52 @@ export const printReceipt = (_this, order) => {
     data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
     data.print = data.print.replace(/{{qr_number}}/g, document.querySelector('#qr-number').value);
 
-    let str = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
+    // let str = 'kenzapprint://kenzapprint.app?data='+encodeURIComponent(JSON.stringify(data));
     
     console.log(data.print);
 
-    if(data.debug) { console.log(data.print); console.log(str); }
+    if(data.debug){ console.log(data.print); console.log(str); }
 
-    return str;
+    let printers = type == "user" ? template["user_print"] : template["auto_print"];
+
+    data["user"] = _this.state.user.id;
+    data["printers"] = printers;
+    data["type"] = "receipt";
+
+    // send data
+    fetch('https://api-print.kenzap.cloud:5001/', {
+        method: 'post',
+        headers: headers,
+        body: JSON.stringify({
+            query: {
+                print: {
+                    type:       'print',
+                    data:       data,
+                    sid:        spaceID(),
+                }
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+
+        if (response.success){
+
+            toast( __('Printing order #'+o.id) );
+
+        }else{
+
+            parseApiError(response);
+        }
+    })
+    .catch(error => {
+
+        parseApiError(error);
+    });
+
+    _this.state.printRequest = null;
+
+    return true;
 }
 
 // 58mm wide thermal printers are best to display 32 chars per line
@@ -161,7 +213,7 @@ export const getPrintItems = (_this, o, cat) => {
     return items;
 }
 
-export const printQR = (_this, order) => {
+export const printQRNative = (_this, order) => {
 
     // vars
     let o = order, data = {}, date = new Date();
@@ -183,9 +235,83 @@ export const printQR = (_this, order) => {
     return str;
 }
 
+export const printQR = (_this, qrnum) => {
+
+    // vars
+    let data = {}, date = new Date();
+
+    // debug vs actual print
+    data.debug = false;
+
+    // find QR template
+    let templates = _this.state.settings['templates'].filter(template => { return template.type == "qr" && (template.user == "" || template.user == _this.state.user.id); });
+
+    // get qr template
+    data.print = templates.length > 0 ? templates[0].template : "Kenzap Cloud: no qr template found";
+
+    // qr link
+    data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
+
+    // qr number
+    qrnum = qrnum ? qrnum : document.querySelector('#qr-number').value;
+
+    // qr number replace
+    data.print = data.print.replace(/{{qr_number}}/g, qrnum);
+
+    // if(data.debug) { console.log(data.print); }
+    console.log(data.print);
+    
+    let printers = templates[0]["user_print"];
+
+    data["user"] = _this.state.user.id;
+    data["printers"] = printers;
+    data["type"] = "qr";
+
+    // send data
+    fetch('https://api-print.kenzap.cloud:5001/', {
+        method: 'post',
+        headers: headers,
+        body: JSON.stringify({
+            query: {
+                print: {
+                    type:       'print',
+                    data:       data,
+                    sid:        spaceID(),
+                }
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+
+        if (response.success){
+
+            toast( __('Printing') );
+
+        }else{
+
+            parseApiError(response);
+        }
+    })
+    .catch(error => {
+
+        parseApiError(error);
+    });
+}
+
 export const autoPrint = (_this) => {
 
     // console.log("autoPrint");
+
+    // find auto printing receipt
+    let templates = _this.state.settings['templates'].filter(template => { return template.auto_print_action == "new" && template.type == "receipt" && (template.user == "" || template.user == _this.state.user.id); });
+
+    if(templates.length == 0) return false;
+
+    autoPrintLoop(_this, templates[0]); setInterval((_this) => { autoPrintLoop(_this, templates[0]); }, 7000, _this);
+}
+
+export const autoPrintLoop = (_this, template) => {
 
     let last_print_id = localStorage.hasOwnProperty("last_print_id") ? localStorage.getItem("last_print_id") : 0;
     let i = _this.state.orders.length;
@@ -196,21 +322,29 @@ export const autoPrint = (_this) => {
 
         if(_this.state.orders[i].status == "new" && parseInt(_this.state.orders[i].id) > last_print_id){
 
-            _this.state.printLink = printReceipt(_this, _this.state.orders[i]);
-
             localStorage.setItem("last_print_id", _this.state.orders[i].id);
 
-            window.location.href = _this.state.printLink;
+            // toast( __('Printing order #' + _this.state.orders[i].id) );
+            
+            printReceipt(_this, _this.state.orders[i]._id, "auto", template);
 
-            _this.state.printLink = null;
+            // if (link.length) window.location.href = link;
 
-            toast( __('Printing order #' + _this.state.orders[i].id) );
+            return false;
 
             // console.log("printing " + _this.state.orders[i].id);
             // console.log("link " + _this.state.printLink);
-            break;
+            // break;
         }
     }
+}
+
+export const isPrintQREnabled = (_this) => {
+
+    // find QR template
+    let templates = _this.state.settings['templates'].filter(template => { return template.type == "qr" && (template.user == "" || template.user == _this.state.user.id); });
+
+    return templates.length > 0 ? true : false;
 }
 
 // export const print = {
