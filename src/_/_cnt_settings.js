@@ -79,6 +79,33 @@ export const HTMLContent = (__) => {
                       </div>
                     </div>
                     
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${__html('Products')}</label>
+                          <div class="col-sm-9">
+                            <div class="form-check">
+                              <input id="add_products" class="form-check-input inp" name="add_products" type="checkbox" value="1" data-type="checkbox">
+                              <label class="form-check-label" for="check">
+                                ${__html('Auto add products')}
+                              </label>
+                            </div>
+                            <p class="form-text">${__html('Automatically add products to new orders.')}</p>
+                          </div> 
+                        </div>
+                      </div>
+          
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${__html('List of products')}</label>
+                          <div class="col-sm-9">
+                            <textarea id="add_products_list" class="form-control inp" name="add_products_list" rows="2" data-type="text" style="font-size:13px;font-family: monospace;"></textarea>
+                            <p class="form-text">${__html('Provide one product ID per line. Example: e98d438cby6g..')}</p>
+                          </div> 
+                        </div>
+                      </div>
+                    </div>
+
                     <h4 id="h-notifications" class="card-title mb-4 mt-4">${__html('Notifications')}</h4>
                     <div class="row">
                       <div class="col-lg-6">
@@ -536,10 +563,6 @@ export const HTMLContent = (__) => {
                           </div>
                         </div>
                       </div>
-
-                      <br>
-                      <br>
-                      <br>
 
                       <div class="row d-none">
                         <div class="col-lg-6">

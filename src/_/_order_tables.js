@@ -1,4 +1,4 @@
-import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID } from '@kenzap/k-cloud';
+import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID, __html } from '@kenzap/k-cloud';
 import { priceFormat, getPageNumber, makeNumber, parseVariations, timeConverterAgo, escape, onlyNumbers, unescape } from "../_/_helpers.js"
 import { printQR } from "../_/_print.js"
 
@@ -128,7 +128,7 @@ export const tables = {
     return `
     <div class="col">
         <div class="card ${ classes } mb-2 " style="max-width: 18rem;">
-            <div class="card-header view-order po ${ _id_header && order['status'] == 'completed' ? "bg-success" : "" }" data-id="${ _id_header }" data-table="${ el }" ${ _id_header ? 'data-index="' + ii + '"' : '' }">${ order.id ? "last order #"+order.id : "&nbsp;" }</div>
+            <div class="card-header view-order po ${ _id_header && order['status'] == 'completed' ? "bg-success" : "" }" data-id="${ _id_header }" data-table="${ el }" ${ _id_header ? 'data-index="' + ii + '"' : '' }">${ order.id ? __html("last order #%1$", order.id) : "&nbsp;" }</div>
             <div class="card-body d-flex align-items-center justify-content-center view-order po" style="min-height:140px;" data-id="${ _id_body }" data-table="${ el }" ${ _id_body ? 'data-index="' + ii + '"' : '' }">
                 <h5 class="card-title">${ __("Table %1$", el) }</h5>
             </div>

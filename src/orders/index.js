@@ -3,9 +3,8 @@ import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumb
 import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, playSound, ecommerceUpdates } from "../_/_helpers.js"
 import { tables } from "../_/_order_tables.js"
 import { preview } from "../_/_order_preview.js"
-// import { print } from "../_/_order_print.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
-import { printQR, printReceipt, autoPrint, isPrintQREnabled } from "../_/_print.js"
+import { printReceipt, autoPrint, isPrintQREnabled } from "../_/_print.js"
 
 // where everything happens
 const _this = {
@@ -119,15 +118,15 @@ const _this = {
                             order: 'DESC'
                         }
                     },
-                    qr_settings: {
-                        type:       'get',
-                        key:        'qrmenu-settings',
-                        fields:     ['slug'],
-                    },
+                    // qr_settings: {
+                    //     type:       'get',
+                    //     key:        'qrmenu-settings',
+                    //     fields:     ['slug'],
+                    // },
                     settings: {
                         type:       'get',
                         key:        'ecommerce-settings',
-                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'payment_methods', 'custom_payment_method', 'tables', 'table_list', 'templates'],
+                        fields:     ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_percent_auto', 'tax_percent', 'tax_display', 'fee_calc', 'fee_percent', 'fee_display', 'payment_methods', 'custom_payment_method', 'tables', 'table_list', 'add_products', 'add_products_list', 'templates'],
                     }
                 }
             })

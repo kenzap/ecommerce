@@ -1,4 +1,4 @@
-import { getCookie, getSiteId, simulateClick, headers, __html } from '@kenzap/k-cloud';
+import { getCookie, getSiteId, simulateClick, headers, parseApiError, __html } from '@kenzap/k-cloud';
 
 /* 
 texts to localize
@@ -546,6 +546,55 @@ export const loadAddon = (dep, version, cb) => {
 
       break;
     }
+}
+
+export const getProductsById = (_this, products, cb) => {
+
+    // do API query
+    const response_raw = fetch('https://api-v1.kenzap.cloud/', {
+        method: 'post',
+        headers: headers,
+        body: JSON.stringify({
+            query: {
+                products: {
+                    type:       'find',
+                    fields:     '*',
+                    key:        'ecommerce-product',
+                    id:         products,
+                    sortby:     {
+                        field: 'created',
+                        order: 'DESC'
+                    }
+                }
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+
+        if (response.success) {
+
+            response.products.forEach((product, i) => {
+
+                _this.state.orderSingle.items.push({
+                    cats: [],
+                    id: product._id,
+                    index: i,
+                    note: "",
+                    price: product.price,
+                    qty: 1,
+                    sdesc: __html(product.sdesc),
+                    title: __html(product.title),
+                    total: product.price,
+                    type: "new",
+                    variations: []
+                });
+            });
+
+            cb(_this);
+        }
+    })
+    .catch(error => { console.log(error); parseApiError(error); });
 }
 
 export const getCurrencies = () => {

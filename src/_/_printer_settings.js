@@ -158,11 +158,8 @@ export const printerSettings = {
 
     e.preventDefault();
 
-    // document.querySelector(".printer-type button").innerHTML = e.currentTarget.dataset.value == "bluetooth" ? '<img style="height:24px" src="http://localhost:3000/assets/img/bluetooth.webp" >' : '<img style="height:24px" src="http://localhost:3000/assets/img/ethernet.png" >';
     document.querySelector(".printer-type button").innerHTML = e.currentTarget.innerHTML;
     document.querySelector(".printer-type button").dataset.value = e.currentTarget.dataset.value;
-
-    // console.log( document.querySelector(".printer-type button").dataset.value + " " +e.currentTarget.dataset.value);
 
     if(e.currentTarget.dataset.value=="ethernet"){
 
@@ -242,7 +239,7 @@ export const printerSettings = {
           </td>
           <td>
               <div class="me-1 me-sm-3 my-1">
-                ${ obj.type == "bluetooth" ? '<img style="height:24px" src="http://localhost:3000/assets/img/bluetooth.webp" >' : '<img style="height:24px" src="http://localhost:3000/assets/img/ethernet.png" >' } ${ obj.type }
+                ${ obj.type == "bluetooth" ? '<img style="height:24px" src="/assets/img/bluetooth.webp" >' : '<img style="height:24px" src="/assets/img/ethernet.png" >' } ${ obj.type }
               </div>
           </td>
           <td class="">
@@ -310,7 +307,7 @@ export const printerSettings = {
     });
 
     return `
-    <div class="accordion-item mb-3" data-index="${i-1}" >
+    <div class="accordion-item border-0 mb-3" data-index="${i-1}" >
       <h2 class="accordion-header" id="flush-heading-${i}">
         <button class="accordion-button ${ (i == 1 || show) ? "":"collapsed" }" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-${i}" aria-expanded="${ (i || show) == 1 ? "true":"false" }" aria-controls="flush-collapse-${i}">
           ${ __html("Template #%1$", i) }

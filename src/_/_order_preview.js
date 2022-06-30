@@ -1,5 +1,5 @@
 import { headers, showLoader, hideLoader, onClick, onKeyUp, simulateClick, parseApiError, spaceID, __html, onChange } from '@kenzap/k-cloud';
-import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, onlyNumbers, unescape } from "../_/_helpers.js"
+import { priceFormat, getPageNumber, makeNumber, parseVariations, escape, onlyNumbers, getProductsById, unescape } from "../_/_helpers.js"
 
 export const preview = {
 
@@ -7,8 +7,8 @@ export const preview = {
     state: { orderSingle: null },
     renderOrder: (_this, e) => {
 
-        let modal = document.querySelector(".order-modal");
-        _this.modalCont = new bootstrap.Modal(modal);
+        _this.modal = document.querySelector(".order-modal");
+        _this.modalCont = new bootstrap.Modal(_this.modal);
         _this.modalOpen = true;
         _this.rowMark = -1;
         let i = e.currentTarget.dataset.index;
@@ -16,7 +16,7 @@ export const preview = {
         // to properly handle back button on mobiles
         history.pushState({ pageID: 'orders' }, 'Orders', window.location.pathname + window.location.search + "#editing");
 
-        modal.addEventListener('hide.bs.modal', function (e) {
+        _this.modal.addEventListener('hide.bs.modal', function (e) {
 
             if (window.location.href.indexOf("#editing") == -1) return;
 
@@ -45,98 +45,38 @@ export const preview = {
                 updated: 1649833845
             }
 
+            // auto add product
+            if(_this.state.orderSingle._id == 'new' && _this.state.settings.add_products == "1"){
+
+                let products = _this.state.settings.add_products_list.trim().split('\n');
+
+                getProductsById(_this, products, preview.renderOrderUI);
+
+            }else{
+
+                preview.renderOrderUI(_this);
+            }
+
         } else {
 
             _this.state.orderSingle = _this.state.orders[i];
+
+            preview.renderOrderUI(_this);
         }
-
-        preview.state.orderSingle = _this.state.orderSingle;
-
-        // console.log(preview.state.orderSingle);
-        let items = '';
-
-        // get order status
-        Object.keys(_this.state.statuses).forEach((key, index) => { items += `<li><a class="dppi dropdown-item" data-key="${key}" href="#">${_this.state.statuses[key].text}</a></li>` })
-        let statusSelect = `
-        <div class="d-flex justify-content-between">
-            <div class="st-modal st-opts mb-3 me-1 me-sm-3 dropdown">
-                <a class="btn btn-sm ${_this.state.statuses[_this.state.orderSingle['status']].class} dropdown-toggle order-form" data-id="status" data-type="key" data-value="${_this.state.orderSingle['status']}" href="#" role="button" id="order-status-modal" data-bs-toggle="dropdown" aria-expanded="false" >
-                    ${_this.state.statuses[_this.state.orderSingle['status']].text}
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="order-status-modal">
-                    ${items}
-                </ul>
-            </div>
-            <a href="#" data-index="0" class="print-order text-success" data-id=${preview.state.orderSingle._id}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
-                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"></path>
-                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"></path>
-                </svg>
-            </a>
-        </div>
-        `;
-        // kenzapprint://kenzapprint.app?data=%7B%22print%22%3A%22%5BC%5D%3Cu%3E%3Cfont%20size%3D%5C%22big%5C%22%3EORDER%7B%7Border_id_short%7D%7D%3C%2Ffont%3E%3C%2Fu%3E%5Cn%5BC%5DFu%20Zhen%20Seafood%5Cn%5BC%5D%3Cu%20type%3Ddouble%3E%7B%7Bdate_time%7D%7D%3C%2Fu%3E%5Cn%5BC%5D%5Cn%5BC%5D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%5C%22%20%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EBEAUTIFUL%20SHIRT%3C%2Fb%3E%5BR%5D9.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%20S%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EAWESOME%20HAT%3C%2Fb%3E%5BR%5D24.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%2057%2F58%5Cn%5BL%5D%5Cn%5BC%5D--------------------------------%5Cn%5BR%5DTOTAL%20PRICE%20%3A%5BR%5D34.98%E2%82%AC%5Cn%5BR%5DTAX%20%3A%5BR%5D4.23%E2%82%AC%22%7D" data-id="72b42ad9111e7767aa68174227ba20b5e11d26e4
-
-        // structure modal
-        modal.querySelector(".modal-dialog").classList.add('modal-fullscreen');
-        modal.querySelector(".modal-header .modal-title").innerHTML = isNaN(_this.state.orderSingle['from']) ? _this.state.orderSingle['from'] : '#' + _this.state.orderSingle['from'];
-        modal.querySelector(".modal-footer .btn-confirm").innerHTML = _this.state.orderSingle._id == "new" ? __('Create') : __('Update');
-        modal.querySelector(".btn-confirm").dataset.loading = false;
-        modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
-
-        let html = statusSelect;
-
-        let fields = { id: { l: __("ID"), classList: "order-form" }, from: { l: __("From"), e: "text", editable: true, classList: "order-form" }, table: { l: __("Table"), e: "text", editable: true, classList: "order-form" }, items: { l: "", e: "items" }, fname: { l: __("Name"), e: "text" }, lname: { l: __("Surname"), e: "text" }, bios: { l: __("Bios"), e: "textarea" }, avatar: { l: __("Avatar"), e: "text" }, email: { l: __("Email"), e: "text" }, countryr: { l: __("Country"), e: "text" }, cityr: { l: __("City"), e: "text" }, addr1: { l: __("Address 1"), e: "textarea" }, addr2: { l: __("Address 2"), e: "textarea" }, post: { l: __("Post"), e: "text" }, state: { l: __("State"), e: "text" }, c1: { l: __("Whatsapp"), e: "text" }, c2: { l: __("Messenger"), e: "text" }, c3: { l: __("Line"), e: "text" }, c4: { l: __("Email"), e: "text" }, c5: { l: __("Telegram"), e: "text" }, email: { l: __("Email"), e: "text" }, bio: { l: __("Bio"), e: "text" }, y1: { l: __("Name"), e: "text" }, y2: { l: __("IBAN"), e: "text" }, y3: { l: __("SWIFT"), e: "text" }, y4: { l: __("Bank"), e: "text" }, y5: { l: __("Bank city"), e: "text" }, y6: { l: __("Bank country"), e: "text" }, note: { l: __("Note"), e: "textarea" }, s3: { l: __("Link 3"), e: "text" }, company: { l: __("Company"), e: "text" }, vat: { l: __("Tax ID"), e: "text" }, grade: { l: __("Grade"), e: "text" }, kenzap_ida: { l: __("Kenzap IDA"), e: "text" } };
-
-        // order table details
-        for (let x in fields) {
-
-            if (_this.state.orderSingle[x] === undefined) continue;
-
-            let val = _this.state.orderSingle[x];
-            let field = fields[x].l;
-
-            html += `
-            <div class="mb-3 mt-3 order-row keyx-${x} ${x == '_id' || x == 'from' ? "elipsized" : ""}"  >
-                <b>${field}</b>${preview.renderField(_this, fields[x], val, x)}
-            </div>`;
-        }
-
-        // totals
-        setTimeout(() => { preview.refreshTotals(); }, 100);
-
-        html += '';
-        modal.querySelector(".modal-body").innerHTML = '<div class="modal-body-cont">' + html + '</div>';
-        _this.modalCont.show();
-
-        // table order item listners (remove, add note, adjust variations, etc)
-        preview.tableOrderItemListeners();
-
-        // order item product edit listener
-        preview.suggestOrderItem(_this);
-
-        // hide suggestion list if still present
-        modal.querySelector(".edit-item").addEventListener('blur', (e) => { setTimeout(() => { document.querySelector('.s-list').dataset.toggle = false; }, 500); });
-
-        // add product item to order table
-        preview.addOrderItem(_this);
-
-        // calculate totals for new orders only
-        if (_this.state.orderSingle._id == 'new') preview.refreshTotals();
-
-        // focus on item input fields
-        if (_this.state.orderSingle._id == 'new') setTimeout(() => { document.querySelector('.edit-item').focus(); }, 300);
+        
+        console.log(_this.state.orderSingle.items);
 
         // prevent modal closure if user clicks on white space areas
         // if(modal) modal.addEventListener('click', (e)=>{ e.preventDefault(); return false; });
 
+        // print listener
         onClick('.print-order', (e) => {
 
             e.preventDefault();
 
             _this.state.printRequest = e.currentTarget.dataset.id;
 
-            simulateClick(modal.querySelector(".btn-confirm"));
+            simulateClick(_this.modal.querySelector(".btn-confirm"));
         });
 
         // save changes to orders
@@ -171,6 +111,86 @@ export const preview = {
                 osm.classList.add(key);
             });
         });
+    },
+    renderOrderUI: (_this) => {
+
+        preview.state.orderSingle = _this.state.orderSingle;
+
+        // console.log(preview.state.orderSingle);
+        let items = '';
+
+        // get order status
+        Object.keys(_this.state.statuses).forEach((key, index) => { items += `<li><a class="dppi dropdown-item" data-key="${key}" href="#">${_this.state.statuses[key].text}</a></li>` })
+        let statusSelect = `
+        <div class="d-flex justify-content-between">
+            <div class="st-modal st-opts mb-3 me-1 me-sm-3 dropdown">
+                <a class="btn btn-sm ${_this.state.statuses[_this.state.orderSingle['status']].class} dropdown-toggle order-form" data-id="status" data-type="key" data-value="${_this.state.orderSingle['status']}" href="#" role="button" id="order-status-modal" data-bs-toggle="dropdown" aria-expanded="false" >
+                    ${_this.state.statuses[_this.state.orderSingle['status']].text}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="order-status-modal">
+                    ${items}
+                </ul>
+            </div>
+            <a href="#" data-index="0" class="print-order text-success" data-id=${preview.state.orderSingle._id}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"></path>
+                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"></path>
+                </svg>
+            </a>
+        </div>
+        `;
+        // kenzapprint://kenzapprint.app?data=%7B%22print%22%3A%22%5BC%5D%3Cu%3E%3Cfont%20size%3D%5C%22big%5C%22%3EORDER%7B%7Border_id_short%7D%7D%3C%2Ffont%3E%3C%2Fu%3E%5Cn%5BC%5DFu%20Zhen%20Seafood%5Cn%5BC%5D%3Cu%20type%3Ddouble%3E%7B%7Bdate_time%7D%7D%3C%2Fu%3E%5Cn%5BC%5D%5Cn%5BC%5D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%5C%22%20%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EBEAUTIFUL%20SHIRT%3C%2Fb%3E%5BR%5D9.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%20S%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EAWESOME%20HAT%3C%2Fb%3E%5BR%5D24.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%2057%2F58%5Cn%5BL%5D%5Cn%5BC%5D--------------------------------%5Cn%5BR%5DTOTAL%20PRICE%20%3A%5BR%5D34.98%E2%82%AC%5Cn%5BR%5DTAX%20%3A%5BR%5D4.23%E2%82%AC%22%7D" data-id="72b42ad9111e7767aa68174227ba20b5e11d26e4
+
+        // structure modal
+        _this.modal.querySelector(".modal-dialog").classList.add('modal-fullscreen');
+        _this.modal.querySelector(".modal-header .modal-title").innerHTML = isNaN(_this.state.orderSingle['from']) ? _this.state.orderSingle['from'] : '#' + _this.state.orderSingle['from'];
+        _this.modal.querySelector(".modal-footer .btn-confirm").innerHTML = _this.state.orderSingle._id == "new" ? __('Create') : __('Update');
+        _this.modal.querySelector(".btn-confirm").dataset.loading = false;
+        _this.modal.querySelector(".modal-footer .btn-secondary").innerHTML = __('Close');
+
+        let html = statusSelect;
+
+        let fields = { id: { l: __("ID"), classList: "order-form" }, from: { l: __("From"), e: "text", editable: true, classList: "order-form" }, table: { l: __("Table"), e: "text", editable: true, classList: "order-form" }, items: { l: "", e: "items" }, fname: { l: __("Name"), e: "text" }, lname: { l: __("Surname"), e: "text" }, bios: { l: __("Bios"), e: "textarea" }, avatar: { l: __("Avatar"), e: "text" }, email: { l: __("Email"), e: "text" }, countryr: { l: __("Country"), e: "text" }, cityr: { l: __("City"), e: "text" }, addr1: { l: __("Address 1"), e: "textarea" }, addr2: { l: __("Address 2"), e: "textarea" }, post: { l: __("Post"), e: "text" }, state: { l: __("State"), e: "text" }, c1: { l: __("Whatsapp"), e: "text" }, c2: { l: __("Messenger"), e: "text" }, c3: { l: __("Line"), e: "text" }, c4: { l: __("Email"), e: "text" }, c5: { l: __("Telegram"), e: "text" }, email: { l: __("Email"), e: "text" }, bio: { l: __("Bio"), e: "text" }, y1: { l: __("Name"), e: "text" }, y2: { l: __("IBAN"), e: "text" }, y3: { l: __("SWIFT"), e: "text" }, y4: { l: __("Bank"), e: "text" }, y5: { l: __("Bank city"), e: "text" }, y6: { l: __("Bank country"), e: "text" }, note: { l: __("Note"), e: "textarea" }, s3: { l: __("Link 3"), e: "text" }, company: { l: __("Company"), e: "text" }, vat: { l: __("Tax ID"), e: "text" }, grade: { l: __("Grade"), e: "text" }, kenzap_ida: { l: __("Kenzap IDA"), e: "text" } };
+
+        // order table details
+        for (let x in fields) {
+
+            if (_this.state.orderSingle[x] === undefined) continue;
+
+            let val = _this.state.orderSingle[x];
+            let field = fields[x].l;
+
+            html += `
+            <div class="mb-3 mt-3 order-row keyx-${x} ${x == '_id' || x == 'from' ? "elipsized" : ""}"  >
+                <b>${field}</b>${preview.renderField(_this, fields[x], val, x)}
+            </div>`;
+        }
+
+        // totals
+        setTimeout(() => { preview.refreshTotals(); }, 100);
+
+        html += '';
+        _this.modal.querySelector(".modal-body").innerHTML = '<div class="modal-body-cont">' + html + '</div>';
+        
+        _this.modalCont.show();
+
+        // table order item listners (remove, add note, adjust variations, etc)
+        preview.tableOrderItemListeners();
+
+        // order item product edit listener
+        preview.suggestOrderItem(_this);
+
+        // hide suggestion list if still present
+        _this.modal.querySelector(".edit-item").addEventListener('blur', (e) => { setTimeout(() => { document.querySelector('.s-list').dataset.toggle = false; }, 500); });
+
+        // add product item to order table
+        preview.addOrderItem(_this);
+
+        // calculate totals for new orders only
+        if (_this.state.orderSingle._id == 'new') preview.refreshTotals();
+
+        // focus on item input fields
+        if (_this.state.orderSingle._id == 'new') setTimeout(() => { document.querySelector('.edit-item').focus(); }, 300);
     },
     newOrder: (_this) => {
 
@@ -290,7 +310,7 @@ export const preview = {
         if(item[x].discount_value) item_discount = " (-" + priceFormat(_this, item[x].discount_value) + ")";
  
         output += '<tr class="order-item-row-active row-mark' + _this.rowMark + '" data-created="' + item[x].created + '" data-x="' + x + '" data-id="' + item[x].id + '" data-vars="' + escape(JSON.stringify(item[x].variations)) + '" data-cats="' + escape(JSON.stringify(item[x].cats)) + '">';
-        output += '<td><div class="item-title" contenteditable="false" data-value="' + item[x].title + '" data-sdesc="' + (item[x].sdesc ? item[x].sdesc : "") + '">' + item[x].title + '</div><div class="item-note text-muted mb-1 ' + ((item[x].note.length == 0 || item[x].note == '<br>') && !isNew ? "d-none" : "") + '" contenteditable="true" data-value="' + item[x].note + '">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="' + item[x].qty + '">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="' + item[x].price + '" data-value="' + item[x].total + '" data-discount_percent="' + (item[x].discount_percent ? item[x].discount_percent : "") + '" data-discount_value="' + (item[x].discount_value ? item[x].discount_value : "") + '">' + priceFormat(_this, item[x].total) + item_discount + '</div><td class="' + (options ? '' : 'd-none') + '">' + preview.itemOptions(item[x]) + '</td></td>';
+        output += '<td><div class="item-title" contenteditable="false" data-value="' + item[x].title + '" data-sdesc="' + (item[x].sdesc ? item[x].sdesc : "") + '">' + __html(item[x].title) + '</div><div class="item-note text-muted mb-1 ' + ((item[x].note.length == 0 || item[x].note == '<br>') && !isNew ? "d-none" : "") + '" contenteditable="true" data-value="' + item[x].note + '">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="' + item[x].qty + '">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="' + item[x].price + '" data-value="' + item[x].total + '" data-discount_percent="' + (item[x].discount_percent ? item[x].discount_percent : "") + '" data-discount_value="' + (item[x].discount_value ? item[x].discount_value : "") + '">' + priceFormat(_this, item[x].total) + item_discount + '</div><td class="' + (options ? '' : 'd-none') + '">' + preview.itemOptions(item[x]) + '</td></td>';
         output += '</tr>';
 
         return output;
