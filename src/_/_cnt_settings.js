@@ -487,7 +487,7 @@ export const HTMLContent = (__) => {
 
                       <div class="row">
 
-                        <div class="col-lg-6">
+                        <div class="col-xl-6">
                           <div class="form-group row mb-3 mt-1">
                             <label class="col-sm-3 col-form-label">${__html('Action')}</label>
                             <div class="col-sm-9">
@@ -499,7 +499,7 @@ export const HTMLContent = (__) => {
                             </div> 
                           </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-xl-6">
                           <div class="form-group row mb-3 mt-1">
                             <label class="col-sm-3 col-form-label">${__html('Printers')}</label>
                             <div class="col-sm-9">
@@ -521,8 +521,8 @@ export const HTMLContent = (__) => {
                                               ${ __html('Select') }
                                             </button>
                                             <ul class="dropdown-menu" aria-labelledby="printer_type">
-                                              <li><a class="dropdown-item" data-value="bluetooth" href="#"><img style="height:24px" src="http://localhost:3000/assets/img/bluetooth.webp" > ${ __html('bluetooth') }</a></li>
-                                              <li><a class="dropdown-item" data-value="ethernet" href="#"><img style="height:24px" src="http://localhost:3000/assets/img/ethernet.png" > ${ __html('ethernet') }</a></li>
+                                              <li><a class="dropdown-item" data-value="bluetooth" href="#"><img style="height:24px" src="/assets/img/bluetooth.webp" > ${ __html('bluetooth') }</a></li>
+                                              <li><a class="dropdown-item" data-value="ethernet" href="#"><img style="height:24px" src="/assets/img/ethernet.png" > ${ __html('ethernet') }</a></li>
                                             </ul>
                                           </div>
                                       </td>
