@@ -55,6 +55,9 @@ const _this = {
         .then(response => response.json())
         .then(response => {
 
+            _this.state.settings = response.settings;
+            _this.state.user = response.user;
+
             // hide UI loader
             hideLoader();
 

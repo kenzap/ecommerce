@@ -1,4 +1,5 @@
-import { onClick, __html, toast, onChange } from '@kenzap/k-cloud';
+import { onClick, __attr, __html, html, toast, onChange, headers, spaceID } from '@kenzap/k-cloud';
+import { printReceipt } from "../_/_print.js"
 
 export const printerSettings = {
 
@@ -19,8 +20,6 @@ export const printerSettings = {
 
   renderSettings: (_this) => {
 
-    // console.log("A");
-
     let printers = [];
     if(_this.state.response.settings.printers) printers = _this.state.response.settings.printers;
 
@@ -32,8 +31,6 @@ export const printerSettings = {
 
           document.querySelector('.printer-table tbody').insertAdjacentHTML("beforeend", printerSettings.structPrinterRow(printer, i));
         });
-                
-        // console.log("B");
 
     }else{
 
@@ -41,8 +38,6 @@ export const printerSettings = {
       document.querySelector('#printers').value = '[]';
     }
 
-    // console.log(JSON.stringify(printers));
-  
     // cache printers
     document.querySelector('#printers').value = JSON.stringify(printers);
 
@@ -57,8 +52,6 @@ export const printerSettings = {
 
     if(!_this.state.response.settings['templates']) _this.state.response.settings['templates'] = [];
     if(_this.state.response.settings['templates'].length == 0) _this.state.response.settings['templates'].push(printerSettings.templateDefault);
-
-    // console.log(_this.state.response.settings['templates']);
 
     // render templates
     let html = '';
@@ -103,14 +96,11 @@ export const printerSettings = {
         obj.type = document.querySelector('.printer-type button').dataset.value; 
         obj.ip = document.querySelector('.printer-ip').value; 
 
-        // console.log(obj);
-
         if(obj.idd.length < 1 || obj.type.length < 1){ alert( __("Fill in all fields first!") ); return false; }
 
         document.querySelector('.printer-idd').value = '';
         document.querySelector('.printer-type button').dataset.value = '';
         document.querySelector('.printer-ip').value = '';
-        // console.log(obj);
 
         let printers = document.querySelector('#printers').value;
 
@@ -119,9 +109,6 @@ export const printerSettings = {
         if(printers){ printers = JSON.parse(printers); }else{ printers = []; }
         if(Array.isArray(printers)){ printers.push(obj); }else{ printers = []; }
         document.querySelector('#printers').value = JSON.stringify(printers);
-
-        // console.log(document.querySelector('#printers').value);
-
         document.querySelector('.printer-table tbody').insertAdjacentHTML("beforeend", printerSettings.structPrinterRow(obj, printers.length-1));
 
         // remove printer listener
@@ -131,8 +118,6 @@ export const printerSettings = {
         printerSettings.renderTemplatesSettings(_this);
 
     });
-  
-    // querySelector(".printer-type-select dropdown-item")
   },
 
   templateListeners: (_this) => {
@@ -145,6 +130,50 @@ export const printerSettings = {
       if(e.currentTarget.value == '') e.currentTarget.parentElement.querySelector('.template_auto_print').classList.add('d-none');
       if(e.currentTarget.value != '') e.currentTarget.parentElement.querySelector('.template_auto_print').classList.remove('d-none');
     });
+
+    onClick('.test-template', e => {
+      
+      // get all printers
+      let printers = document.querySelector('#printers').value;
+      if(printers){ printers = JSON.parse(printers); }else{ printers = []; }
+
+      // selected printer index
+      let pi = parseInt(e.currentTarget.dataset.index);
+
+      // confirm user
+      if(!confirm( __("Send this template to %1$ printer %2$?", printers[pi].type, (pi+1)+"-"+printers[pi].idd) )) return;
+
+      let template = {};
+
+      template['template'] = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('.template').value;
+      template['type'] = "receipt";
+      template['user'] = "";
+      template['user_print'] = [];
+      printers[pi].index = pi+1;
+      template['user_print'].push(printers[pi]);
+
+      console.log(template);
+
+      // send print request
+      printReceipt(_this, "test", "user", template);
+    });
+  },
+
+  saveFile: (blob, filename) => {
+    if (window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      const url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = filename;
+      a.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 0)
+    }
   },
 
   removeTemplateRow: (e) => {
@@ -166,8 +195,9 @@ export const printerSettings = {
       document.querySelector('.printer-ip-th').classList.remove("d-none");
       document.querySelector('.printer-ip-td').classList.remove("d-none");
       // document.querySelector('.printer-ip-td2').classList.remove("d-none");
+    }
 
-    }else{
+    if(e.currentTarget.dataset.value=="bluetooth" || e.currentTarget.dataset.value=="usb"){
 
       document.querySelector('.printer-ip-th').classList.add("d-none");
       document.querySelector('.printer-ip-td').classList.add("d-none");
@@ -239,7 +269,10 @@ export const printerSettings = {
           </td>
           <td>
               <div class="me-1 me-sm-3 my-1">
-                ${ obj.type == "bluetooth" ? '<img style="height:24px" src="/assets/img/bluetooth.webp" >' : '<img style="height:24px" src="/assets/img/ethernet.png" >' } ${ obj.type }
+                ${ obj.type == "bluetooth" ? '<img style="height:20px" src="/assets/img/bluetooth.webp" >' : '' } 
+                ${ obj.type == "ethernet" ? '<img style="height:20px" src="/assets/img/ethernet.png" >' : '' } 
+                ${ obj.type == "usb" ? '<img style="height:20px" src="/assets/img/usb.png" >' : '' } 
+                ${ obj.type }
               </div>
           </td>
           <td class="">
@@ -277,7 +310,12 @@ export const printerSettings = {
         <div class="form-check">
           <input id="auto_print${ ip+1 }" class="form-check-input template_auto_print" name="auto_print" type="checkbox" value="1" data-index="${ ip+1 }" data-idd="${ printer.idd }" data-type="${ printer.type }" data-ip="${ printer.ip }" data-value="" data-type="checkbox" ${checked}>
           <label class="form-check-label" for="auto_print${ ip+1 }">
-            ${ ip+1 }-${ printer.idd }
+            ${ ip+1 }-${ printer.idd } 
+
+            ${ printer.type == "bluetooth" ? '<img style="height:20px" src="/assets/img/bluetooth.webp" >' : '' } 
+            ${ printer.type == "ethernet" ? '<img style="height:20px" src="/assets/img/ethernet.png" >' : '' } 
+            ${ printer.type == "usb" ? '<img style="height:20px" src="/assets/img/usb.png" >' : '' } 
+
           </label>
         </div>
       `;
@@ -297,11 +335,22 @@ export const printerSettings = {
       template['user_print'].filter(ap => { if(ap.idd == printer.idd && ap.index == (ip+1) ){ checked = "checked"; } })
 
       user_printers += `
-        <div class="form-check">
+        <div class="form-check clearfix">
           <input id="user_print${ ip+1 }" class="form-check-input template_user_print" name="user_print" type="checkbox" value="1" data-index="${ ip+1 }" data-idd="${ printer.idd }" data-type="${ printer.type }" data-ip="${ printer.ip }" data-value="" data-type="checkbox" ${checked}>
           <label class="form-check-label" for="user_print${ ip+1 }">
             ${ ip+1 }-${ printer.idd }
+
+            ${ printer.type == "bluetooth" ? '<img style="height:20px" src="/assets/img/bluetooth.webp" >' : '' } 
+            ${ printer.type == "ethernet" ? '<img style="height:20px" src="/assets/img/ethernet.png" >' : '' } 
+            ${ printer.type == "usb" ? '<img style="height:20px" src="/assets/img/usb.png" >' : '' } 
+
           </label>
+          <div class="d-inline   me-1" style="float:right;" title="${ __attr("click for test print") }">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-printer test-template ms-2 po text-primary" viewBox="0 0 16 16" data-index="${(ip)}">
+                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"></path>
+                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"></path>
+            </svg>
+          </div>
         </div>
       `;
     });
@@ -369,7 +418,21 @@ export const printerSettings = {
                 </div> 
               </div>
               <div class="form-group mb-3 mt-1 ">
+                <button class="d-none btn btn-sm btn-outline-success test-template mt-5 mb-1 mt-md-4 mb-md-0 d-flex align-items-center ms-auto bd-highlight" type="button" data-index="${(i-1)}">${ __html('Test print') }</button>
                 <button class="btn btn-sm btn-outline-danger remove-template mt-5 mb-1 mt-md-4 mb-md-0 d-flex align-items-center ms-auto bd-highlight" type="button" data-index="${(i-1)}">${ __html('Remove template') }</button>
+              </div>
+            </div>
+
+            <div class="col-lg-6 d-none">
+
+            </div>
+
+            <div class="col-lg-6 d-none">
+              <div class="form-group row mb-3 mt-1">
+                <div class="col-sm-12" >
+                  <iframe class="template-preview" style="width:600px;min-height:400px" srcdoc="${ html(template.template) }"></iframe>
+                  <p class="form-text">${__html('Template preview.')}</p>
+                </div>
               </div>
             </div>
 

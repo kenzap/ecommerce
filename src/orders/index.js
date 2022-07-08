@@ -455,28 +455,13 @@ const _this = {
                 parseApiError(error);
             });
         },
-        // printOrder: (e) => {
-
-
-        // },
         searchOrders: (e) => {
 
             e.preventDefault();
 
-            // _this.playSound();
-
             _this.getData();
-
-            // console.log('search products ' +e.currentTarget.value);
         },
 
-        // printQR: (e) => {
-        
-        //     e.preventDefault();
-
-        //     printQR(_this,  e.currentTarget.dataset.qrnum);
-        // },
-        
         modalSuccessBtn: (e) => {
             
             _this.listeners.modalSuccessBtnFunc(e);
@@ -567,7 +552,7 @@ const _this = {
         data['created_y'] = dateObj.getUTCFullYear() + '';
         data['printed'] = _this.state.printRequest ? true : false;
 
-        console.log(data);
+        // console.log(data);
 
         // create new order
         if(id == 'new'){

@@ -4,7 +4,8 @@ import { printQR } from "../_/_print.js"
 
 export const tables = {
 
-    _this: null, 
+    _this: null,
+    firstLoad: true,
     state: { orderSingle: null },
     render: (_this, e) => {
 
@@ -19,7 +20,7 @@ export const tables = {
             if(o.table) if(o.table.length>0) if(!table_list.includes(o.table)) table_list.push(o.table);
         });
 
-        // console.log(table_list);
+        console.log(table_list);
 
         table_list.forEach((el, i) => {
 
@@ -34,12 +35,15 @@ export const tables = {
         document.querySelector('#orders-after-header').insertAdjacentHTML("beforeend", html);
 
         // print custom QR code
-        onClick('.print-qr', (e) => {
+        if(tables.firstLoad){
+         
+            tables.firstLoad = false; onClick('.print-qr', (e) => {
         
-            e.preventDefault();
+                e.preventDefault();
 
-            printQR(_this, e.currentTarget.dataset.qrnum);
-        });
+                printQR(_this, e.currentTarget.dataset.qrnum);
+            });
+        }
     },
     renderField: (_this, a, item, x) => {
 

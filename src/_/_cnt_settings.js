@@ -523,6 +523,7 @@ export const HTMLContent = (__) => {
                                             <ul class="dropdown-menu" aria-labelledby="printer_type">
                                               <li><a class="dropdown-item" data-value="bluetooth" href="#"><img style="height:24px" src="/assets/img/bluetooth.webp" > ${ __html('bluetooth') }</a></li>
                                               <li><a class="dropdown-item" data-value="ethernet" href="#"><img style="height:24px" src="/assets/img/ethernet.png" > ${ __html('ethernet') }</a></li>
+                                              <li><a class="dropdown-item" data-value="usb" href="#"><img style="height:24px" src="/assets/img/usb.png" > ${ __html('usb') }</a></li>
                                             </ul>
                                           </div>
                                       </td>

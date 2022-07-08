@@ -64,7 +64,7 @@ export const preview = {
             preview.renderOrderUI(_this);
         }
         
-        console.log(_this.state.orderSingle.items);
+        // console.log(_this.state.orderSingle.items);
 
         // prevent modal closure if user clicks on white space areas
         // if(modal) modal.addEventListener('click', (e)=>{ e.preventDefault(); return false; });
@@ -286,7 +286,7 @@ export const preview = {
     },
     structOrderItemTable: (_this, x, item, isNew = false, options = true) => {
 
-        // console.log(item[x]);
+        // console.log(item[x].variations);
 
         if (_this.created != item[x].created) { _this.rowMark += 1; }
 
@@ -299,7 +299,7 @@ export const preview = {
 
             // parse variation list
             let list = ''; for (let l in item[x].variations[v].list) list += __html(item[x].variations[v].list[l].title) + " ";
-            vars += '<div><b>' + __html(item[x].variations[v].title) + "</b> <span>" + list + "</span></div> ";
+            vars += '<div><b class="me-1">' + __html(item[x].variations[v].title) + "</b> <span>" + list + "</span></div> ";
 
             // meal note
             if (item[x].variations[v].note !== undefined && item[x].variations[v].note.length > 0) vars += "<div><b>" + __('Note') + "</b> " + item[x].variations[v].note + "</div> ";
