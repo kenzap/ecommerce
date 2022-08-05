@@ -81,6 +81,9 @@ export const printerSettings = {
     
     // printer type select listener
     onClick(".printer-type .dropdown-item", e => { printerSettings.modelSelect(e); });
+    
+    // printer paper type select listener
+    onClick(".printer-paper-type .dropdown-item", e => { printerSettings.paperSelect(e); });
 
     // remove printer listener
     onClick('.remove-printer', printerSettings.removePrinter);
@@ -94,6 +97,7 @@ export const printerSettings = {
 
         obj.idd = document.querySelector('.printer-idd').value;
         obj.type = document.querySelector('.printer-type button').dataset.value; 
+        obj.paper = document.querySelector('.printer-paper-type button').dataset.value; 
         obj.ip = document.querySelector('.printer-ip').value; 
 
         if(obj.idd.length < 1 || obj.type.length < 1){ alert( __("Fill in all fields first!") ); return false; }
@@ -104,7 +108,7 @@ export const printerSettings = {
 
         let printers = document.querySelector('#printers').value;
 
-        // console.log(printers);
+        console.log(printers);
 
         if(printers){ printers = JSON.parse(printers); }else{ printers = []; }
         if(Array.isArray(printers)){ printers.push(obj); }else{ printers = []; }
@@ -205,6 +209,14 @@ export const printerSettings = {
     }
   },
 
+  paperSelect: (e) => {
+
+    e.preventDefault();
+
+    document.querySelector(".printer-paper-type button").innerHTML = e.currentTarget.innerHTML;
+    document.querySelector(".printer-paper-type button").dataset.value = e.currentTarget.dataset.value;
+  },
+
   removePrinter: (e) => {
 
       e.preventDefault();
@@ -244,12 +256,12 @@ export const printerSettings = {
 
         if(tl.querySelector('input.template_auto_print:checked')) for(let tap of tl.querySelectorAll("input.template_auto_print:checked")){
 
-            obj['auto_print'].push({ index: tap.dataset.index, idd: tap.dataset.idd, type: tap.dataset.type, ip: tap.dataset.ip });
+            obj['auto_print'].push({ index: tap.dataset.index, idd: tap.dataset.idd, type: tap.dataset.type, ip: tap.dataset.ip, paper: tap.dataset.paper });
         }
 
         if(tl.querySelector('input.template_user_print:checked')) for(let uap of tl.querySelectorAll("input.template_user_print:checked")){
 
-            obj['user_print'].push({ index: uap.dataset.index, idd: uap.dataset.idd, type: uap.dataset.type, ip: uap.dataset.ip });
+            obj['user_print'].push({ index: uap.dataset.index, idd: uap.dataset.idd, type: uap.dataset.type, ip: uap.dataset.ip, paper: uap.dataset.paper });
         }
 
         data['templates'].push(obj);
@@ -273,6 +285,12 @@ export const printerSettings = {
                 ${ obj.type == "ethernet" ? '<img style="height:20px" src="/assets/img/ethernet.png" >' : '' } 
                 ${ obj.type == "usb" ? '<img style="height:20px" src="/assets/img/usb.png" >' : '' } 
                 ${ obj.type }
+              </div>
+          </td>
+          <td>
+              <div class="me-1 me-sm-3 my-1">
+                ${ obj.paper == "58" || !obj.paper ? __html('58mm') : '' } 
+                ${ obj.paper == "80" ? __html('80mm') : '' }
               </div>
           </td>
           <td class="">
@@ -308,7 +326,7 @@ export const printerSettings = {
 
       auto_printers += `
         <div class="form-check">
-          <input id="auto_print${ ip+1 }" class="form-check-input template_auto_print" name="auto_print" type="checkbox" value="1" data-index="${ ip+1 }" data-idd="${ printer.idd }" data-type="${ printer.type }" data-ip="${ printer.ip }" data-value="" data-type="checkbox" ${checked}>
+          <input id="auto_print${ ip+1 }" class="form-check-input template_auto_print" name="auto_print" type="checkbox" value="1" data-index="${ ip+1 }" data-idd="${ printer.idd }" data-type="${ printer.type }" data-ip="${ printer.ip }" data-paper="${ printer.paper }" data-value="" data-type="checkbox" ${checked}>
           <label class="form-check-label" for="auto_print${ ip+1 }">
             ${ ip+1 }-${ printer.idd } 
 
@@ -336,7 +354,7 @@ export const printerSettings = {
 
       user_printers += `
         <div class="form-check clearfix">
-          <input id="user_print${ ip+1 }" class="form-check-input template_user_print" name="user_print" type="checkbox" value="1" data-index="${ ip+1 }" data-idd="${ printer.idd }" data-type="${ printer.type }" data-ip="${ printer.ip }" data-value="" data-type="checkbox" ${checked}>
+          <input id="user_print${ ip+1 }" class="form-check-input template_user_print" name="user_print" type="checkbox" value="1" data-index="${ ip+1 }" data-idd="${ printer.idd }" data-type="${ printer.type }" data-ip="${ printer.ip }" data-paper="${ printer.paper }" data-value="" data-type="checkbox" ${checked}>
           <label class="form-check-label" for="user_print${ ip+1 }">
             ${ ip+1 }-${ printer.idd }
 

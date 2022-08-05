@@ -20,7 +20,7 @@ export const tables = {
             if(o.table) if(o.table.length>0) if(!table_list.includes(o.table)) table_list.push(o.table);
         });
 
-        console.log(table_list);
+        // console.log(table_list);
 
         table_list.forEach((el, i) => {
 

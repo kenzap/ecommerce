@@ -11,7 +11,7 @@ const _this = {
   
     state: {
         firstLoad: true,
-        // firstTouch: true,
+        changes: false,
         modalCont: null,
         modalOpen: false,
         playSound: { allowed: false, ids: null, nids: [], n: 0, max_times: 5, timer: null, audio: new Audio('https://kenzap.com/static/swiftly.mp3') },
@@ -232,6 +232,8 @@ const _this = {
         _this.state.orders = response.orders;
         _this.state.meta = response.meta;
         
+        // console.log(_this.state.orders);
+
         // cache settings globally
         _this.state.settings = response.settings;
         // _this.state.qr_settings = response.qr_settings;
@@ -471,9 +473,11 @@ const _this = {
     },
     updateOrder: (i, id) => {
 
+        // print immediately if order has no changes
+        if(!_this.state.changes && _this.state.printRequest){ printReceipt(_this, _this.state.printRequest, "user"); _this.modalCont.hide(); return; }
+
         let modal = document.querySelector(".modal");
         if(modal.querySelector(".btn-confirm").dataset.loading === 'true') return;
-
         modal.querySelector(".btn-confirm").dataset.loading = true;
         modal.querySelector(".btn-confirm").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' + __html('Loading..');
 
@@ -499,10 +503,12 @@ const _this = {
 
                         let vars = JSON.parse(unescape(item.dataset.vars));
                         let cats = JSON.parse(unescape(item.dataset.cats));
+                        let discounts = JSON.parse(unescape(item.dataset.discounts));
                         let obj = {
                             "id": item.dataset.id,
                             "qty": parseInt(item.querySelector('.item-qty').dataset.value),
                             "cats": cats ? cats : [],
+                            "discounts": discounts ? discounts : [],
                             "note": item.querySelector('.item-note').innerHTML,
                             "type": "new",
                             "index": "0",
@@ -551,8 +557,11 @@ const _this = {
         data['created_ym'] = dateObj.getUTCFullYear() + '' + mt(dateObj.getUTCMonth() + 1);
         data['created_y'] = dateObj.getUTCFullYear() + '';
         data['printed'] = _this.state.printRequest ? true : false;
+        data['notify'] = false;
 
         // console.log(data);
+
+        preview._this.state.changes = false;
 
         // create new order
         if(id == 'new'){

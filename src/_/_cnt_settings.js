@@ -489,26 +489,14 @@ export const HTMLContent = (__) => {
 
                         <div class="col-xl-6">
                           <div class="form-group row mb-3 mt-1">
-                            <label class="col-sm-3 col-form-label">${__html('Action')}</label>
-                            <div class="col-sm-9">
-                              <select id="print_action" class="form-select inp" name="print_action" data-type="select">
-                                <option value="system">${__html('Default printing dialogue')}</option>
-                                <option value="app">${__html('Kenzap print app')}</option>
-                              </select>
-                              <p class="form-text">${__html('Choose action when printing icon is clicked.')}</p>
-                            </div> 
-                          </div>
-                        </div>
-                        <div class="col-xl-6">
-                          <div class="form-group row mb-3 mt-1">
-                            <label class="col-sm-3 col-form-label">${__html('Printers')}</label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-3 col-form-label d-none">${__html('Printers')}</label>
+                            <div class="col-sm-12">
 
                               <input id="printers" class="form-control inp d-none" name="printers" type="text" value="1" data-type="text">
                               
                               <table class="printer-table order-form mb-3">
                                 <theader>
-                                  <tr><th><div class="me-1 me-sm-3">${ __html('Device ID') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __html('Type') }</div></th><th class="printer-ip-th d-none"><div class="me-1 me-sm-3 ">${ __html('IP Address') }</div></th><th></th></tr>
+                                  <tr><th><div class="me-1 me-sm-3">${ __html('Device ID') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __html('Type') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __html('Paper') }</div></th><th class="printer-ip-th d-none"><div class="me-1 me-sm-3 ">${ __html('IP Address') }</div></th><th></th></tr>
                                   <tr class="new-item-row">
                                       <td>
                                         <div class="me-1 me-sm-3 mt-2">
@@ -524,6 +512,17 @@ export const HTMLContent = (__) => {
                                               <li><a class="dropdown-item" data-value="bluetooth" href="#"><img style="height:24px" src="/assets/img/bluetooth.webp" > ${ __html('bluetooth') }</a></li>
                                               <li><a class="dropdown-item" data-value="ethernet" href="#"><img style="height:24px" src="/assets/img/ethernet.png" > ${ __html('ethernet') }</a></li>
                                               <li><a class="dropdown-item" data-value="usb" href="#"><img style="height:24px" src="/assets/img/usb.png" > ${ __html('usb') }</a></li>
+                                            </ul>
+                                          </div>
+                                      </td>
+                                      <td class="printer-paper-type">
+                                          <div class="me-1 me-sm-3 mt-2">
+                                            <button class="form-control form-control-sm dropdown-toggle" type="button" id="printer_paper_type"  data-value="" data-bs-toggle="dropdown" aria-expanded="false">
+                                              ${ __html('Select') }
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="printer_paper_type">
+                                              <li><a class="dropdown-item" data-value="58" href="#">${ __html('58mm') }</a></li>
+                                              <li><a class="dropdown-item" data-value="80" href="#">${ __html('80mm') }</a></li>
                                             </ul>
                                           </div>
                                       </td>
@@ -546,7 +545,18 @@ export const HTMLContent = (__) => {
                             </div>
                           </div>
                         </div>
-
+                        <div class="col-xl-6">
+                          <div class="form-group row mb-3 mt-1">
+                            <label class="col-sm-3 col-form-label">${__html('Action')}</label>
+                            <div class="col-sm-9">
+                              <select id="print_action" class="form-select inp" name="print_action" data-type="select">
+                                <option value="system">${__html('Default printing dialogue')}</option>
+                                <option value="app">${__html('Kenzap print app')}</option>
+                              </select>
+                              <p class="form-text">${__html('Choose action when printing icon is clicked.')}</p>
+                            </div> 
+                          </div>
+                        </div>
                       </div>
 
                       <div class="border-top my-3 mb-5 d-none"></div>

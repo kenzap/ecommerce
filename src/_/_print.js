@@ -130,6 +130,8 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
         data.print = template.template;
     }
 
+    console.log(template);
+
     // find max char per line parameter
     let cols_p = data.print.indexOf('[W:'); let cols = 20;
     if(cols_p!=-1){ cols = parseInt(data.print.substr(cols_p+3, 2)); data.print = data.print.substr(0, cols_p) + data.print.substr(cols_p+6, data.print.length); }
@@ -149,6 +151,8 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // order items restricted by category
     const matches = data.print.matchAll(/{{order_items:(.*?):start}}/g);
     Array.from(matches, x => x[1]).forEach(cat => {
+
+        // console.log(cat);
 
         // const items_match = data.print.matchAll(/{{order_items:Frog:start}}([\s\S]*?){{order_items:Frog:end}}/g);
 
@@ -209,6 +213,8 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     if(data.debug){ console.log(data.print); }
 
     let printers = type == "user" ? template["user_print"] : template["auto_print"];
+
+    // console.log(printers);
 
     data["user"] = _this.state.user.id;
     data["printers"] = printers;
@@ -305,7 +311,7 @@ export const processStyling = (print, cols) => {
         }
 
         // clean empty row
-        let empty = 0; [...row].forEach(char => { if (char==" ") empty +=1 ; }); console.log(empty + " " + max_char); if(empty>=max_char) row = "";
+        let empty = 0; [...row].forEach(char => { if (char==" ") empty +=1 ; }); if(empty>=max_char) row = ""; // console.log(empty + " " + max_char);
 
         output += row+"\n";
     }
@@ -559,6 +565,8 @@ export const countDoubledChars = (text) => {
 export const getPrintItems = (_this, o, cat, cols) => {
 
     let items = '';
+
+    // console.log(o.items);
   
     for(let i in o.items){
 

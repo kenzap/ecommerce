@@ -7,6 +7,7 @@ export const preview = {
     state: { orderSingle: null },
     renderOrder: (_this, e) => {
 
+        _this.state.changes = false;
         _this.modal = document.querySelector(".order-modal");
         _this.modalCont = new bootstrap.Modal(_this.modal);
         _this.modalOpen = true;
@@ -90,6 +91,8 @@ export const preview = {
         onClick('.st-modal li a', (e) => {
 
             e.preventDefault();
+
+            preview._this.state.changes = true;
 
             let osm = document.querySelector('#order-status-modal');
             osm.innerHTML = _this.state.statuses[e.currentTarget.dataset.key].text;
@@ -308,9 +311,16 @@ export const preview = {
         let item_discount = "";
         if(item[x].discount_percent) item_discount = " (-" + item[x].discount_percent + "%)";
         if(item[x].discount_value) item_discount = " (-" + priceFormat(_this, item[x].discount_value) + ")";
+
+        // individual discount
+        if(!item[x].discounts) item[x].discounts = [];
+        item[x].discounts.forEach(obj => {
+
+           if(obj.type == "never") item[x].discount_type = "never";
+        });
  
-        output += '<tr class="order-item-row-active row-mark' + _this.rowMark + '" data-created="' + item[x].created + '" data-x="' + x + '" data-id="' + item[x].id + '" data-vars="' + escape(JSON.stringify(item[x].variations)) + '" data-cats="' + escape(JSON.stringify(item[x].cats)) + '">';
-        output += '<td><div class="item-title" contenteditable="false" data-value="' + item[x].title + '" data-sdesc="' + (item[x].sdesc ? item[x].sdesc : "") + '">' + __html(item[x].title) + '</div><div class="item-note text-muted mb-1 ' + ((item[x].note.length == 0 || item[x].note == '<br>') && !isNew ? "d-none" : "") + '" contenteditable="true" data-value="' + item[x].note + '">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="' + item[x].qty + '">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="' + item[x].price + '" data-value="' + item[x].total + '" data-discount_percent="' + (item[x].discount_percent ? item[x].discount_percent : "") + '" data-discount_value="' + (item[x].discount_value ? item[x].discount_value : "") + '">' + priceFormat(_this, item[x].total) + item_discount + '</div><td class="' + (options ? '' : 'd-none') + '">' + preview.itemOptions(item[x]) + '</td></td>';
+        output += '<tr class="order-item-row-active row-mark' + _this.rowMark + '" data-created="' + item[x].created + '" data-x="' + x + '" data-id="' + item[x].id + '" data-vars="' + escape(JSON.stringify(item[x].variations)) + '" data-cats="' + escape(JSON.stringify(item[x].cats)) + '" data-discounts="' + escape(JSON.stringify(item[x].discounts)) + '">';
+        output += '<td><div class="item-title" contenteditable="false" data-value="' + item[x].title + '" data-sdesc="' + (item[x].sdesc ? item[x].sdesc : "") + '">' + __html(item[x].title) + '</div><div class="item-note text-muted mb-1 ' + ((item[x].note.length == 0 || item[x].note == '<br>') && !isNew ? "d-none" : "") + '" contenteditable="true" data-value="' + item[x].note + '">' + item[x].note + '</div><div class="vars border-primary item-variations my-1 ps-2 text-secondary" data-value="">' + vars + '</div></td><td class="qty"><div class="me-1 me-sm-3 item-qty" data-value="' + item[x].qty + '">' + item[x].qty + '</div></td><td class="tp"><div class="me-1 me-sm-3 item-total" data-price="' + item[x].price + '" data-value="' + item[x].total + '" data-discount_type="' + (item[x].discount_type ? item[x].discount_type : "") + '" data-discount_percent="' + (item[x].discount_percent ? item[x].discount_percent : "") + '" data-discount_value="' + (item[x].discount_value ? item[x].discount_value : "") + '">' + priceFormat(_this, item[x].total) + item_discount + '</div><td class="' + (options ? '' : 'd-none') + '">' + preview.itemOptions(item[x]) + '</td></td>';
         output += '</tr>';
 
         return output;
@@ -399,24 +409,31 @@ export const preview = {
                             document.querySelector('.edit-item').dataset.id = _this.state.productsSuggestions[index]._id;
                             document.querySelector('.edit-item').dataset.cats = JSON.stringify(_this.state.productsSuggestions[index].cats);
                             document.querySelector('.edit-item').value = _this.state.productsSuggestions[index].title;
+                            document.querySelector('.edit-item').dataset.discounts = JSON.stringify(_this.state.productsSuggestions[index].discounts);
                             document.querySelector('.edit-qty').value = 1;
                             document.querySelector('.edit-qty').dataset.price = _this.state.productsSuggestions[index].price;
                             document.querySelector('.edit-tp').value = _this.state.productsSuggestions[index].price;
                             document.querySelector('.edit-tp').dataset.price = _this.state.productsSuggestions[index].price;
                             document.querySelector('.s-list').dataset.toggle = false;
+                            document.querySelector('.edit-discount').classList.add('d-none');
 
                             if (_this.state.productsSuggestions[index].discounts) if (_this.state.productsSuggestions[index].discounts.length > 0) {
 
                                 let discount_options = '<option value="">%</option>';
-                                document.querySelector('.edit-discount').classList.remove('d-none');
                                 _this.state.productsSuggestions[index].discounts.forEach(discount => {
                                     if (discount.availability == "admin" && discount.type == "percent") {
 
                                         discount_options += '<option data-type="percent" value="' + discount.percent + '">-' + discount.percent + '%</option>';
+                                        document.querySelector('.edit-discount').classList.remove('d-none');
                                     }
                                     if (discount.availability == "admin" && discount.type == "value") {
 
                                         discount_options += '<option data-type="value" value="' + discount.value + '">-' + priceFormat(preview._this, discount.value) + '</option>';
+                                        document.querySelector('.edit-discount').classList.remove('d-none');
+                                    }
+                                    if (discount.type == "never") {
+
+                                        
                                     }
                                 });
 
@@ -504,9 +521,11 @@ export const preview = {
             e.preventDefault();
 
             let noteEl = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('.item-note');
-            console.log(noteEl);
+            // console.log(noteEl);
             noteEl.classList.remove('d-none');
             noteEl.focus();
+
+            preview._this.state.changes = true;
         });
 
         // remove order item
@@ -518,6 +537,8 @@ export const preview = {
 
             // if(preview._this.state.orderSingle._id == 'new') 
             preview.refreshTotals();
+
+            preview._this.state.changes = true;
         });
     },
     refreshTotals: () => {
@@ -525,7 +546,7 @@ export const preview = {
         let html = ``, grand_total_temp = 0;
 
         // calc grand_total_temp
-        for (let price of document.querySelectorAll('.item-total')) { grand_total_temp += makeNumber(price.dataset.value); };
+        for (let price of document.querySelectorAll('.item-total')){ grand_total_temp += makeNumber(price.dataset.value); };
 
         // defaults
         let price = { grand_total: 0, total: makeNumber(grand_total_temp), discount_percent: document.querySelector('.discount-percent-inp') ? parseInt(document.querySelector('.discount-percent-inp').value) : preview.state.orderSingle['price']['discount_percent'] ? preview.state.orderSingle['price']['discount_percent'] : 0, discount_value: document.querySelector('.discount-value-inp') ? parseFloat(document.querySelector('.discount-value-inp').value) : preview.state.orderSingle['price']['discount_value'] ? preview.state.orderSingle['price']['discount_value'] : 0, discount_total: 0, fee_total: 0, tax_total: 0, tax_percent: 0 };
@@ -551,13 +572,13 @@ export const preview = {
 
             let ordertotalpaymentmethod =
                 `<div class="mb-2 mt-2 order-total-payment_method order-row text-right keyx-payment_method">
-            <b>${__('Payment')}</b>
-            <div class="ms-2 d-inline-block" >
-                <select class="form-select form-select-sm payment-method-select" data-type="select" aria-label="Default payment method">
-                    ${options}
-                </select>
-            </div>
-        </div>`;
+                    <b>${__('Payment')}</b>
+                    <div class="ms-2 d-inline-block" >
+                        <select class="form-select form-select-sm payment-method-select" data-type="select" aria-label="Default payment method">
+                            ${options}
+                        </select>
+                    </div>
+                </div>`;
 
             html += ordertotalpaymentmethod;
         }
@@ -585,11 +606,19 @@ export const preview = {
         // if(document.querySelector("#discount-type").dataset.type == 'percent'){
         if (parseInt(price.discount_percent) > 0) {
 
-            if (parseInt(price.discount_percent) > 0 && parseInt(price.discount_percent) <= 100) {
+            // if (parseInt(price.discount_percent) > 0 && parseInt(price.discount_percent) <= 100) {
 
-                price.discount_total = makeNumber((parseInt(price.discount_percent)) * price.total) / 100;
-                grand_total_temp -= price.discount_total;
+            //     price.discount_total = makeNumber((parseInt(price.discount_percent)) * price.total) / 100;
+            //     grand_total_temp -= price.discount_total;
+            // }
+
+            price.discount_total = 0;
+            for (let item_price of document.querySelectorAll('.item-total')){
+
+                if(item_price.dataset.discount_type != 'never') price.discount_total += makeNumber((parseInt(price.discount_percent)) * makeNumber(item_price.dataset.value)) / 100;
             }
+
+            grand_total_temp -= price.discount_total;
         }
 
         // }else if(document.querySelector("#discount-type").dataset.type == 'value'){
@@ -688,6 +717,8 @@ export const preview = {
                         break;
                 }
 
+                preview._this.state.changes = true;
+                
                 preview.refreshTotals();
             });
 
@@ -732,11 +763,12 @@ export const preview = {
 
                 e.currentTarget.style.maxWidth = '120px';
 
+                preview._this.state.changes = true;
+
                 preview.refreshTotals();
             });
         }
     },
-
 
     /*
     order JSON structure example
@@ -799,6 +831,7 @@ export const preview = {
             item.title = document.querySelector('.edit-item').value;
             item.total = parseFloat(document.querySelector('.edit-tp').value);
             item.price = parseInt(document.querySelector('.edit-tp').dataset.price);
+            item.discounts = JSON.parse(document.querySelector('.edit-item').dataset.discounts);
             item.qty = parseInt(document.querySelector('.edit-qty').value);
             item.note = "";
             item.created = preview.state.orderSingle.updated; // Date.now() / 1000 | 0;  
@@ -806,6 +839,7 @@ export const preview = {
 
             // get discount
             let discount_type = document.querySelector('.edit-discount').options[document.querySelector('.edit-discount').selectedIndex].dataset.type;
+            // if (discount_type) item.discount_type;
             if (discount_type == "percent") { item.discount_percent = document.querySelector('.edit-discount').value; }
             if (discount_type == "value") { item.discount_value = document.querySelector('.edit-discount').value; }
             
@@ -854,6 +888,8 @@ export const preview = {
 
             // focus back to the input field
             setTimeout(() => { document.querySelector('.edit-item').focus(); }, 300);
+
+            preview._this.state.changes = true;
         });
     },
 }

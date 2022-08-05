@@ -1,5 +1,5 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, loadScript, toast, link } from '@kenzap/k-cloud';
+import { headers, __html, __attr, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, loadScript, toast, link } from '@kenzap/k-cloud';
 import { getProductId, makeNumber, numsOnly, priceFormat, onlyNumbers, loadAddon } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
@@ -94,7 +94,7 @@ const _this = {
                 _this.initListeners('all');
 
                 // footer note
-                initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
+                initFooter(__html('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
 
                 // load addons
                 if(response.settings.addons) if(response.settings.addons.product_edit) response.settings.addons.product_edit.forEach(obj => { loadAddon(obj.src, obj.version); })
@@ -110,10 +110,10 @@ const _this = {
         // initiate breadcrumbs
         initBreadcrumbs(
             [
-                { link: link('https://dashboard.kenzap.cloud'), text: __('Dashboard') },
-                { link: link('/'), text: __('E-commerce') },
-                { link: link('/product-list/'), text: __('Product List') },
-                { text: __('Product Edit') }
+                { link: link('https://dashboard.kenzap.cloud'), text: __html('Dashboard') },
+                { link: link('/'), text: __html('E-commerce') },
+                { link: link('/product-list/'), text: __html('Product List') },
+                { text: __html('Product Edit') }
             ]
         );
 
@@ -224,7 +224,7 @@ const _this = {
 
             e.preventDefault();
 
-            let c = confirm(__('Remove entire block?'));
+            let c = confirm(__html('Remove entire block?'));
             if(c){ 
                 e.currentTarget.parentNode.parentNode.remove();
                 // e.currentTarget.parentElement.parentElement.remove();
@@ -244,22 +244,22 @@ const _this = {
             console.log('index: ' + index);
 
             // init defaults
-            let modal_title = __('Add Variation Block');
+            let modal_title = __html('Add Variation Block');
             let title = "";
             let type = "";
             let required = 0;
-            let modal_btn = __('Add'), modal_cancel_btn = __('Cancel');
+            let modal_btn = __html('Add'), modal_cancel_btn = __html('Cancel');
 
             // override defaults in editing mode
             if(action == 'edit'){
 
-                modal_title = __('Edit Variation Block');
+                modal_title = __html('Edit Variation Block');
 
                 title = document.querySelector(".var-block[data-index='"+index+"']").dataset.title;
                 type  = document.querySelector(".var-block[data-index='"+index+"']").dataset.type;
                 required = parseInt(document.querySelector(".var-block[data-index='"+index+"']").dataset.required);
 
-                modal_btn = __('Save');
+                modal_btn = __html('Save');
                 // console.log(variations);
             }
 
@@ -275,28 +275,28 @@ const _this = {
             let modalHTml = `
             <div class="form-cont">
                 <div class="form-group mb-3">
-                    <label for="mtitle" class="form-label">${ __('Save') }</label>
+                    <label for="mtitle" class="form-label">${ __html('Save') }</label>
                     <input type="text" class="form-control" id="mtitle" autocomplete="off" placeholder="Rice type" value="${ title }">
                 </div>
                 <div class="form-group mb-3">
-                    <label for="mtype" class="form-label">${ __('Input type') }</label>
+                    <label for="mtype" class="form-label">${ __html('Input type') }</label>
                     <select id="mtype" class="form-control " >
-                        <option ${ type=='radio'?'selected="selected"':'' } value="radio">${ __('Radio buttons') }</option>
-                        <option ${ type=='checkbox'?'selected="selected"':'' } value="checkbox">${ __('Checkboxes') }</option>
+                        <option ${ type=='radio'?'selected="selected"':'' } value="radio">${ __html('Radio buttons') }</option>
+                        <option ${ type=='checkbox'?'selected="selected"':'' } value="checkbox">${ __html('Checkboxes') }</option>
                     </select>
-                    <p class="form-text">${ __('Define how this renders on frontend.') }</p>
+                    <p class="form-text">${ __html('Define how this renders on frontend.') }</p>
                 </div>
                 <div class="form-group mb-3">
                     <div class="form-check">
                         <label for="id="mtype"" class="form-check-label form-label">
                             <input id="mrequired" type="checkbox" class="form-check-input" ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Required') }
+                            ${ __html('Required') }
                         </label>
                     </div>
-                    <p class="form-text">${ __('Make this variation mandatory for users.') }</p>
+                    <p class="form-text">${ __html('Make this variation mandatory for users.') }</p>
                 </div>
                 <div class="form-group mb-3 dn">
-                    <label for="mtype" class="form-label">${ __('Minimum required') }</label>
+                    <label for="mtype" class="form-label">${ __html('Minimum required') }</label>
                     <select id="mtype" class="form-control" >
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -317,7 +317,7 @@ const _this = {
                 let mrequired = pmodal.querySelector(".p-modal #mrequired:checked");
                 mrequired = mrequired == null ? 0 : mrequired.value == "1" ? 1 : 0;
             
-                if(mtitle.length<2){ alert(__('Please provide longer title')); return; }
+                if(mtitle.length<2){ alert(__html('Please provide longer title')); return; }
 
                 // add mix and match
                 let data = []; data['title'] = mtitle; data['type'] = mtype; data['required'] = mrequired; data['index'] = document.querySelectorAll(".var-block").length;
@@ -356,22 +356,22 @@ const _this = {
             
             pmodalCont.show();
 
-            pmodal.querySelector(".modal-title").innerHTML = __('Add Variation');
-            pmodal.querySelector(".btn-primary").innerHTML = __('Add');
-            pmodal.querySelector(".btn-secondary").innerHTML = __('Cancel');
+            pmodal.querySelector(".modal-title").innerHTML = __html('Add Variation');
+            pmodal.querySelector(".btn-primary").innerHTML = __html('Add');
+            pmodal.querySelector(".btn-secondary").innerHTML = __html('Cancel');
 
             let modalHTML = `
             <div class="form-cont">
                 <div class="form-group">
-                    <label for="mtitle" class="form-label">${ __('Title') }</label>
-                    <input type="text" class="form-control" id="mtitle" autocomplete="off" placeholder="${ __('Brown rice') }">
+                    <label for="mtitle" class="form-label">${ __html('Title') }</label>
+                    <input type="text" class="form-control" id="mtitle" autocomplete="off" placeholder="${ __html('Brown rice') }">
                 </div>
                 <div class="form-group mt-3">
-                    <label for="mprice" class="form-label">${ __('Price') }</label>
+                    <label for="mprice" class="form-label">${ __html('Price') }</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text">$</span>
                         <input id="mprice" type="text" class="form-control" placeholder="0.00" value="" >
-                        <p class="form-text">${ __('You can change default currency under Dashboard &gt; Settings.') }</p>
+                        <p class="form-text">${ __html('You can change default currency under Dashboard &gt; Settings.') }</p>
                     </div>
                 </div>
             </div>`;
@@ -437,23 +437,23 @@ const _this = {
             e.currentTarget.dataset.action = 'add'; // $(this).attr('data-action', 'add');
 
             // init defaults
-            let modal_title = __('Add discount');
+            let modal_title = __html('Add discount');
             let title = "";
             let type = "";
             let availability = "";
             let required = 0;
-            let modal_btn = __('Add'), modal_cancel_btn = __('Cancel');
+            let modal_btn = __html('Add'), modal_cancel_btn = __html('Cancel');
 
             // override defaults in editing mode
             if(action == 'edit'){
 
-                modal_title = __('Edit Variation Block');
+                modal_title = __html('Edit Variation Block');
 
                 title = document.querySelector(".var-block[data-index='"+index+"']").dataset.title;
                 type  = document.querySelector(".var-block[data-index='"+index+"']").dataset.type;
                 required = parseInt(document.querySelector(".var-block[data-index='"+index+"']").dataset.required);
 
-                modal_btn = __('Save');
+                modal_btn = __html('Save');
                 // console.log(variations);
             }
 
@@ -471,102 +471,104 @@ const _this = {
                 <div class="form-group mb-3">
                     <div class="row">
                         <div class="col-lg-6">
-                            <label for="discount-type" class="form-label">${ __('Type') }</label>
+                            <label for="discount-type" class="form-label">${ __html('Type') }</label>
                             <select id="discount-type" class="form-control" >
-                                <option ${ type=='percent'?'selected="selected"':'' } value="percent">${ __('By percent') }</option>
-                                <option ${ type=='value'?'selected="selected"':'' } value="value">${ __('By value') }</option>
+                                <option ${ type=='percent'?'selected="selected"':'' } value="percent">${ __html('By percent') }</option>
+                                <option ${ type=='value'?'selected="selected"':'' } value="value">${ __html('By value') }</option>
+                                <option ${ type=='never'?'selected="selected"':'' } value="never">${ __html('never discount') }</option>
                             </select>
                         </div>
                         <div id="discount-percent-cont" class="col-lg-6">
-                            <label for="discount-percent" class="form-label">${ __('Percent %') }</label>
-                            <input type="text" class="form-control" id="discount-percent" autocomplete="off" placeholder="${ __('5') }">
+                            <label for="discount-percent" class="form-label">${ __html('Percent %') }</label>
+                            <input type="text" class="form-control" id="discount-percent" autocomplete="off" placeholder="${ __html('5') }">
                         </div>
                         <div id="discount-value-cont" class="col-lg-6 d-none">
-                            <label for="discount-value" class="form-label">${ __('Value') }</label>
-                            <input type="text" class="form-control" id="discount-value" autocomplete="off" placeholder="${ __('12.00') }">
+                            <label for="discount-value" class="form-label">${ __html('Value') }</label>
+                            <input type="text" class="form-control" id="discount-value" autocomplete="off" placeholder="${ __html('12.00') }">
                         </div>
                     </div>
-                    <p class="form-text">${ __('Define how big is the discount (numeric value only).') }</p>
+                    <p class="form-text discount-hint-cont">${ __html('Define how big is the discount (numeric value only).') }</p>
+                    <p class="form-text discount-never-cont d-none">${ __html('Never apply general discount for this product') }</p>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="discount-availability" class="form-label">${ __('Availability') }</label>
+                <div class="discount-availability-cont form-group mb-3">
+                    <label for="discount-availability" class="form-label">${ __html('Availability') }</label>
                     <select id="discount-availability" class="form-control " >
-                        <option ${ availability=='admin'?'selected="selected"':'' } value="admin">${ __('Admin') }</option>
-                        <option ${ availability=='always'?'selected="selected"':'' } value="always">${ __('Always') }</option>
-                        <option ${ availability=='hourly'?'selected="selected"':'' } value="hourly">${ __('Hourly') }</option>
-                        <option ${ availability=='weekly'?'selected="selected"':'' } value="weekly">${ __('Weekly') }</option>
-                        <option class="d-none" ${ availability=='monthly'?'selected="selected"':'' } value="monthly">${ __('Monthly') }</option>
+                        <option ${ availability=='admin'?'selected="selected"':'' } value="admin">${ __html('Admin') }</option>
+                        <option ${ availability=='always'?'selected="selected"':'' } value="always">${ __html('Always') }</option>
+                        <option ${ availability=='hourly'?'selected="selected"':'' } value="hourly">${ __html('Hourly') }</option>
+                        <option ${ availability=='weekly'?'selected="selected"':'' } value="weekly">${ __html('Weekly') }</option>
+                        <option class="d-none" ${ availability=='monthly'?'selected="selected"':'' } value="monthly">${ __html('Monthly') }</option>
                     </select>
-                    <p class="form-text">${ __('Restrict discount availability.') }</p>
+                    <p class="form-text">${ __html('Restrict discount availability.') }</p>
                 </div>
-                <div id="discount-weekly" class="form-group mb-3 d-none">
-                    <label for="mtype" class="form-label">${ __('Days of week') }</label>
+                <div id="discount-weekly" class="discount-weekly-cont form-group mb-3 d-none">
+                    <label for="mtype" class="form-label">${ __html('Days of week') }</label>
                     <div class="form-check">
                         <label for="week-monday" class="form-check-label form-label">
                             <input id="week-monday" type="checkbox" class="form-check-input " ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Monday') }
+                            ${ __html('Monday') }
                         </label>
                     </div>
                     <div class="form-check">
                         <label for="week-tuesday" class="form-check-label form-label">
                             <input id="week-tuesday" type="checkbox" class="form-check-input" ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Tuesday') }
+                            ${ __html('Tuesday') }
                         </label>
                     </div>
                     <div class="form-check">
                         <label id="week-wednesday" class="form-check-label form-label">
                             <input id="week-wednesday" type="checkbox" class="form-check-input" ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Wednesday') }
+                            ${ __html('Wednesday') }
                         </label>
                     </div>
                     <div class="form-check">
                         <label id="week-thursday" class="form-check-label form-label">
                             <input id="week-thursday" type="checkbox" class="form-check-input" ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Thursday') }
+                            ${ __html('Thursday') }
                         </label>
                     </div>
                     <div class="form-check">
                         <label id="week-friday" class="form-check-label form-label">
                             <input id="week-friday" type="checkbox" class="form-check-input" ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Friday') }
+                            ${ __html('Friday') }
                         </label>
                     </div>
                     <div class="form-check">
                         <label id="week-saturday" class="form-check-label form-label">
                             <input id="week-saturday" type="checkbox" class="form-check-input" ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Saturday') }
+                            ${ __html('Saturday') }
                         </label>
                     </div>
                     <div class="form-check">
                         <label id="week-sunday" class="form-check-label form-label">
                             <input id="week-sunday" type="checkbox" class="form-check-input" ${ required==1?'checked="checked"':'' } value="1">
-                            ${ __('Sunday') }
+                            ${ __html('Sunday') }
                         </label>
                     </div>
-                    <p class="form-text">${ __('Days of the week when discount is available.') }</p>
+                    <p class="form-text">${ __html('Days of the week when discount is available.') }</p>
                 </div>
-                <div id="discount-hourly" class="form-group mb-3 d-none">
+                <div id="discount-hourly" class="form-group discount-hourly-cont mb-3 d-none">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group mb-3 mt-1">
-                                <label for="discount-hour-from" class="form-label">${ __('From') }</label>
-                                <input id="discount-hour-from" type="text" class="form-control" maxlength="5" autocomplete="off" placeholder="${ __('12:00') }">
+                                <label for="discount-hour-from" class="form-label">${ __html('From') }</label>
+                                <input id="discount-hour-from" type="text" class="form-control" maxlength="5" autocomplete="off" placeholder="${ __html('12:00') }">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group mb-3 mt-1">
-                                <label for="discount-hour-to" class="form-label">${ __('To') }</label>
-                                <input id="discount-hour-to" type="text" class="form-control" maxlength="5" autocomplete="off" placeholder="${ __('17:00') }">
+                                <label for="discount-hour-to" class="form-label">${ __html('To') }</label>
+                                <input id="discount-hour-to" type="text" class="form-control" maxlength="5" autocomplete="off" placeholder="${ __html('17:00') }">
                             </div>
                         </div>
                     </div>
-                    <p class="form-text">${ __('Time range when discount is available.') }</p>
+                    <p class="form-text">${ __html('Time range when discount is available.') }</p>
                 </div>
-                <div class="form-group mb-3">
+                <div class="form-group discount-note-cont mb-3">
                     <div class="form-group mb-3 mt-1">
-                        <label for="discount-note" class="form-label">${ __('Note') }</label>
-                        <input id="discount-note" type="text" class="form-control" maxlength="25" autocomplete="off" placeholder="${ __('') }">
-                        <p class="form-text">${ __('Example: •happy hour promo.') }</p>
+                        <label for="discount-note" class="form-label">${ __html('Note') }</label>
+                        <input id="discount-note" type="text" class="form-control" maxlength="25" autocomplete="off" placeholder="${ __html('') }">
+                        <p class="form-text">${ __html('Example: •happy hour promo.') }</p>
                     </div>
                 </div> 
             </div>`;
@@ -620,6 +622,11 @@ const _this = {
                 // discount-availability
                 console.log(e.currentTarget.value);
 
+                document.querySelector('.discount-never-cont').classList.add('d-none');
+                document.querySelector('.discount-hint-cont').classList.remove('d-none');
+                document.querySelector('.discount-availability-cont').classList.remove('d-none');
+                document.querySelector('.discount-hint-cont').classList.remove('d-none');
+
                 switch(e.currentTarget.value){
 
                     case 'percent':
@@ -629,6 +636,13 @@ const _this = {
                     case 'value':
                         document.querySelector('#discount-percent-cont').classList.add('d-none');
                         document.querySelector('#discount-value-cont').classList.remove('d-none');
+                    break;
+                    case 'never':
+                        document.querySelector('#discount-percent-cont').classList.add('d-none');
+                        document.querySelector('#discount-value-cont').classList.add('d-none');
+                        document.querySelector('.discount-never-cont').classList.remove('d-none');
+                        document.querySelector('.discount-availability-cont').classList.add('d-none');
+                        document.querySelector('.discount-hint-cont').classList.add('d-none');
                     break;
                 };
             });
@@ -687,6 +701,10 @@ const _this = {
                         // alert('Value field can not be empty.'); 
                         // return false; 
                     }
+                }else if(obj.type == 'value'){
+
+                    // get value
+                    obj.value = "-";
                 }
 
                 // discount availability
@@ -885,14 +903,14 @@ const _this = {
                 // check image type
                 if(input.files[0].type != 'image/jpeg' && input.files[0].type != 'image/jpg' && input.files[0].type != 'image/png'){
 
-                    toast( __("Please provide image in JPEG format") );
+                    toast( __html("Please provide image in JPEG format") );
                     return;
                 }
           
                 // check image size
                 if(input.files[0].size > 5000000){
 
-                    toast( __("Please provide image less than 5 MB in size!") );
+                    toast( __html("Please provide image less than 5 MB in size!") );
                     return;
                 }
 
@@ -958,8 +976,8 @@ const _this = {
                 
                 </ul>
             </div>
-            <p class="form-text"><a class="add-mix" href="#">${ __('+ add option') }</a> ${ __('to differentiate price offering.') }</p>
-            <div class="add-mix-ctn d-none"><a class="add-mix" href="#">${ __('+ add option') }</a></div>
+            <p class="form-text"><a class="add-mix" href="#">${ __html('+ add option') }</a> ${ __html('to differentiate price offering.') }</p>
+            <div class="add-mix-ctn d-none"><a class="add-mix" href="#">${ __html('+ add option') }</a></div>
         </div>`;
     
         return html;
@@ -989,7 +1007,7 @@ const _this = {
           <div class="p-img-cont float-start">\
             <p data-index="${i}">\
               <img class="p-img images-${i}" data-index="${i}" width="100" height="100" src="${img}" />\
-              <span class="remove hd" title="${ __('Remove') }">×</span>\
+              <span class="remove hd" title="${ __html('Remove') }">×</span>\
             </p>\
             <input type="file" name="img[]" data-type="search" data-index="${i}" class="file aif-${i} d-none">\
           </div>`;
@@ -1074,7 +1092,7 @@ const _this = {
                 _this.state.ajaxQueue -= 1;
                 if(response.success && _this.state.ajaxQueue == 0){
 
-                    toast( __("Product updated") );
+                    toast( __html("Product updated") );
 
                     // hide UI loader
                     hideLoader();
@@ -1085,7 +1103,7 @@ const _this = {
         // image upload notice
         if(_this.state.ajaxQueue == 0){
 
-            toast( __("Product updated") );
+            toast( __html("Product updated") );
 
             hideLoader();
         }
@@ -1094,7 +1112,7 @@ const _this = {
     renderDiscounts: () => {
 
         let discounts = document.querySelector('.discount-blocks').dataset.data;
-        let dow = [__('Monday'), __('Tuesday'), __('Wednesday'), __('Thursday'), __('Friday'), __('Saturday'), __('Sunday')];
+        let dow = [__html('Monday'), __html('Tuesday'), __html('Wednesday'), __html('Thursday'), __html('Friday'), __html('Saturday'), __html('Sunday')];
         
         discounts = JSON.parse(decodeURIComponent(discounts));
 
@@ -1102,15 +1120,18 @@ const _this = {
         discounts.forEach((el, index) => {
 
             let dv = el.type == 'value' ? priceFormat(_this, el.value) : el.percent + '% (' + priceFormat(_this, (makeNumber(document.querySelector("#p-price").value) * ((100-el.percent)/100))) + ')';
+
             let time = '';
             switch(el.availability){
 
-                case 'admin': time = __('Admin') + ' ' + dv; break;
-                case 'always': time = __('Always') + ' ' + dv; break;
+                case 'admin': time = __html('Admin') + ' ' + dv; break;
+                case 'always': time = __html('Always') + ' ' + dv; break;
                 case 'hourly': time = el.hours.from + '-' + el.hours.to + ' ' + dv; break;
                 case 'weekly': el.dow.forEach((day, index) => { time += day == true ? dow[index] + ' ' : ''; }); time += '<b>' + el.hours.from + '-' + el.hours.to + '</b> ' + dv; break;
             }
-        
+
+            if(el.type=="never") time = __html('Avoid discount calculation for this product.');
+
             html +=`
             <li class="form-text mb-2" >
                 ${ time }
