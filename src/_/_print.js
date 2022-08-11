@@ -1,5 +1,5 @@
-import { headers, __html, parseApiError, spaceID, toast } from '@kenzap/k-cloud';
-import { priceFormat } from "../_/_helpers.js"
+import { headers, __html, parseApiError, spaceID, toast, __ } from '@kenzap/k-cloud';
+import { priceFormat, renderNotifications } from "../_/_helpers.js"
 
 export const printReceipt = (_this, _id, type, template, debug = false) => {
 
@@ -226,7 +226,7 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // console.log(data.print); return;
 
     // send data
-    fetch('https://api-print.kenzap.cloud:5001/', {
+    fetch('https://api-v1.kenzap.cloud/ecommerce/', {
         method: 'post',
         headers: headers,
         body: JSON.stringify({
@@ -248,7 +248,9 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
 
         }else{
 
-            parseApiError(response);
+            parsePrintError(_this, response);
+
+            // parseApiError(response);
         }
     })
     .catch(error => {
@@ -443,7 +445,7 @@ export const printReceiptLegacy = (_this, _id, type, template) => {
     data["type"] = "receipt";
 
     // send data
-    fetch('https://api-print.kenzap.cloud:5001/', {
+    fetch('https://api-v1.kenzap.cloud/ecommerce/', {
         method: 'post',
         headers: headers,
         body: JSON.stringify({
@@ -465,7 +467,9 @@ export const printReceiptLegacy = (_this, _id, type, template) => {
 
         }else{
 
-            parseApiError(response);
+            parsePrintError(_this, response);
+            
+            // parseApiError(response);
         }
     })
     .catch(error => {
@@ -657,7 +661,7 @@ export const printQR = (_this, qrnum) => {
     // return;
 
     // send data
-    fetch('https://api-print.kenzap.cloud:5001/', {
+    fetch('https://api-v1.kenzap.cloud/ecommerce/', {
         method: 'post',
         headers: headers,
         body: JSON.stringify({
@@ -679,7 +683,9 @@ export const printQR = (_this, qrnum) => {
 
         }else{
 
-            parseApiError(response);
+            parsePrintError(_this, response);
+
+            // parseApiError(response);
         }
     })
     .catch(error => {
@@ -726,4 +732,21 @@ export const isPrintQREnabled = (_this) => {
     let templates = _this.state.settings['templates'].filter(template => { return template.type == "qr" && (template.user == "" || template.user == _this.state.user.id); });
 
     return templates.length > 0 ? true : false;
+}
+
+const parsePrintError = (_this, response) => {
+
+    toast( __(response.reason) );
+
+    if(document.querySelector('.alert[data-id="print-api"')){ document.querySelector('.alert[data-id="print-api"').remove(); }
+
+    let messages = [{ _id: "print-api", color: "danger", msg: __html(response.reason) }];
+
+    renderNotifications(_this, messages);
+
+    try{
+        if(isMobile()) window.navigator.vibrate(200);
+    }catch{
+
+    }
 }

@@ -142,6 +142,8 @@ export const preview = {
             </a>
         </div>
         `;
+
+  
         // kenzapprint://kenzapprint.app?data=%7B%22print%22%3A%22%5BC%5D%3Cu%3E%3Cfont%20size%3D%5C%22big%5C%22%3EORDER%7B%7Border_id_short%7D%7D%3C%2Ffont%3E%3C%2Fu%3E%5Cn%5BC%5DFu%20Zhen%20Seafood%5Cn%5BC%5D%3Cu%20type%3Ddouble%3E%7B%7Bdate_time%7D%7D%3C%2Fu%3E%5Cn%5BC%5D%5Cn%5BC%5D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%5C%22%20%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EBEAUTIFUL%20SHIRT%3C%2Fb%3E%5BR%5D9.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%20S%5Cn%5BL%5D%5Cn%5BL%5D%3Cb%3EAWESOME%20HAT%3C%2Fb%3E%5BR%5D24.99%E2%82%AC%5Cn%5BL%5D%20%20%2B%20Size%20%3A%2057%2F58%5Cn%5BL%5D%5Cn%5BC%5D--------------------------------%5Cn%5BR%5DTOTAL%20PRICE%20%3A%5BR%5D34.98%E2%82%AC%5Cn%5BR%5DTAX%20%3A%5BR%5D4.23%E2%82%AC%22%7D" data-id="72b42ad9111e7767aa68174227ba20b5e11d26e4
 
         // structure modal
@@ -153,7 +155,9 @@ export const preview = {
 
         let html = statusSelect;
 
-        let fields = { id: { l: __("ID"), classList: "order-form" }, from: { l: __("From"), e: "text", editable: true, classList: "order-form" }, table: { l: __("Table"), e: "text", editable: true, classList: "order-form" }, items: { l: "", e: "items" }, fname: { l: __("Name"), e: "text" }, lname: { l: __("Surname"), e: "text" }, bios: { l: __("Bios"), e: "textarea" }, avatar: { l: __("Avatar"), e: "text" }, email: { l: __("Email"), e: "text" }, countryr: { l: __("Country"), e: "text" }, cityr: { l: __("City"), e: "text" }, addr1: { l: __("Address 1"), e: "textarea" }, addr2: { l: __("Address 2"), e: "textarea" }, post: { l: __("Post"), e: "text" }, state: { l: __("State"), e: "text" }, c1: { l: __("Whatsapp"), e: "text" }, c2: { l: __("Messenger"), e: "text" }, c3: { l: __("Line"), e: "text" }, c4: { l: __("Email"), e: "text" }, c5: { l: __("Telegram"), e: "text" }, email: { l: __("Email"), e: "text" }, bio: { l: __("Bio"), e: "text" }, y1: { l: __("Name"), e: "text" }, y2: { l: __("IBAN"), e: "text" }, y3: { l: __("SWIFT"), e: "text" }, y4: { l: __("Bank"), e: "text" }, y5: { l: __("Bank city"), e: "text" }, y6: { l: __("Bank country"), e: "text" }, note: { l: __("Note"), e: "textarea" }, s3: { l: __("Link 3"), e: "text" }, company: { l: __("Company"), e: "text" }, vat: { l: __("Tax ID"), e: "text" }, grade: { l: __("Grade"), e: "text" }, kenzap_ida: { l: __("Kenzap IDA"), e: "text" } };
+        let fields = { id: { l: __("ID"), classList: "order-form" }, from: { l: __("From"), e: "text", editable: true, classList: "order-form" }, table: { l: __("Table"), e: "text", editable: true, classList: "order-form" }, items: { l: "", e: "items" }, fname: { l: __("Name"), e: "text" }, lname: { l: __("Surname"), e: "text" }, bios: { l: __("Bios"), e: "textarea" }, avatar: { l: __("Avatar"), e: "text" }, email: { l: __("Email"), e: "text" }, countryr: { l: __("Country"), e: "text" }, cityr: { l: __("City"), e: "text" }, phone: { l: __("Phone"), e: "text" }, addr1: { l: __("Address 1"), e: "textarea" }, addr2: { l: __("Address 2"), e: "textarea" }, post: { l: __("Post"), e: "text" }, state: { l: __("State"), e: "text" }, c1: { l: __("Whatsapp"), e: "text" }, c2: { l: __("Messenger"), e: "text" }, c3: { l: __("Line"), e: "text" }, c4: { l: __("Email"), e: "text" }, c5: { l: __("Telegram"), e: "text" }, email: { l: __("Email"), e: "text" }, bio: { l: __("Bio"), e: "text" }, y1: { l: __("Name"), e: "text" }, y2: { l: __("IBAN"), e: "text" }, y3: { l: __("SWIFT"), e: "text" }, y4: { l: __("Bank"), e: "text" }, y5: { l: __("Bank city"), e: "text" }, y6: { l: __("Bank country"), e: "text" }, note: { l: __("Note"), e: "textarea" }, s3: { l: __("Link 3"), e: "text" }, company: { l: __("Company"), e: "text" }, vat: { l: __("Tax ID"), e: "text" }, grade: { l: __("Grade"), e: "text" }, kenzap_ida: { l: __("Kenzap IDA"), e: "text" } };
+
+        // console.log(Object.keys(fields));
 
         // order table details
         for (let x in fields) {
@@ -168,7 +172,7 @@ export const preview = {
                 <b>${field}</b>${preview.renderField(_this, fields[x], val, x)}
             </div>`;
         }
-
+       
         // totals
         setTimeout(() => { preview.refreshTotals(); }, 100);
 
