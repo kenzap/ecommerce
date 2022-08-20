@@ -154,7 +154,7 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
 
     console.log(data.print);
 
-    return;
+    // return;
 
     // order items restricted by category
     const matches = data.print.matchAll(/{{order_items:(.*?):start}}/g);
