@@ -130,14 +130,15 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
         data.print = template.template;
     }
 
-    console.log(template);
-
     // find max char per line parameter
     let cols_p = data.print.indexOf('[W:'); let cols = 20;
     if(cols_p!=-1){ cols = parseInt(data.print.substr(cols_p+3, 2)); data.print = data.print.substr(0, cols_p) + data.print.substr(cols_p+6, data.print.length); }
 
     // order id
     data.print = data.print.replace(/{{order_id}}/g, o.id);
+
+    // order from
+    data.print = data.print.replace(/{{order_from}}/g, o.from);
 
     // table no
     data.print = data.print.replace(/{{order_table}}/g, o.table ? o.table : "");
@@ -147,6 +148,8 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
 
     // order items
     data.print = data.print.replace(/{{order_items}}/g, getPrintItems(_this, o, '', cols));
+
+    console.log(template);
 
     // order items restricted by category
     const matches = data.print.matchAll(/{{order_items:(.*?):start}}/g);
