@@ -140,6 +140,9 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // order from
     data.print = data.print.replace(/{{order_from}}/g, o.from);
 
+    // take away
+    data.print = data.print.replace(/{{order_takeaway}}/g, o.takeaway ? o.takeaway : "");
+
     // table no
     data.print = data.print.replace(/{{order_table}}/g, o.table ? o.table : "");
 
@@ -149,7 +152,9 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // order items
     data.print = data.print.replace(/{{order_items}}/g, getPrintItems(_this, o, '', cols));
 
-    console.log(template);
+    console.log(data.print);
+
+    return;
 
     // order items restricted by category
     const matches = data.print.matchAll(/{{order_items:(.*?):start}}/g);
