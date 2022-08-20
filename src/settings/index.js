@@ -163,6 +163,14 @@ const _this = {
 
         // printer settings
         printerSettings.init(_this);
+
+        // webhooks
+        if(response.settings.webhooks) response.settings.webhooks.forEach((hook, i) => {
+
+            console.log(hook);
+            document.querySelector('[name="webhook1_trigger"]').value = hook['trigger'];
+            document.querySelector('[name="webhook1_url"]').value = hook['url'];
+        });
     },
     initListeners: () => {
 
@@ -290,6 +298,17 @@ const _this = {
         // get templates
         data = printerSettings.save(_this, data);
 
+        // webhooks
+        data.webhooks = [];
+        for(let row of document.querySelectorAll('.webhook-list')){
+            
+            let obj = {};
+            obj.trigger = row.querySelector('.webhook_trigger').value;
+            obj.url = row.querySelector('.webhook_url').valeu;
+
+            data.webhooks.push(obj);
+        }
+        
         console.log(data);
 
         // send data

@@ -483,6 +483,35 @@ export const HTMLContent = (__) => {
                       </div>
                     </div>
 
+                    <h4 id="h-webhooks" class="card-title mb-4 mt-4">${__html('Webhooks')}</h4>
+                    <div class="row webhook-list">
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${__html('Trigger')}</label>
+                          <div class="col-sm-9">
+                            <select id="webhook1_trigger" class="form-select webhook_trigger" name="webhook1_trigger" data-type="select">
+                                <option value="">${__html('None')}</option>
+                                <option value="new_order">${__html('New order')}</option>
+                                <option value="canceled_order">${__html('Canceled order')}</option>
+                                <option value="refunded_order">${__html('Refunded order')}</option>
+                                <option value="completed_order">${__html('Completed order')}</option>
+                                <option value="low_stock">${__html('Low stock')}</option>
+                            </select>
+                            <p class="form-text">${__html('Action when the URL is called.')}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group row mb-3 mt-1">
+                          <label class="col-sm-3 col-form-label">${__html('Webhook')}</label>
+                          <div class="col-sm-9">
+                            <input id="webhook1" type="text" class="form-control webhook_url" name="webhook1_url" >
+                            <p class="form-text">${__html('URL with parameters. Ex.: https://example.com/{{order_id}}')}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <h4 id="h-printing" class="card-title mb-4 mt-4">${__html('Printing')}</h4>
 
                       <div class="row">
