@@ -505,7 +505,7 @@ export const HTMLContent = (__) => {
                         <div class="form-group row mb-3 mt-1">
                           <label class="col-sm-3 col-form-label">${__html('Webhook')}</label>
                           <div class="col-sm-9">
-                            <input id="webhook1" type="text" class="form-control webhook_url" name="webhook1_url" >
+                            <input id="webhook1_url" type="text" class="form-control webhook_url" name="webhook1_url" >
                             <p class="form-text">${__html('URL with parameters. Ex.: https://example.com/{{order_id}}')}</p>
                           </div>
                         </div>

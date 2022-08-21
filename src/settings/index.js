@@ -304,7 +304,7 @@ const _this = {
             
             let obj = {};
             obj.trigger = row.querySelector('.webhook_trigger').value;
-            obj.url = row.querySelector('.webhook_url').valeu;
+            obj.url = row.querySelector('.webhook_url').value;
 
             data.webhooks.push(obj);
         }

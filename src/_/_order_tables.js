@@ -11,21 +11,24 @@ export const tables = {
 
         if(_this.state.settings.tables != "1") return;
 
+        // permanent table list defined under ecommerce settings
         let s = '', table_list = _this.state.settings.table_list.trim().split('\n');
-       
         let html = `<div id="table_list" class="row row-cols-1 row-cols-lg-5 row-cols-md-3 row-cols-sm-2 g-3 mb-3">`;
 
+        // temporary user defined tables 
         _this.state.orders.forEach(o => {
 
+            console.log(o);
+
             if(o.table) if(o.table.length>0) if(!table_list.includes(o.table)) table_list.push(o.table);
+
+            if(o.takeaway && (o.status == "new" || o.status == "processing")) if(!table_list.includes(__("Take away") + " #" + o.id)) table_list.push(__("Take away") + " #" + o.id);
         });
 
-        // console.log(table_list);
-
+        // generate table list
         table_list.forEach((el, i) => {
 
             html += tables.structTableCard(_this, i, el, { orders: _this.state.orders, meta: _this.state.meta }); 
-
         });
 
         html += '</div>';
@@ -107,8 +110,18 @@ export const tables = {
     let ii = 0;
     let order = {};
     let id_last = 0;
+    let title = __("Table %1$", el);
     
-    response.orders.forEach((o, index) => { if(o.table == el+'' && o.id > id_last){ ii = index; order = o; id_last = o.id; } });
+    response.orders.forEach((o, index) => { 
+
+        // take away
+        if(el.includes("#")){
+            if(o.id == el.split("#")[1]){ ii = index; order = o; id_last = o.id; title = __("Take away %1$", o.id); }
+        }
+
+        // dine in table
+        if(o.table == el+'' && o.id > id_last){ ii = index; order = o; id_last = o.id; title = __("Table %1$", el); }
+    });
 
     order = order ? order : {};
     order['id'] = order.id ? order.id : "";
@@ -134,7 +147,7 @@ export const tables = {
         <div class="card ${ classes } mb-2 " style="max-width: 18rem;">
             <div class="card-header view-order po ${ _id_header && order['status'] == 'completed' ? "bg-success" : "" }" data-id="${ _id_header }" data-table="${ el }" ${ _id_header ? 'data-index="' + ii + '"' : '' }">${ order.id ? __html("last order #%1$", order.id) : "&nbsp;" }</div>
             <div class="card-body d-flex align-items-center justify-content-center view-order po" style="min-height:140px;" data-id="${ _id_body }" data-table="${ el }" ${ _id_body ? 'data-index="' + ii + '"' : '' }">
-                <h5 class="card-title">${ __("Table %1$", el) }</h5>
+                <h5 class="card-title">${ __html(title) }</h5>
             </div>
             <div class="card-footer d-flex justify-content-between">
                 ${ order['created'] ? timeConverterAgo(__, response.meta.time, order['created']) : '&nbsp;' }
