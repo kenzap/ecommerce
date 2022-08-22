@@ -141,7 +141,7 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     data.print = data.print.replace(/{{order_from}}/g, o.from);
 
     // take away
-    data.print = data.print.replace(/{{order_takeaway}}/g, o.takeaway ? __html("take away") : __html("dine-in"));
+    data.print = data.print.replace(/{{order_takeaway}}/g, o.takeaway ? (o.takeaway == "dine-in" ? __html("dine-in") : __html("take away")) : __html("dine-in"));
 
     // table no
     data.print = data.print.replace(/{{order_table}}/g, o.table ? __html("Table #%1$", o.table) : "");
