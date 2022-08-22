@@ -144,15 +144,13 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     data.print = data.print.replace(/{{order_takeaway}}/g, o.takeaway ? __html("take away") : __html("dine-in"));
 
     // table no
-    data.print = data.print.replace(/{{order_table}}/g, o.table ? o.table : "");
+    data.print = data.print.replace(/{{order_table}}/g, o.table ? __html("Table #%1$", o.table) : "");
 
     // current time
     data.print = data.print.replace(/{{date_time}}/g, date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short', }));
 
     // order items
     data.print = data.print.replace(/{{order_items}}/g, getPrintItems(_this, o, '', cols));
-
-    console.log(data.print);
 
     // return;
 
@@ -218,6 +216,8 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
     if(document.querySelector('#qr-number')) data.print = data.print.replace(/{{qr_number}}/g, document.querySelector('#qr-number').value);
 
+    // debug
+    console.log(data.print);
     if(data.debug){ console.log(data.print); }
 
     let printers = type == "user" ? template["user_print"] : template["auto_print"];
@@ -366,7 +366,7 @@ export const printReceiptLegacy = (_this, _id, type, template) => {
     data.print = data.print.replace(/{{order_id}}/g, o.id);
 
     // table no
-    data.print = data.print.replace(/{{order_table}}/g, o.table ? o.table : "");
+    data.print = data.print.replace(/{{order_table}}/g, o.table ? __html("Table #%1$", o.table) : "");
 
     // current time
     data.print = data.print.replace(/{{date_time}}/g, date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short', }));
