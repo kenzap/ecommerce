@@ -23,6 +23,7 @@ const _this = {
         settings: {}, // where all requested settings are cached
         qr_settings: {}, // where all requested settings are cached
         orderSingle: [], // where single order is stored during preview
+        printQueue: [],
         updates: { last_order_id: '', last_order_update: 0 },
         playTitleTimer: null,
         refreshTimer: null,
@@ -69,14 +70,11 @@ const _this = {
         // show loader during first load
         if (_this.state.firstLoad) showLoader();
 
-        // check if any print pending receipts
-        // if (_this.state.printLink){ window.location.href = _this.state.printLink; _this.state.printLink = null; }
-        // if (_this.state.printLink){
+        if(_this.state.printRequest){
 
-        //     printReceipt(_this); 
-        //     // window.location.href = _this.state.printLink; _this.state.printLink = null; 
-        // }
-        if(_this.state.printRequest){ printReceipt(_this, _this.state.printRequest, "user"); }
+            // printReceipt(_this, _this.state.printRequest, "user");
+            _this.state.printQueue.push({_id: _this.state.printRequest, type: "user", template: null});
+        }
 
         // search content
         let s = document.querySelector('.search-input') ? document.querySelector('.search-input').value : '';
@@ -474,7 +472,13 @@ const _this = {
     updateOrder: (i, id) => {
 
         // print immediately if order has no changes
-        if(!_this.state.changes && _this.state.printRequest){ printReceipt(_this, _this.state.printRequest, "user"); _this.modalCont.hide(); return; }
+        if(!_this.state.changes && _this.state.printRequest){ 
+
+            _this.state.printQueue.push({_id: _this.state.printRequest, type: "user", template: null});
+            // printReceipt(_this, _this.state.printRequest, "user");
+            _this.modalCont.hide(); 
+            return; 
+        }
 
         let modal = document.querySelector(".modal");
         if(modal.querySelector(".btn-confirm").dataset.loading === 'true') return;
@@ -600,9 +604,6 @@ const _this = {
 
                     if(_this.state.printRequest == 'new') _this.state.printRequest = data._id;
                     
-                    // if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
-                    // if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
-
                     _this.getData();
                                     
                 }else{ parseApiError(response); }
@@ -636,9 +637,6 @@ const _this = {
 
                     toast( __('Order updated') );
 
-                    // _this.state.printRequest
-                    // if(_this.state.printLink) _this.state.printLink = printReceipt(_this, data);
-                    
                     _this.getData();
 
                 }else{

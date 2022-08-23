@@ -65,7 +65,7 @@ export const preview = {
             preview.renderOrderUI(_this);
         }
         
-        // console.log(_this.state.orderSingle.items);
+        console.log(_this.state.orderSingle);
 
         // prevent modal closure if user clicks on white space areas
         // if(modal) modal.addEventListener('click', (e)=>{ e.preventDefault(); return false; });

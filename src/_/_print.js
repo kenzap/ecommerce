@@ -135,7 +135,7 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     if(cols_p!=-1){ cols = parseInt(data.print.substr(cols_p+3, 2)); data.print = data.print.substr(0, cols_p) + data.print.substr(cols_p+6, data.print.length); }
 
     // order id
-    data.print = data.print.replace(/{{order_id}}/g, o.id);
+    data.print = data.print.replace(/{{order_id}}/g, o.id ? o.id : "-");
 
     // order from
     data.print = data.print.replace(/{{order_from}}/g, o.from);
@@ -220,12 +220,14 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     console.log(data.print);
     if(data.debug){ console.log(data.print); }
 
+    // return false;
+
     let printers = type == "user" ? template["user_print"] : template["auto_print"];
 
     // console.log(printers);
 
     data["user"] = _this.state.user.id;
-    data["printers"] = printers;
+    data["printers"] = []; data["printers"].push(printers[0]); // one by one
     data["type"] = "receipt";
 
     // process styling
@@ -703,35 +705,72 @@ export const printQR = (_this, qrnum) => {
 }
 
 export const autoPrint = (_this) => {
+    
+    if(!_this.state.lastPrintTime) _this.state.lastPrintTime = Math.floor(Date.now() / 1000);
 
-    // console.log("autoPrint");
+    // process printing pending tasks
+    setInterval((_this) => { 
+
+        if((Math.floor(Date.now() / 1000) - _this.state.lastPrintTime) > 7 && _this.state.printQueue.length > 0){
+
+            // console.log("pending printing");
+            // console.log(_this.state.printQueue);
+
+            let _obj = _this.state.printQueue.shift();
+
+            printReceipt(_this, _obj._id, _obj.type, _obj.template);
+
+            _this.state.lastPrintTime = Math.floor(Date.now() / 1000);
+        }
+
+    }, 50, _this);
 
     // find auto printing receipt
     let templates = _this.state.settings['templates'].filter(template => { return template.auto_print_action == "new" && template.type == "receipt" && (template.user == "" || template.user == _this.state.user.id); });
 
+    // if no templates stop here
     if(templates.length == 0) return false;
 
-    autoPrintLoop(_this, templates[0]); setInterval((_this) => { autoPrintLoop(_this, templates[0]); }, 7000, _this);
-}
+    // iterate orders and match with templates
+    setInterval((_this) => {
+        
+        // get last order id
+        let last_print_id = localStorage.hasOwnProperty("last_print_id") ? localStorage.getItem("last_print_id") : 0;
 
-export const autoPrintLoop = (_this, template) => {
+        // get orders pending printing 
+        let orders = _this.state.orders.filter((o, i) => { return o.status == "new" && parseInt(_this.state.orders[i].id) > last_print_id });
 
-    let last_print_id = localStorage.hasOwnProperty("last_print_id") ? localStorage.getItem("last_print_id") : 0;
-    let i = _this.state.orders.length;
+        // iterate through all templates
+        orders.reverse();
+        templates.forEach((template, t) => {
 
-    while (i > 0){
+            orders.forEach((o, i) => {
 
-        i--;
+                console.log(template);
 
-        if(_this.state.orders[i].status == "new" && parseInt(_this.state.orders[i].id) > last_print_id){
+                template.auto_print.forEach((p, a) => {
 
-            localStorage.setItem("last_print_id", _this.state.orders[i].id);
+                    let template_temp = {
+                        auto_print: [],
+                        auto_print_action: template.auto_print_action,
+                        template: template.template,
+                        type: template.type,
+                        user: template.user
+                    };
 
-            printReceipt(_this, _this.state.orders[i]._id, "auto", template);
+                    template_temp.auto_print.push(p);
 
-            return false;
-        }
-    }
+                    _this.state.printQueue.push({id: o.id, _id: o._id, type: "auto", template: template_temp});
+                });
+                
+                if(o.id > last_print_id) last_print_id = o.id;
+            });
+        });
+
+        // mark all orders as printed
+        localStorage.setItem("last_print_id", last_print_id);
+
+    }, 5000, _this);
 }
 
 export const isPrintQREnabled = (_this) => {

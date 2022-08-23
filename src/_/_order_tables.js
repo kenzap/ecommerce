@@ -20,7 +20,7 @@ export const tables = {
 
             if(o.table) if(o.table.length>0) if(!table_list.includes(o.table)) table_list.push(o.table);
 
-            if(o.takeaway && (o.status == "new" || o.status == "processing")){ console.log(o); if(!table_list.includes(__("Take away") + " #" + o.id) && o.takeaway != "dine-in") table_list.push(__("Take away") + " #" + o.id); }
+            if(o.takeaway && (o.status == "new" || o.status == "processing")){ if(!table_list.includes(__("Take away") + " #" + o.id) && o.takeaway != "dine-in") table_list.push(__("Take away") + " #" + o.id); }
         });
 
         // generate table list
