@@ -106,7 +106,7 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
         o = _this.state.orders.filter(order => { return order._id == _id; })[0], data = {}, date = new Date();
     }
  
-    // console.log(o);
+    console.log(o);
 
     // debug vs actual print
     data.debug = debug;
@@ -117,7 +117,7 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
         // any user designated templates?
         let templates = _this.state.settings['templates'].filter(template => { return template.type == "receipt" && (template.user == _this.state.user.id); });
         
-        // get default templagte
+        // get default template
         if(templates.length == 0) templates = _this.state.settings['templates'].filter(template => { return template.type == "receipt" && (template.user == ""); });
 
         // assign template
@@ -143,6 +143,15 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // take away
     data.print = data.print.replace(/{{order_takeaway}}/g, o.takeaway ? (o.takeaway == "dine-in" ? __html("dine-in") : __html("take away")) : __html("dine-in"));
 
+    // order note
+    data.print = data.print.replace(/{{order_note}}/g, o.note ? o.note : "");
+
+    // phone
+    data.print = data.print.replace(/{{order_phone}}/g, o.phone ? o.phone : "");
+    
+    // phone
+    data.print = data.print.replace(/{{order_addr1}}/g, o.addr1 ? o.addr1 : "");
+    
     // table no
     data.print = data.print.replace(/{{order_table}}/g, o.table ? __html("Table #%1$", o.table) : "");
 
@@ -151,8 +160,6 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
 
     // order items
     data.print = data.print.replace(/{{order_items}}/g, getPrintItems(_this, o, '', cols));
-
-    // return;
 
     // order items restricted by category
     const matches = data.print.matchAll(/{{order_items:(.*?):start}}/g);
@@ -191,11 +198,11 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     });
 
     // order note
-    let note = !o.note || o.note == '<br>' ? '' : o.note;
-    if(note.length>0){
-        //  data.print += '[C]================================';
-        data.print = data.print.replace(/{{order_note}}/g, '[C]================================\n' + note + '\n[C]================================\n');
-    }
+    // let note = !o.note || o.note == '<br>' ? '' : o.note;
+    // if(note.length>0){
+    //     //  data.print += '[C]================================';
+    //     data.print = data.print.replace(/{{order_note}}/g, '[C]================================\n' + note + '\n[C]================================\n');
+    // }
 
     // order totals
     data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.price.total));
@@ -216,12 +223,6 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // data.print = data.print.replace(/{{qr_link}}/g, 'http://'+_this.state.qr_settings.slug + '.kenzap.site');
     if(document.querySelector('#qr-number')) data.print = data.print.replace(/{{qr_number}}/g, document.querySelector('#qr-number').value);
 
-    // debug
-    console.log(data.print);
-    if(data.debug){ console.log(data.print); }
-
-    // return false;
-
     let printers = type == "user" ? template["user_print"] : template["auto_print"];
 
     // console.log(printers);
@@ -233,7 +234,8 @@ export const printReceipt = (_this, _id, type, template, debug = false) => {
     // process styling
     data.print = processStyling(data.print, cols);
 
-    // console.log(data.print); return;
+    // console.log(data.print); 
+    // return;
 
     // send data
     fetch('https://api-v1.kenzap.cloud/ecommerce/', {
@@ -324,6 +326,29 @@ export const processStyling = (print, cols) => {
 
         // clean empty row
         let empty = 0; [...row].forEach(char => { if (char==" ") empty +=1 ; }); if(empty>=max_char) row = ""; // console.log(empty + " " + max_char);
+
+        // split very long rows to fit max col size
+        if(row.length > cols){
+
+            let rowNew = "", last_row_length = 0;
+            for (let i = 0; i < row.length; i++){
+
+                last_row_length += 1;
+                rowNew += row[i];
+                if(i % cols == 0 && i>0){ rowNew += "\n"; last_row_length = 0; } 
+            }
+
+            // add remaining trailing spaces
+            for (let i = last_row_length; i < cols; i++){
+                
+                rowNew += " ";
+            }
+
+            console.log(rowNew)
+            // rowNew += "\n";
+
+            row = rowNew;
+        }
 
         output += row+"\n";
     }
@@ -417,11 +442,11 @@ export const printReceiptLegacy = (_this, _id, type, template) => {
     });
 
     // order note
-    let note = !o.note || o.note == '<br>' ? '' : o.note;
-    if(note.length>0){
-        //  data.print += '[C]================================';
-        data.print = data.print.replace(/{{order_note}}/g, '[C]================================\n' + note + '\n[C]================================\n');
-    }
+    // let note = !o.note || o.note == '<br>' ? '' : o.note;
+    // if(note.length>0){
+    //     //  data.print += '[C]================================';
+    //     data.print = data.print.replace(/{{order_note}}/g, '[C]================================\n' + note + '\n[C]================================\n');
+    // }
 
     // order totals
     data.print = data.print.replace(/{{total}}/g, priceFormat(_this, o.price.total));
@@ -656,7 +681,7 @@ export const printQR = (_this, qrnum) => {
     let cols_p = data.print.indexOf('[W:'); let cols = 20;
     if(cols_p!=-1){ cols = parseInt(data.print.substr(cols_p+3, 2)); data.print = data.print.substr(0, cols_p) + data.print.substr(cols_p+6, data.print.length); }
     
-    // pricess styling
+    // process styling
     data.print = processStyling(data.print, cols);
   
     // if(data.debug) { console.log(data.print); }
@@ -746,7 +771,7 @@ export const autoPrint = (_this) => {
 
             orders.forEach((o, i) => {
 
-                console.log(template);
+                // console.log(template);
 
                 template.auto_print.forEach((p, a) => {
 
