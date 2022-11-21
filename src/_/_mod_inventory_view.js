@@ -16,7 +16,7 @@ export const inventoryView = (_this) => {
 
     if(!inventory.price) inventory.price = 0;
 
-    console.log(inventory);
+    // console.log(inventory);
 
     let modal = document.querySelector(".modal");
     let modalCont = new bootstrap.Modal(modal);
@@ -37,12 +37,12 @@ export const inventoryView = (_this) => {
     <h4 class="card-title mb-lg-4 mt-sm-3 mt-3 mb-0">${__html('Live stock')}</h4>
     <div class="form-text d-flex">
         <div class="d-flex align-items-center">
-            <div>${ inventory.stock_amount } ${ inventory.stock_unit }</div>
+            <div>${ parseFloat(inventory.stock_amount).toFixed(2) } ${ inventory.stock_unit }</div>
             <div id="stock_arrow" class="triangle_down mx-2"></div>
         </div>
         <div class="d-flex align-items-center ms-2">
-            <div>${ priceFormat(_this, inventory.price_per_unit_prev - inventory.price_per_unit) }</div>
-            <div id="price_arrow" class="${ (inventory.price_per_unit_prev - inventory.price_per_unit) >= 0 ? 'triangle_down triangle_green' : 'triangle_up triangle_red' } mx-2"></div>
+            <div>${ priceFormat(_this, parseFloat(inventory.price_per_unit)) }</div>
+            <div id="price_arrow" class="${ (parseFloat(inventory.price_per_unit_prev) - parseFloat(inventory.price_per_unit)) >= 0 ? 'triangle_down triangle_green' : 'triangle_up triangle_red' } mx-2"></div>
         </div>
         <div class="d-flex align-items-center ms-2">
             <div>${__html('5 days')}</div>
@@ -121,7 +121,7 @@ export const inventoryView = (_this) => {
             <label class="col-sm-3 col-form-label">${__html('Total price')}</label>
             <div class="col-sm-9">
                 <div class="input-group mb-sm-2">           
-                    <input id="price" type="text" class="form-control inp" name="stock_price" aria-label="Price" aria-describedby="basic-addon2" value="0" autocomplete="off">
+                    <input id="stock_price" type="text" class="form-control inp" name="stock_price" aria-label="Price" aria-describedby="basic-addon2" value="0" autocomplete="off">
                     <span class="input-group-text" id="price_cur">${ html(_this.state.settings.currency_symb ? _this.state.settings.currency_symb : '') }</span>
                 </div>
                 <p class="form-text d-none">${__html('Use tagging for inventory grouping.')}</p>
@@ -169,7 +169,7 @@ export const inventoryView = (_this) => {
     // const sTags = new simpleTags(tags);
 
     // restrict to numbers only
-    onlyNumbers('#price', [8, 46, 190, 189]);
+    onlyNumbers('#stock_price', [8, 46, 190, 189]);
     // onlyNumbers('#stock_warning', [8, 46, 190]);
     onlyNumbers('#stock_amount', [8, 46, 190, 189]);
 
@@ -207,8 +207,8 @@ export const inventoryView = (_this) => {
 
             modal.querySelector(".btn-top-up").classList.add("d-none");
             modal.querySelector(".btn-deduct").classList.remove("d-none");
-            modal.querySelector("#price").setAttribute('disabled', true);
-            modal.querySelector("#price").value = "";
+            modal.querySelector("#stock_price").setAttribute('disabled', true);
+            modal.querySelector("#stock_price").value = "";
 
             return;
         }
@@ -217,7 +217,7 @@ export const inventoryView = (_this) => {
 
             modal.querySelector(".btn-top-up").classList.remove("d-none");
             modal.querySelector(".btn-deduct").classList.add("d-none");
-            modal.querySelector("#price").removeAttribute('disabled');
+            modal.querySelector("#stock_price").removeAttribute('disabled');
 
             return;
         }
@@ -248,9 +248,9 @@ export const inventoryView = (_this) => {
             let data = {};
             data.iid = _this.state.id;
             data.details = modal.querySelector("#details").value.trim();
-            data.price = modal.querySelector("#price").value.trim();
+            data.price = modal.querySelector("#stock_price").value.trim();
             data.stock_unit = modal.querySelector("#stock_amount_unit").innerHTML.trim();
-            data.amount = modal.querySelector("#stock_amount").value.trim();
+            data.amount = parseFloat(modal.querySelector("#stock_amount").value.trim());
             data.ym = d.getFullYear() + '' + mt(d.getMonth()+1);
             data.ymd = d.getFullYear() + '' + mt(d.getMonth()+1) + mt(d.getDay());
             data.time = Math.round(d.getTime()/1000);
@@ -258,6 +258,7 @@ export const inventoryView = (_this) => {
             if(data.details.length<2){ alert( __html('Please provide longer description') ); return; }
             if(data.amount.length==0){ alert( __html('Please enter amount') ); return; }
             if(data.amount > 0 && data.price.length==0){ alert( __html('Please enter price') ); return; }
+            if(data.price.length > 0) data.price = parseFloat(data.price);
 
             // create query
             let query = {
@@ -297,7 +298,7 @@ export const inventoryView = (_this) => {
                     // modal.querySelector('.btn-stock-update').dataset.loading = "";
                     // modal.querySelector('.btn-stock-update').innerHTML =  _this.state.btnHTML;
 
-                    updateStock(_this, data);
+                    updateStock(_this, inventory, data);
 
                     // _this.getData();
 
@@ -316,7 +317,7 @@ export const inventoryView = (_this) => {
     });
 
     // update stock amounts
-    let updateStock = (_this, data) => {
+    let updateStock = (_this, inventory, data) => {
 
         // calculate new average price normalised by the amount
         // 5kg / 6 EUR -  10kg / 13 EUR
@@ -326,20 +327,23 @@ export const inventoryView = (_this) => {
         // let price_avg_new = parseFloat(data.price) / parseFloat(data.amount);
 
         if(!inventory.price) inventory.price = 0;
+
         // let price_avg = (parseFloat(data.price) + parseFloat(inventory.price)) / (parseFloat(data.amount) + parseFloat(inventory.stock_amount));
-
-        console.log(data);
-        console.log(inventory);
+        // console.log(data);
+        // console.log(inventory);
         // console.log(price_avg);
-
         // return;
 
         let data_query = null;
+
+        console.log(inventory);
+        console.log(data);
+
         // top up
         if(data.amount > 0){
 
             data_query = {
-                stock_amount: Math.round((parseFloat(inventory.stock_amount) + parseFloat(data.amount))*1000)/1000,
+                stock_amount: (parseFloat(inventory.stock_amount) + parseFloat(data.amount)),
                 price_per_unit: Math.round(parseFloat(data.price)/parseFloat(data.amount)*100)/100,
                 price_per_unit_prev: Math.round(parseFloat(inventory.price) / parseFloat(inventory.stock_amount)*100)/100,
                 price: Math.round(parseFloat(data.price)*100)/100,
@@ -350,7 +354,7 @@ export const inventoryView = (_this) => {
         }else{
 
             data_query = {
-                stock_amount: Math.round((parseFloat(inventory.stock_amount) + parseFloat(data.amount))*1000)/1000,
+                stock_amount: (parseFloat(inventory.stock_amount) + parseFloat(data.amount)),
             }
         }
 
@@ -364,12 +368,11 @@ export const inventoryView = (_this) => {
             }
         }
 
-        console.log(query);
+        // console.log(query);
         // return;
-
+        
         // update query
         // if(_this.state.action == 'edit' && _this.state.id){
-
         //     query.update.type = 'update';
         //     query.update.id = _this.state.id;
         // }
@@ -422,7 +425,7 @@ export const inventoryView = (_this) => {
 
         document.querySelector('#details').value = row.details;
         document.querySelector('#stock_amount').value = row.amount;
-        document.querySelector('#price').value = row.price;
+        document.querySelector('#stock_price').value = row.price;
 
         simulateClick(document.querySelector("#stock_amount"));
 

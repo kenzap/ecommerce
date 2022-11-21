@@ -132,7 +132,9 @@ export const stockBadge = (_this, inventory) => {
     inventory.stock_warning = parseFloat(inventory.stock_warning);
     inventory.stock_amount = parseFloat(inventory.stock_amount);
 
-    if(inventory.stock_amount<=0){
+    console.log(inventory.stock_warning + " " + inventory.stock_amount);
+
+    if(inventory.stock_amount <= 0){
 
         return '<div class="badge bg-danger text-light fw-light">' + __html('Out of stock') + '</div>';
     }else if(inventory.stock_warning >= inventory.stock_amount){

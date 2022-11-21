@@ -323,8 +323,8 @@ export const inventoryTable = (_this) => {
     // remove record from table
     let removeInventoryRow = (_this, id) => {
 
-        console.log(_this.state.response.product.stock.inventory);
-        console.log(id);
+        // console.log(_this.state.response.product.stock.inventory);
+        // console.log(id);
 
         // let id = getProductId();
         let sid = spaceID();
@@ -376,7 +376,7 @@ export const inventoryTable = (_this) => {
     let loadInventoryPrice = (_this) => {
 
         let ids = _this.state.response.product.stock.inventory.map(obj => { return obj.id })
-        console.log(ids);
+        // console.log(ids);
 
         // return; 
         // send data
@@ -420,8 +420,8 @@ export const inventoryTable = (_this) => {
             if(response.success){
 
                 // _this.state.inventory = response.inventory
-                console.log("prices");
-                console.log(response.inventory_price);
+                // console.log("prices");
+                // console.log(response.inventory_price);
 
                 let price_total = 0;
                 response.inventory_price.forEach(inv => {
@@ -431,7 +431,7 @@ export const inventoryTable = (_this) => {
                     document.querySelector('#itid'+inv._id).innerHTML = priceFormat(_this, price); 
                 })
 
-                document.querySelector('#itidtotal').innerHTML = priceFormat(_this, price_total);
+                if(document.querySelector('#itidtotal')) document.querySelector('#itidtotal').innerHTML = priceFormat(_this, price_total);
             }else{
 
                 parseApiError(response);

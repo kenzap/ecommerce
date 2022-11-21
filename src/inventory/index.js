@@ -50,7 +50,7 @@ const _this = {
                     inventory: {
                         type:       'find',
                         key:        'ecommerce-inventory',
-                        fields:     ['_id', 'id', 'img', 'status', 'tags', 'price', 'price_prev', 'price_per_unit', 'price_per_unit_prev', 'title', 'stock_amount', 'stock_unit', 'stock_warning', 'updated'],
+                        fields:     ['_id', 'id', 'img', 'status', 'tags', 'price', 'price_prev', 'price_per_unit', 'price_per_unit_prev', 'write_off', 'title', 'stock_amount', 'stock_unit', 'stock_warning', 'updated'],
                         limit:      _this.state.limit,
                         offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.limit - _this.state.limit,    // automatically calculate the offset of table pagination
                         search:     {                                                           // if s is empty search query is ignored
@@ -200,6 +200,8 @@ const _this = {
         let list = '';
         for (let i in response.inventory) {
 
+            // console.log(response.inventory[i]);
+
             let img = 'https://cdn.kenzap.com/loading.png';
 
             if(typeof(response.inventory[i].img) === 'undefined') response.inventory[i].img = [];
@@ -217,12 +219,12 @@ const _this = {
                             <a class="text-body" href="#" >${ response.inventory[i].title }</a>
                             <div class="form-text form-text d-flex fst-italic my-0">
                                 <div class="d-flex align-items-center">
-                                    <div>${ response.inventory[i].stock_amount } ${ response.inventory[i].stock_unit }</div>
+                                    <div>${ parseFloat(response.inventory[i].stock_amount).toFixed(2) } ${ response.inventory[i].stock_unit }</div>
                                     <div id="stock_arrow" class="triangle_down mx-2"></div>
                                 </div>
                                 <div class="d-flex align-items-center ms-1">
-                                    <div>${ priceFormat(_this, response.inventory[i].price_per_unit_prev - response.inventory[i].price_per_unit) }</div>
-                                    <div id="price_arrow" class="${ (response.inventory[i].price_per_unit_prev - response.inventory[i].price_per_unit) >= 0 ? 'triangle_down triangle_green' : 'triangle_up triangle_red' } mx-2"></div>
+                                    <div>${ priceFormat(_this, parseFloat(response.inventory[i].price_per_unit)) }</div>
+                                    <div id="price_arrow" class="${ (parseFloat(response.inventory[i].price_per_unit_prev) - parseFloat(response.inventory[i].price_per_unit)) > 0 ? 'triangle_down triangle_green' : '' } ${ (parseFloat(response.inventory[i].price_per_unit_prev) - parseFloat(response.inventory[i].price_per_unit)) < 0 ? 'triangle_up triangle_red' : '' } mx-2"></div>
                                 </div>
                             </div>
                         </div>
