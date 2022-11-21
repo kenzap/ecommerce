@@ -125,7 +125,7 @@ const _this = {
         d.querySelector("#p-ldesc").value = product.ldesc;
 
         // price section
-        d.querySelector("#p-price").value = product.price; onlyNumbers('#p-price', [8, 46]);
+        d.querySelector("#p-price").value = product.price; onlyNumbers('#p-price', [8, 46, 190]);
         // d.querySelector("#p-priced").value = product.priced;
         d.querySelector("#p-price-symb").innerHTML = _this.state.settings['currency_symb'] ? _this.state.settings['currency_symb'] : "";
 

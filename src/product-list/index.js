@@ -326,7 +326,7 @@ const _this = {
 
         modal.querySelector(".modal-body").innerHTML = modalHTml;
 
-        onlyNumbers('#p-price', [8, 46]);
+        onlyNumbers('#p-price', [8, 46, 190]);
 
         _this.listeners.modalSuccessBtnFunc = (e) => {
 
