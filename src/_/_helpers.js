@@ -1,4 +1,4 @@
-import { getCookie, getSiteId, simulateClick, headers, parseApiError, __html } from '@kenzap/k-cloud';
+import { getCookie, H, getSiteId, simulateClick, parseApiError, __html } from '@kenzap/k-cloud';
 
 /* 
 texts to localize
@@ -126,6 +126,24 @@ export const getPagination = (__, meta, cb) => {
     }
 }
 
+export const stockBadge = (_this, inventory) => {
+
+    if(!inventory.stock_warning) inventory.stock_warning = 0;
+    inventory.stock_warning = parseFloat(inventory.stock_warning);
+    inventory.stock_amount = parseFloat(inventory.stock_amount);
+
+    if(inventory.stock_amount<=0){
+
+        return '<div class="badge bg-danger text-light fw-light">' + __html('Out of stock') + '</div>';
+    }else if(inventory.stock_warning >= inventory.stock_amount){
+
+        return '<div class="badge bg-warning text-dark fw-light">' + __html('Low stock') + '</div>';
+    }else{
+
+        return '<div class="badge bg-success text-light fw-light">' + __html('In stock') + '</div>';
+    }
+}
+
 export const formatStatus = (__, st) => {
 
     st = parseInt(st); 
@@ -148,7 +166,7 @@ export const formatStatus = (__, st) => {
     price = (Math.round(parseFloat(price) * 100)/100).toFixed(2);
     
     switch(_this.state.settings.currency_symb_loc){
-        case 'left': price = _this.state.settings.currency_symb + price; break;
+        case 'left': price = _this.state.settings.currency_symb + ' ' + price; break;
         case 'right': price = price + _this.state.settings.currency_symb; break;
     }
 
@@ -180,21 +198,98 @@ export const formatTime = (__, timestamp) => {
     return time;
 }
 
+export const formatTimeDetailed = (__, timestamp) => {
+	
+    // let a = new Date(timestamp * 1000);
+    // let hour = a.getHours();
+    // let min = a.getMinutes();
+
+    // console.log(hour+":"+min);
+
+    // server stores in UTC
+    // let offset = new Date().getTimezoneOffset();
+
+    const d = new Date(parseInt(timestamp) * 1000); //  + offset*60
+    
+    let t = d.toLocaleTimeString().split(':');
+
+    return d.toLocaleDateString() + " " + t[0] + ":" + t[1];
+}
+
+// numbers only with allowed exceptions
+// export const onlyNumbers = (sel, chars) => {
+
+//     if(!document.querySelector(sel)) return;
+    
+//     document.querySelector(sel).addEventListener('keypress', (e) => {
+
+//         // console.log(e.which);
+
+//         if((!chars.includes(e.which) && isNaN(String.fromCharCode(e.which))) || e.which == 32 || (document.querySelector(sel).value.includes(String.fromCharCode(e.which)) && chars.includes(e.which))){
+
+//             // stop character from entering input
+//             e.preventDefault(); 
+//             return false;
+//         }
+//     });
+// }
+
 // numbers only with allowed exceptions
 export const onlyNumbers = (sel, chars) => {
 
     if(!document.querySelector(sel)) return;
+
+    // arrow navigation
+    chars.push(...[9, 37, 38, 39, 40, 98, 100, 102, 104]);
     
-    document.querySelector(sel).addEventListener('keypress', (e) => {
+    [...document.querySelectorAll(sel)].forEach(el => {
 
-        // console.log(e.which);
+        el.addEventListener('keydown', (e) => {
 
-        if((!chars.includes(e.which) && isNaN(String.fromCharCode(e.which))) || e.which == 32 || (document.querySelector(sel).value.includes(String.fromCharCode(e.which)) && chars.includes(e.which))){
+            const key = e.key.toLowerCase();
 
-            // stop character from entering input
-            e.preventDefault(); 
-            return false;
-        }
+            // track potential paste event
+            if(key == 'control' || key == 'meta'){
+
+                window[key] = true;
+            }
+        
+            console.log(key.length + " / " + isNumber + " / " + e.which);
+
+            // not alphanumeric
+            // if (key.length != 1) {
+
+            //     e.preventDefault(); 
+            //     return false;
+            // }
+        
+            // const isLetter = (key >= 'a' && key <= 'z');
+            const isNumber = (key >= '0' && key <= '9');
+
+            // add exception when Control or Meta (MAC) keys pressed
+            // console.log(window['meta'] + " " + window['control']);
+
+            // allow x c v a characters when meta ot control is pressed
+            if((window['control'] || window['meta']) && [86, 88, 65, 67, 90].includes(e.which)){ console.log("pushing"); return true; }
+
+            // actual check
+            if (!isNumber && !chars.includes(e.which)) {
+
+                e.preventDefault(); 
+                return false;
+            }
+        });
+
+        el.addEventListener('keyup', (e) => {
+
+            const key = e.key.toLowerCase();
+
+            // potential paste event
+            if(key == 'control' || key == 'meta'){
+
+                window[key] = false;
+            }
+        });
     });
 }
 
@@ -339,7 +434,7 @@ export const ecommerceUpdates = (_this, source, cb) => {
     // do API query
     fetch('https://api-v1.kenzap.cloud/ecommerce/', {
         method: 'post',
-        headers: headers,
+        headers: H(),
         body: JSON.stringify({
             query: {
                 updates: {
@@ -457,7 +552,7 @@ export const renderNotifications = (_this, messages) => {
         // do API query
         fetch('https://api-v1.kenzap.cloud/ecommerce/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     updates: {
@@ -556,7 +651,7 @@ export const getProductsById = (_this, products, cb) => {
     // do API query
     const response_raw = fetch('https://api-v1.kenzap.cloud/', {
         method: 'post',
-        headers: headers,
+        headers: H(),
         body: JSON.stringify({
             query: {
                 products: {
@@ -601,6 +696,118 @@ export const getProductsById = (_this, products, cb) => {
 }
 
 export let Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
+
+// categories input tags
+export const simpleTags = (element) => {
+
+    if (!element) {
+        throw new Error("DOM Element is undifined! Please choose HTML target element.")
+    }
+
+    let DOMParent = element
+    let DOMList
+    let DOMInput
+    let dataAttribute
+    let arrayOfList
+
+    function DOMCreate() {
+        let ul = document.createElement("ul")
+        let input = document.createElement("input")
+
+        input.setAttribute('placeholder', __html('new tag'));
+
+        DOMParent.appendChild(ul)
+        DOMParent.appendChild(input)
+
+        // first child is <ul>
+        DOMList = DOMParent.firstElementChild
+        // last child is <input>
+        DOMInput = DOMParent.lastElementChild
+    }
+
+    function DOMRender() {
+        // clear the entire <li> inside <ul>
+        DOMList.innerHTML = ""
+
+        // render each <li> to <ul>
+        arrayOfList.forEach((currentValue, index) => {
+
+            if (currentValue) {
+
+                let li = document.createElement("li")
+                li.innerHTML = `${currentValue} <a>&times;</a>`
+                li.querySelector("a").addEventListener("click", function () {
+                    onDelete(index)
+                })
+
+                DOMList.appendChild(li)
+            }
+        })
+
+        setAttribute()
+    }
+
+    function onKeyUp() {
+        DOMInput.addEventListener("keyup", function (event) {
+            let text = this.value.trim()
+
+            // check if ',' or 'enter' key was press
+            if (text.includes(",") || event.keyCode === 13) {
+                // check if empty text when ',' is remove
+                if (text.replace(",", "") !== "") {
+                    // push to array and remove ','
+                    arrayOfList.push(text.replace(",", ""))
+                }
+                // clear input
+                this.value = ""
+            }
+
+            DOMRender()
+        })
+    }
+
+    function onDelete(id) {
+        arrayOfList = arrayOfList.filter(function (currentValue, index) {
+            if (index === id) {
+                return false
+            }
+            return currentValue
+        })
+
+        DOMRender()
+    }
+
+    function getAttribute() {
+        dataAttribute = DOMParent.getAttribute("data-simple-tags")
+        dataAttribute = dataAttribute.split(",")
+
+        // store array of data attribute in arrayOfList
+        arrayOfList = dataAttribute.map((currentValue) => {
+            return currentValue.trim()
+        })
+    }
+
+    function setAttribute() {
+        DOMParent.setAttribute("data-simple-tags", arrayOfList.toString())
+    }
+
+    getAttribute()
+    DOMCreate()
+    DOMRender()
+    onKeyUp()
+}
+
+export const initFooter = (_this) => {
+        
+    // Created by %1$Kenzap%2$. ❤️ 
+    let left = __html('E-commerce 2.0 by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>')  
+    let right = "";
+    document.querySelector("footer .row").innerHTML = `
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">${left}</span>
+        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center text-muted">${right}</span>
+    </div>`;
+}
 
 export const getCurrencies = () => {
 

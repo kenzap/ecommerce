@@ -124,6 +124,16 @@ return `
                                                 <input id="stock_low_threshold" type="text" class="form-control" placeholder="0">
                                                 <p class="form-text">${ __('Low stock threshold.') }</p>
                                             </div>
+
+                                            <div class="mb-3 mw stock-cont">
+                                                <label class="form-label" >${ __('Inventory table') }</label>
+                                                <div class="inventory-cont">
+
+                                                </div>
+                                                <div class="add-mix-ctn text-left mt-1 mb-2"><a class="add-inventory" href="#" data-action="add" style="font-size: 0.875rem;">${ __('+ add inventory') }</a></div>
+
+                                                <p class="form-text d-none">${ __('Low stock threshold.') }</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

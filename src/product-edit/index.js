@@ -1,8 +1,9 @@
 // js dependencies
-import { headers, __html, __attr, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, loadScript, toast, link } from '@kenzap/k-cloud';
-import { getProductId, makeNumber, numsOnly, priceFormat, onlyNumbers, loadAddon } from "../_/_helpers.js"
+import { H, __html, __attr, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, loadScript, toast, link } from '@kenzap/k-cloud';
+import { getProductId, makeNumber, numsOnly, priceFormat, onlyNumbers, loadAddon, initFooter } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
+import { inventoryTable } from "../_/_mod_product_edit_inventory_edit.js"
 
 // where everything happens
 const _this = {
@@ -25,7 +26,7 @@ const _this = {
 
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     user: {
@@ -62,6 +63,7 @@ const _this = {
 
             if (response.success){
 
+                _this.state.response = response;
                 _this.state.settings = response.settings;
 
                 // init header
@@ -94,7 +96,7 @@ const _this = {
                 _this.initListeners('all');
 
                 // footer note
-                initFooter(__html('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
+                initFooter(_this);
 
                 // load addons
                 if(response.settings.addons) if(response.settings.addons.product_edit) response.settings.addons.product_edit.forEach(obj => { loadAddon(obj.src, obj.version); })
@@ -110,7 +112,7 @@ const _this = {
         // initiate breadcrumbs
         initBreadcrumbs(
             [
-                { link: link('https://dashboard.kenzap.cloud'), text: __html('Dashboard') },
+                { link: link('https://dashboard.kenzap.cloud'), text: __html('Home') },
                 { link: link('/'), text: __html('E-commerce') },
                 { link: link('/product-list/'), text: __html('Product List') },
                 { text: __html('Product Edit') }
@@ -154,7 +156,7 @@ const _this = {
         }
 
         // inventory
-        if(!product['stock']) product['stock'] = {management: false, sku: "", qty: 0, low_threshold: 0};
+        if(!product['stock']) product['stock'] = { management: false, sku: "", qty: 0, low_threshold: 0, inventory: [] };
 
         for(let el of document.querySelectorAll('.stock-cont')){ product['stock']['management'] == true ? el.classList.remove('d-none') : el.classList.add('d-none'); }
         document.querySelector('#stock_sku').value = product['stock']['sku'] ? product['stock']['sku'] : "";
@@ -170,6 +172,8 @@ const _this = {
         if (product.cats) pcats.setAttribute('data-simple-tags', product.cats);
         const tags = new simpleTags(__, pcats);
         
+        // render inventory table fot stock
+        inventoryTable(_this);
     },
     initListeners: (type = 'partial') => {
 
@@ -855,7 +859,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: headers,
+                headers: H(),
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -952,6 +956,7 @@ const _this = {
                 e.currentTarget.checked ? el.classList.remove('d-none') : el.classList.add('d-none');
                 e.currentTarget.value = e.currentTarget.checked ? "1" : "0";
             }
+
         },
 
         modalSuccessBtnFunc: null

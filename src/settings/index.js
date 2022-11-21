@@ -1,6 +1,6 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, toast, link } from '@kenzap/k-cloud';
-import { getCurrencies } from "../_/_helpers.js"
+import { H, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, toast, link } from '@kenzap/k-cloud';
+import { getCurrencies, initFooter } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_settings.js"
 import { printerSettings } from "../_/_printer_settings.js"
 
@@ -27,7 +27,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     user: {
@@ -76,7 +76,7 @@ const _this = {
                 _this.initListeners();
             
                 // initiate footer
-                _this.initFooter();
+                initFooter(_this);
 
                 // first load
                 _this.state.firstLoad = false;
@@ -114,7 +114,7 @@ const _this = {
             // initiate breadcrumbs
             initBreadcrumbs(
                 [
-                    { link: link('https://dashboard.kenzap.cloud'), text: __('Dashboard') },
+                    { link: link('https://dashboard.kenzap.cloud'), text: __('Home') },
                     { link: link('/'), text: __('E-commerce') },
                     { text: __('Settings') }
                 ]
@@ -193,7 +193,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: headers,
+                headers: H(),
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -314,7 +314,7 @@ const _this = {
         // send data
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     settings: {

@@ -1,6 +1,7 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, getSiteId, link } from '@kenzap/k-cloud';
+import { H, showLoader, hideLoader, initHeader, __html, initBreadcrumbs, parseApiError, getCookie, getSiteId, link } from '@kenzap/k-cloud';
 import { HTMLContent } from "../_/_cnt_home.js"
+import { getCurrencies, initFooter } from "../_/_helpers.js"
 
 // where everything happens
 const _this = {
@@ -21,7 +22,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     locale: {
@@ -59,7 +60,7 @@ const _this = {
                 // _this.initListeners();
             
                 // initiate footer
-                _this.initFooter();
+                initFooter(_this);
 
                 // first load
                 _this.state.firstLoad = false;
@@ -78,7 +79,7 @@ const _this = {
         // initiate breadcrumbs
         initBreadcrumbs(
             [
-                { link: link('https://dashboard.kenzap.cloud'), text: __('Dashboard') },
+                { link: link('https://dashboard.kenzap.cloud'), text: __('Home') },
                 { text: __('E-commerce') },
             ]
         );
@@ -114,11 +115,6 @@ const _this = {
 
         // get core html content 
         document.querySelector('#contents').innerHTML = HTMLContent(__);
-    },
-    initFooter: () => {
-        
-        initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
-        // initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
     }
 }
 

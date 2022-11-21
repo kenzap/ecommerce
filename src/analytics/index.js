@@ -1,7 +1,7 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, link, onClick, onChange } from '@kenzap/k-cloud';
+import { H, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, link, onClick, onChange } from '@kenzap/k-cloud';
 import { HTMLContent } from "../_/_cnt_analytics.js"
-import { priceFormat, mt } from "../_/_helpers.js"
+import { priceFormat, mt, initFooter } from "../_/_helpers.js"
 
 // where everything happens
 const _this = {
@@ -25,7 +25,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     locale: {
@@ -68,7 +68,7 @@ const _this = {
                 _this.initListeners();
             
                 // initiate footer
-                _this.initFooter();
+                initFooter(_this);
 
                 // first load
                 _this.state.firstLoad = false;
@@ -87,7 +87,7 @@ const _this = {
         // initiate breadcrumbs
         initBreadcrumbs(
             [
-                { link: link('https://dashboard.kenzap.cloud'), text: __('Dashboard') },
+                { link: link('https://dashboard.kenzap.cloud'), text: __('Home') },
                 { link: link('/home/'), text: __('E-commerce') },
                 { text: __('Analytics') },
             ]
@@ -193,7 +193,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     sales: {
@@ -407,7 +407,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     products: {

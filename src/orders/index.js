@@ -1,6 +1,6 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange, __html } from '@kenzap/k-cloud';
-import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, playSound, ecommerceUpdates } from "../_/_helpers.js"
+import { H, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, spaceID, toast, link, onChange, __html } from '@kenzap/k-cloud';
+import { timeConverterAgo, priceFormat, getPageNumber, makeNumber, unescape, mt, playSound, ecommerceUpdates, initFooter } from "../_/_helpers.js"
 import { tables } from "../_/_order_tables.js"
 import { preview } from "../_/_order_preview.js"
 import { HTMLContent } from "../_/_cnt_orders.js"
@@ -88,7 +88,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     user: {
@@ -150,7 +150,7 @@ const _this = {
                 _this.initListeners();
             
                 // initiate footer
-                _this.initFooter();
+                initFooter(_this);
 
                 // first load
                 _this.state.firstLoad = false;
@@ -186,7 +186,7 @@ const _this = {
             // initiate breadcrumbs
             initBreadcrumbs(
                 [
-                    { link: link('https://dashboard.kenzap.cloud'), text: __html('Dashboard') },
+                    { link: link('https://dashboard.kenzap.cloud'), text: __html('Home') },
                     { link: link('/'), text: __html('E-commerce') },
                     { text: __html('Orders') }
                 ]
@@ -425,7 +425,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/ecommerce/', {
                 method: 'post',
-                headers: headers,
+                headers: H(),
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -581,7 +581,7 @@ const _this = {
             // get last order ID number
             fetch('https://api-v1.kenzap.cloud/ecommerce/', {
                 method: 'post',
-                headers: headers,
+                headers: H(),
                 body: JSON.stringify({
                     query: {
                         order: {
@@ -616,7 +616,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/ecommerce/', {
                 method: 'post',
-                headers: headers,
+                headers: H(),
                 body: JSON.stringify({
                     query: {
                         order: {

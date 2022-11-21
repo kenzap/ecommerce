@@ -1,6 +1,6 @@
 // js dependencies
-import { headers, showLoader, hideLoader, initHeader, initFooter, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime, onlyNumbers } from "../_/_helpers.js"
+import { H, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
+import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime, onlyNumbers, initFooter } from "../_/_helpers.js"
 import { productListContent } from "../_/_cnt_product_list.js"
 
 // where everything happens
@@ -26,7 +26,7 @@ const _this = {
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
-            headers: headers,
+            headers: H(),
             body: JSON.stringify({
                 query: {
                     user: {
@@ -92,7 +92,7 @@ const _this = {
                 _this.initPagination(response);
 
                 // initiate footer
-                _this.initFooter();
+                initFooter(_this);
 
                 // first load
                 _this.state.firstLoad = false;
@@ -128,7 +128,7 @@ const _this = {
             // initiate breadcrumbs
             initBreadcrumbs(
                 [
-                    { link: link('https://dashboard.kenzap.cloud'), text: __('Dashboard') },
+                    { link: link('https://dashboard.kenzap.cloud'), text: __('Home') },
                     { link: link('/'), text: __('E-commerce') },
                     { text: __('Product list') }
                 ]
@@ -242,7 +242,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: headers,
+                headers: H(),
                 body: JSON.stringify({
                     query: {
                         product: {
@@ -345,7 +345,7 @@ const _this = {
             // send data
             fetch('https://api-v1.kenzap.cloud/', {
                 method: 'post',
-                headers: headers,
+                headers: H(),
                 body: JSON.stringify({
                     query: {
                         product: {

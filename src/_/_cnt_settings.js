@@ -818,8 +818,7 @@ export const HTMLContent = (__) => {
                         </div>
                       </div>
                     </div>
-                    </div>
-
+                  </div>
                 </div>
               </div>
             </div>
