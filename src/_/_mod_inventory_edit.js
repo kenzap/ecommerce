@@ -219,7 +219,7 @@ export const inventoryEdit = (_this) => {
 
     // restrict to numbers only
     onlyNumbers('#price', [8, 46, 190]);
-    onlyNumbers('#stock_amount', [8, 46, 190, 189]);
+    onlyNumbers('#stock_amount', [8, 46, 190, 189, 229]);
     onlyNumbers('#stock_warning', [8, 46, 190]);
 
     // stock unit changed

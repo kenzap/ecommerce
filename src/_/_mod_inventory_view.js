@@ -169,9 +169,9 @@ export const inventoryView = (_this) => {
     // const sTags = new simpleTags(tags);
 
     // restrict to numbers only
-    onlyNumbers('#stock_price', [8, 46, 190, 189]);
+    onlyNumbers('#stock_price', [8, 46, 190, 189, 229]);
     // onlyNumbers('#stock_warning', [8, 46, 190]);
-    onlyNumbers('#stock_amount', [8, 46, 190, 189]);
+    onlyNumbers('#stock_amount', [8, 46, 190, 189, 229]);
 
     // // stock unit changed
     // modal.querySelector("#stock_unit").addEventListener('change', e => {
@@ -370,7 +370,7 @@ export const inventoryView = (_this) => {
 
         // console.log(query);
         // return;
-        
+
         // update query
         // if(_this.state.action == 'edit' && _this.state.id){
         //     query.update.type = 'update';
