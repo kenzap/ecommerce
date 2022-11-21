@@ -174,7 +174,6 @@ export const inventoryEdit = (_this) => {
             <div class="form-group row mb-lg-3 mt-1">
                 <label class="col-sm-3 col-form-label">${__html('When')}</label>
                 <div class="col-sm-9">
-                    <label for="write_off_time" class="form-label">${ __html('Time') }</label>
                     <select id="write_off_time" class="form-select inp" name="write_off_time" data-type="select">
                         <option value="2" ${ inventory.write_off.time == '2' ? 'selected' : '' }>${__html('2:00 AM')}</option>
                         <option value="4" ${ inventory.write_off.time == '4' ? 'selected' : '' }>${__html('4:00 AM')}</option>
@@ -220,7 +219,7 @@ export const inventoryEdit = (_this) => {
 
     // restrict to numbers only
     onlyNumbers('#price', [8, 46, 190]);
-    onlyNumbers('#stock_amount', [8, 46, 190]);
+    onlyNumbers('#stock_amount', [8, 46, 190, 189]);
     onlyNumbers('#stock_warning', [8, 46, 190]);
 
     // stock unit changed
@@ -284,8 +283,12 @@ export const inventoryEdit = (_this) => {
         data.img = [];
         data.cats = [];
 
+        // console.log(data);
+        // return;
+
         if(data.title.length<2){ alert( __html('Please provide longer title') ); return; }
-        if(data.price_per_unit.length==0){ data.price_per_unit = 0; }
+        if(data.price_per_unit.length == 0){ data.price_per_unit = '0'; }
+        if(data.stock_amount == 0) data.stock_amount = '0';
         // if(data.stock_unit.length<2){ alert( __html('Please provide longer title') ); return; }
         if(data.stock_warning.length<2){ data.stock_warning = 0; }
 

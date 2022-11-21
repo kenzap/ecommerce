@@ -206,7 +206,8 @@ const _this = {
 
             if(typeof(response.inventory[i].img) === 'undefined') response.inventory[i].img = [];
             if(response.inventory[i].img[0]) img = CDN + '/S'+sid+'/product-'+response.inventory[i]._id+'-1-100x100.jpeg?'+response.inventory[i].updated;
-              
+            // if(response.inventory[i].stock_amount.length == 0) response.inventory[i].stock_amount = 0;
+
             list += `
                 <tr>
                     <td>

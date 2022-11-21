@@ -812,7 +812,7 @@ const _this = {
             data["discounts"] = JSON.parse(decodeURIComponent(document.querySelector('.discount-blocks').dataset.data));
 
             // inventory
-            data["stock"] = {};
+            data["stock"] = { inventory: _this.state.response.product.stock.inventory };
             data['stock']['sku'] = document.querySelector('#stock_sku').value;
             data['stock']['management'] = document.querySelector('#stock_management').checked;
             data['stock']['qty'] = document.querySelector('#stock_quantity').value; 
@@ -849,6 +849,11 @@ const _this = {
                 block_index++;
             }
 
+            // inventory table
+            // [...document.querySelectorAll('.inventory-history tr td')].forEach(row => {
+
+            //     row.
+            // });
             // console.log(data);
         
             let id = getProductId();
