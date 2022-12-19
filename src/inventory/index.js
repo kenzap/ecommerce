@@ -441,8 +441,6 @@ const _this = {
 
             e.preventDefault();
 
-            _this.state.tag = "";
-
             document.querySelector('.select-stock-btn').innerHTML = e.currentTarget.innerHTML;
             document.querySelector('.select-stock-btn').dataset.key = e.currentTarget.dataset.key;
 
