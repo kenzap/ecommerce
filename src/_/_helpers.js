@@ -128,21 +128,17 @@ export const getPagination = (__, meta, cb) => {
 
 export const stockBadge = (_this, inventory) => {
 
-    if(!inventory.stock_warning) inventory.stock_warning = 0;
-    inventory.stock_warning = parseFloat(inventory.stock_warning);
-    inventory.stock_amount = parseFloat(inventory.stock_amount);
-
-    console.log(inventory.stock_warning + " " + inventory.stock_amount);
+    // console.log(inventory.stock_warning + " " + inventory.stock_amount);
 
     if(inventory.stock_amount <= 0){
 
-        return '<div class="badge bg-danger text-light fw-light">' + __html('Out of stock') + '</div>';
+        return '<div data-stock="out" class="badge bg-danger text-light fw-light">' + __html('Out of stock') + '</div>';
     }else if(inventory.stock_warning >= inventory.stock_amount){
 
-        return '<div class="badge bg-warning text-dark fw-light">' + __html('Low stock') + '</div>';
+        return '<div data-stock="low" class="badge bg-warning text-dark fw-light">' + __html('Low stock') + '</div>';
     }else{
 
-        return '<div class="badge bg-success text-light fw-light">' + __html('In stock') + '</div>';
+        return '<div data-stock="in" class="badge bg-success text-light fw-light">' + __html('In stock') + '</div>';
     }
 }
 
@@ -802,7 +798,7 @@ export const simpleTags = (element) => {
 export const initFooter = (_this) => {
         
     // Created by %1$Kenzap%2$. ❤️ 
-    let left = __html('E-commerce 2.0 by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>')  
+    let left = __html('E-commerce 2.1.1 by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>')  
     let right = "";
     document.querySelector("footer .row").innerHTML = `
     <div class="d-sm-flex justify-content-center justify-content-sm-between">

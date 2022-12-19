@@ -58,7 +58,7 @@ export const inventoryView = (_this) => {
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="form-group row mb-lg-3 mt-1">
+            <div class="form-group row mb-lg-3 mt-1"></div>
             <div id="live_stock" style="width: 100%; height: 320px;"></div>
         </div>
     </div>
@@ -476,7 +476,7 @@ export const inventoryView = (_this) => {
     let getHistory = (_this) => {
 
         // send data
-        _this.state.limit = 10;
+        let limit = 10;
         let s = "";
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
@@ -487,7 +487,7 @@ export const inventoryView = (_this) => {
                         type:       'find',
                         key:        'ecommerce-inventory-history',
                         fields:     ['_id', 'details', 'price', 'price_per_unit', 'stock_unit', 'amount', 'time', 'updated'],
-                        limit:      _this.state.limit,
+                        limit:      limit,
                         term:[
                             {
                                 "field": "iid",
@@ -496,7 +496,7 @@ export const inventoryView = (_this) => {
                                 "value":_this.state.id
                             }
                         ],
-                        offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.limit - _this.state.limit, // automatically calculate the offset of table pagination
+                        offset:     s.length > 0 ? 0 : getPageNumber() * limit - limit, // automatically calculate the offset of table pagination
                         search:     {                                                           // if s is empty search query is ignored
                                         field: 'details',
                                         s: s
@@ -524,7 +524,7 @@ export const inventoryView = (_this) => {
                 }
 
                 // load table data
-                document.querySelector("#inventory-history").innerHTML = response.history.map((history, i) => {
+                if(response.history) document.querySelector("#inventory-history").innerHTML = response.history.map((history, i) => {
 
                     return `
                         <tr>
@@ -553,7 +553,6 @@ export const inventoryView = (_this) => {
 
                 // remove from table
                 [...document.querySelectorAll(".inventoryHistoryActionsCont .dropdown-item")].forEach(row => {
-                // [...document.querySelectorAll("#inventory-history tr td")].forEach(row => {
                 
                     row.addEventListener("click", (e)=> {
 

@@ -43,7 +43,7 @@ export const inventoryEdit = (_this) => {
             <label class="col-sm-3 col-form-label">${__html('Price per 1 ')}<span id="price_stock_unit">${ inventory.stock_unit }</span></label>
             <div class="col-sm-9">
                 <div class="input-group">
-                    <input id="price_per_unit" type="text" class="form-control inp" name="price_per_unit" aria-label="Current stock amount" aria-describedby="basic-addon1" value="${ inventory.price_per_unit }" autocomplete="off">
+                    <input id="price_per_unit" type="text" class="form-control inp" name="price_per_unit" aria-label="Current stock amount" aria-describedby="basic-addon1" value="${ inventory.price_per_unit ? inventory.price_per_unit : 0 }" autocomplete="off">
                     <span class="input-group-text" id="price_curr">${ html(_this.state.settings.currency_symb ? _this.state.settings.currency_symb : '') }</span>
                 </div>
                 <p class="form-text">${__html('Price per one stock measurement unit.')}</p>

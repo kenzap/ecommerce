@@ -4,6 +4,7 @@ import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime, st
 import { inventoryListContent } from "../_/_cnt_inventory_list.js"
 import { inventoryEdit } from "../_/_mod_inventory_edit.js"
 import { inventoryView } from "../_/_mod_inventory_view.js"
+import { categoryTable } from "../_/_mod_inventory_category_table.js"
 
 // where everything happens
 const _this = {
@@ -11,7 +12,7 @@ const _this = {
     state:{
         firstLoad: true,
         settings: {},
-        limit: 10, // number of records to load per table
+        limit: 50, // number of records to load per table
     },
     init: () => {
          
@@ -24,6 +25,97 @@ const _this = {
 
         // search content
         let s = document.querySelector('.search-cont input') ? document.querySelector('.search-cont input').value : '';
+
+        // struct term
+        let term = [];
+
+        // in stock
+        if(document.querySelector('.select-stock-btn')) if(document.querySelector('.select-stock-btn').dataset.key == "in"){
+         
+            term.push(
+                {
+                    type:       'string',
+                    field:      'stock_amount',
+                    value:      0,
+                    relation:   '!='
+                }
+            )
+        }
+        
+        // out of stock
+        if(document.querySelector('.select-stock-btn')) if(document.querySelector('.select-stock-btn').dataset.key == "out"){
+         
+            term.push(
+                {
+                    type:       'string',
+                    field:      'stock_amount',
+                    value:      0,
+                    relation:   '='
+                }
+            )
+        }
+
+        // struct sort
+        let sort = [];
+
+        // sort by alphabetically
+        if(document.querySelector('.select-title-btn')) if(document.querySelector('.select-title-btn').dataset.key == "title"){
+         
+            sort.push(
+                {
+                    field:      'title',
+                    order:      'ASC'
+                }
+            )
+        }
+
+        // sort by updated
+        if(document.querySelector('.select-title-btn')) if(document.querySelector('.select-title-btn').dataset.key == "updated"){
+         
+            sort.push(
+                {
+                    field:      'updated',
+                    order:      'DESC'
+                }
+            )
+        }
+
+        // sort default
+        if(sort.length == 0){
+
+            sort.push(
+                {
+                    field:      'title',
+                    order:      'ASC'
+                }
+            )
+        }
+
+        let search = {};
+        
+        // filter by tag
+        if(_this.state.tag){
+
+            console.log("tag: " + _this.state.tag);
+
+            document.querySelector('.select-title-btn').innerHTML = __html('Tag %1$', '<span class="fw-light">' + _this.state.tag + '</span>');
+
+            search =
+                {                                                           // if s is empty search query is ignored
+                    field: 'tags',
+                    s: _this.state.tag
+                }
+        }
+
+        // search
+        if(s){
+
+            search =
+                {                                                           // if s is empty search query is ignored
+                    field: 'title',
+                    s: s
+                }
+        }
 
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
@@ -53,14 +145,9 @@ const _this = {
                         fields:     ['_id', 'id', 'img', 'status', 'tags', 'price', 'price_prev', 'price_per_unit', 'price_per_unit_prev', 'write_off', 'title', 'stock_amount', 'stock_unit', 'stock_warning', 'updated'],
                         limit:      _this.state.limit,
                         offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.limit - _this.state.limit,    // automatically calculate the offset of table pagination
-                        search:     {                                                           // if s is empty search query is ignored
-                                        field: 'title',
-                                        s: s
-                                    },
-                        sortby:     {
-                                        field: 'created',
-                                        order: 'DESC'
-                                    },
+                        search:     search,
+                        sortby:     sort,
+                        term:       term
                         // groupby:    [
                         //                 {
                         //                     field: 'created',
@@ -128,6 +215,8 @@ const _this = {
     },
     renderPage: (response) => {
 
+        console.log(response)
+
         if(_this.state.firstLoad){
 
             // initiate breadcrumbs
@@ -162,19 +251,22 @@ const _this = {
                             </div>
                         </div>
                         <div class="st-opts st-table dropdown dropstart-">
-                            <a class="text-black text-dark text-decoration-none fw-bolder border-0 dropdown-toggle select-updated-btn" href="#" role="button" id="order-updated" data-id="updated" data-value="" data-bs-toggle="dropdown" aria-expanded="false">
-                                ${ __html('Title') }
-                            </a>
-                            <ul class="dropdown-menu select-updated" aria-labelledby="order-updated">
-                                <li><a class="dppi dropdown-item" data-key="updated" href="#" >${ __html('Title') }</a></li>
+                            <a class="text-black text-dark text-decoration-none fw-bolder border-0 dropdown-toggle select-title-btn" data-key="key" href="#" role="button" id="order-updated" data-id="updated" data-value="" data-bs-toggle="dropdown" aria-expanded="false">${ __html('Title') }</a>
+                            <ul class="dropdown-menu select-title" aria-labelledby="order-title">
+                                <li><a class="dppi dropdown-item" data-key="title" href="#" >${ __html('Title') }</a></li>
                                 <li><a class="dppi dropdown-item" data-key="updated" href="#" >${ __html('Updated') }</a></li>
-                                <li><a class="dppi dropdown-item" data-key="stock_prediction" href="#" >${ __html('Low stock warning') }</a></li>
-                                <li><a class="dppi dropdown-item" data-key="updated" href="#" >${ __html('Out of stock') }</a></li>
+                                <li><a class="dppi dropdown-item" data-key="tag" href="#" >${ __html('Tag') }</a></li>
                             </ul>
                         </div>
                     </th>
                     <th class="align-middle">
-                        ${ __html("Stock") }
+                        <a class="text-black text-dark text-decoration-none fw-bolder border-0 dropdown-toggle select-stock-btn" href="#" data-key="" role="button" id="order-updated" data-id="updated" data-value="" data-bs-toggle="dropdown" aria-expanded="false">${ __html('All') }</a>
+                        <ul class="dropdown-menu select-stock" aria-labelledby="order-stock">
+                            <li><a class="dppi dropdown-item" data-key="" href="#" >${ __html('All') }</a></li>
+                            <li><a class="dppi dropdown-item" data-key="in" href="#" >${ __html('In stock') }</a></li>
+                            <li><a class="dppi dropdown-item d-none" data-key="low" href="#" >${ __html('Low stock') }</a></li>
+                            <li><a class="dppi dropdown-item" data-key="out" href="#" >${ __html('Out of stock') }</a></li>
+                        </ul>
                     </th>
                     <th class="align-middle d-none d-sm-table-cell">
                         ${ __html("Price") }
@@ -200,14 +292,52 @@ const _this = {
         let list = '';
         for (let i in response.inventory) {
 
-            // console.log(response.inventory[i]);
+            // normalise inventory values
+            if(!response.inventory[i].stock_warning) response.inventory[i].stock_warning = 0;
+            response.inventory[i].stock_warning = parseFloat(response.inventory[i].stock_warning);
+            response.inventory[i].stock_amount = parseFloat(response.inventory[i].stock_amount);
 
+            let allow = true;
+
+            // if(response.inventory.stock_amount <= 0 && document.querySelector('.select-stock-btn').dataset.key == "out"){
+
+            //     allow = true;
+            // }else if(response.inventory.stock_warning >= response.inventory.stock_amount && document.querySelector('.select-stock-btn').dataset.key == "low"){
+
+            //     allow = true;
+            // }
+ 
+            // // in stock
+            // if(response.inventory[i].stock_warning < response.inventory[i].stock_amount && document.querySelector('.select-stock-btn').dataset.key == "in"){
+
+            //     allow = true;
+            // }
+
+            // // low stock
+            // if(response.inventory[i].stock_warning >= response.inventory[i].stock_amount && response.inventory[i].stock_amount > 0 && document.querySelector('.select-stock-btn').dataset.key == "low"){
+
+            //     allow = true;
+            // }
+
+            // // out of stock
+            // if(response.inventory[i].stock_amount <= 0 && document.querySelector('.select-stock-btn').dataset.key == "out"){
+
+            //     allow = true;
+            // }
+            
+            // // all
+            // if(document.querySelector('.select-stock-btn').dataset.key == ""){
+
+            //    allow = true;
+            // }
+            
+            // if(allow){
+
+            // set inventory image
             let img = 'https://cdn.kenzap.com/loading.png';
-
             if(typeof(response.inventory[i].img) === 'undefined') response.inventory[i].img = [];
             if(response.inventory[i].img[0]) img = CDN + '/S'+sid+'/product-'+response.inventory[i]._id+'-1-100x100.jpeg?'+response.inventory[i].updated;
-            // if(response.inventory[i].stock_amount.length == 0) response.inventory[i].stock_amount = 0;
-
+      
             list += `
                 <tr>
                     <td>
@@ -243,10 +373,13 @@ const _this = {
 
                     </td>
                 </tr>`; 
+            // }
         }
 
         // provide result to the page
         document.querySelector(".table tbody").innerHTML = list;
+
+        if(response.inventory.length < 2){ document.querySelector(".table tbody").style.height = "150px"; }else{ document.querySelector(".table tbody").style.height = "auto"; }
     },
     initListeners: () => {
 
@@ -268,6 +401,12 @@ const _this = {
         // search inventory activation
         onClick('.table-p-list .inventoryActionsCont .dropdown-item', _this.listeners.tableAction);
 
+        // stock sort select
+        onClick('.select-stock a', _this.listeners.stockSort)
+
+        // title sort select
+        onClick('.select-title a', _this.listeners.titleSort)
+
         // break here if initListeners is called more than once
         if(!_this.state.firstLoad) return;
 
@@ -278,6 +417,37 @@ const _this = {
         // onClick('.btn-modal', _this.listeners.modalSuccessBtn);
     },
     listeners: {
+
+        titleSort: (e) => {
+
+            e.preventDefault();
+
+            _this.state.tag = "";
+
+            // pick category first
+            if(e.currentTarget.dataset.key == 'tag'){
+
+                categoryTable(_this)
+            }else{
+
+                document.querySelector('.select-title-btn').innerHTML = e.currentTarget.innerHTML;
+                document.querySelector('.select-title-btn').dataset.key = e.currentTarget.dataset.key;
+
+                _this.getData();
+            }
+        },
+
+        stockSort: (e) => {
+
+            e.preventDefault();
+
+            _this.state.tag = "";
+
+            document.querySelector('.select-stock-btn').innerHTML = e.currentTarget.innerHTML;
+            document.querySelector('.select-stock-btn').dataset.key = e.currentTarget.dataset.key;
+
+            _this.getData();
+        },
 
         removeProduct: (e) => {
 
