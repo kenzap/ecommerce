@@ -1,23 +1,40 @@
-// js dependencies
-import { H, showLoader, hideLoader, initHeader, __html, initBreadcrumbs, parseApiError, getCookie, getSiteId, link } from '@kenzap/k-cloud';
+import { H, showLoader, hideLoader, initHeader, __html, initBreadcrumbs, parseApiError, link } from '@kenzap/k-cloud';
 import { HTMLContent } from "../_/_cnt_home.js"
-import { getCurrencies, initFooter } from "../_/_helpers.js"
+import { initFooter } from "../_/_helpers.js"
 
-// where everything happens
-const _this = {
-
-    state: {
-        firstLoad: true,
-        ajaxQueue: 0 
-    },
-    init: () => {
+/**
+ * Main navigation menu page of the dashboard.
+ * Loads HTMLContent from _cnt_home.js file.
+ * Renders menu items in a list view manner
+ * 
+ * @version 1.0
+ */
+class Menu {
+    
+    // construct class
+    constructor(){
         
-        _this.getData(); 
-    },
-    getData: () => {
+        this.state = {
+            firstLoad: true,
+            ajaxQueue: 0 
+        };
+    
+        // connect to backend
+        this.getData();
+    }
+
+    /**
+     * Get data from the cloud and authenticate the user.
+     * Load translation strings.
+     * Get any additional data by extending the query object.
+     * 
+     * @version 1.0
+     * @link https://developer.kenzap.cloud/
+     */
+    getData = () => {
 
         // show loader during first load
-        if (_this.state.firstLoad) showLoader();
+        if (this.state.firstLoad) showLoader();
 
         // do API query
         fetch('https://api-v1.kenzap.cloud/', {
@@ -44,26 +61,17 @@ const _this = {
                 // init header
                 initHeader(response);
 
-                // initiate locale
-                // i18n.init(response.locale);
-
                 // get core html content 
-                _this.loadHomeStructure();  
+                this.html();  
 
                 // render table
-                _this.renderPage(response);
+                this.render(response);
 
-                // init header
-                // _this.initHeader(response);
-
-                // bind content listeners
-                // _this.initListeners();
-            
                 // initiate footer
-                initFooter(_this);
+                initFooter(this);
 
                 // first load
-                _this.state.firstLoad = false;
+                this.state.firstLoad = false;
 
             }else{
 
@@ -71,10 +79,19 @@ const _this = {
             }
         })
         .catch(error => { parseApiError(error); });
-    },
-    renderPage: (product) => {
+    }
 
-        let d = document;
+    // load page
+    html = () => {
+
+        if(!this.state.firstLoad) return;
+
+        // get core html content 
+        document.querySelector('#contents').innerHTML = HTMLContent();
+    }
+
+    // render page
+    render = (product) => {
 
         // initiate breadcrumbs
         initBreadcrumbs(
@@ -83,39 +100,13 @@ const _this = {
                 { text: __('E-commerce') },
             ]
         );
-    },
-    // initHeader: (response) => {
+    }
 
-    //     onClick('.nav-back', (e) => {
-
-    //         e.preventDefault();
-    //         console.log('.nav-back');
-    //         let link = document.querySelector('.bc ol li:nth-last-child(2)').querySelector('a');
-    //         simulateClick(link);
-    //     });
-    // },
-    initListeners: (type = 'partial') => {
+    // init page listeners
+    listeners = () => {
 
 
-
-    },
-    listeners: {
-
-
-        modalSuccessBtn: (e) => {
-            
-            _this.listeners.modalSuccessBtnFunc(e);
-        },
-
-        modalSuccessBtnFunc: null
-    },
-    loadHomeStructure: () => {
-
-        if(!_this.state.firstLoad) return;
-
-        // get core html content 
-        document.querySelector('#contents').innerHTML = HTMLContent(__);
     }
 }
 
-_this.init();
+new Menu();

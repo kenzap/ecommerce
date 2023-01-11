@@ -1,3 +1,5 @@
+import { __html, __attr } from '@kenzap/k-cloud';
+
 // html product list loader
 export const HTMLContent = (__) => {
 
@@ -19,23 +21,23 @@ return `
                                 <div class="landing_status"></div>
                                 <input type="hidden" class="form-control" id="landing-slug" value="">
 
-                                <h4 id="elan" class="card-title mb-4">${ __('Description') }</h4>
+                                <h4 id="elan" class="card-title mb-4">${ __html('Description') }</h4>
 
                                 <div id="placeholders">
 
                                     <div class="mb-3">
-                                        <label class="banner-title-l form-label" for="p-title">${ __('Title') }</label>
-                                        <input type="text" class="form-control inp" id="p-title" placeholder="${ __('Sushi set..') }">
+                                        <label class="banner-title-l form-label" for="p-title">${ __html('Title') }</label>
+                                        <input type="text" class="form-control inp" id="p-title" placeholder="${ __attr('Sushi set..') }">
                                         <p class="form-text"> </p>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="banner-descshort-l form-label" for="p-sdesc">${ __('Short Description') }</label>
+                                        <label class="banner-descshort-l form-label" for="p-sdesc">${ __html('Short Description') }</label>
                                         <textarea class="form-control inp" id="p-sdesc" placeholder="  " maxlength="120" rows="2"></textarea>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="banner-descshort-l form-label" for="desc">${ __('Images') }</label>
+                                        <label class="banner-descshort-l form-label" for="desc">${ __html('Images') }</label>
                                         <div class="clearfix"></div>
                                         <div class="ic"></div>
                                         <div class="clearfix"></div>
@@ -44,7 +46,7 @@ return `
                                     <div class="mb-3">
                                         <div class="clearfix"></div>
                                         <div style="clear:both;margin-top:16px;"></div>
-                                        <label class="banner-descshort-l form-label" for="p-desc">${ __('Description') }</label>
+                                        <label class="banner-descshort-l form-label" for="p-desc">${ __html('Description') }</label>
                                         <textarea class="form-control inp" id="p-ldesc" placeholder=" " maxlength="2000" rows="10"></textarea>
                                     </div>
 
@@ -56,12 +58,12 @@ return `
                                     </div>
 
                                     <div class="price_group mt-3 mb-3">
-                                        <h4 class="card-title mb-3">${ __('Price') }</h4>
+                                        <h4 class="card-title mb-3">${ __html('Price') }</h4>
                                         <div class="price_group_base">
                                             <div class="mb-3">
                                                 <div class="input-group">
                                                     <div id="p-price-c">
-                                                        <label for="p-price" class="form-label">${ __('Default') } <span class="lang"></span></label>
+                                                        <label for="p-price" class="form-label">${ __html('Default') } <span class="lang"></span></label>
                                                         <div class="input-group pe-3 mb-3">
                                                             <span id="p-price-symb" class="input-group-text">$</span>
                                                             <input id="p-price" type="text" class="form-control inp" placeholder="55.00" autocomplete="off">
@@ -70,22 +72,22 @@ return `
                                                     <div id="p-priced-c" class="d-flex align-content-end flex-wrap">
                                                         <a class="btn btn-outline-secondary mb-3 add-discount" href="#" role="button" id="btn-discount" >
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
-                                                            ${ __('discount') }
+                                                            ${ __html('discount') }
                                                         </a>
                                                         <div class="d-none">
-                                                            <label for="p-priced pe-3 mb-3" class="form-label">${ __('Discounted') } <span class="lang"></span></label>
+                                                            <label for="p-priced pe-3 mb-3" class="form-label">${ __html('Discounted') } <span class="lang"></span></label>
                                                             <input id="p-priced" type="text" class="form-control" placeholder="45.00" autocomplete="off">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="discount-blocks mw">
-                                                    <label class="discount-list form-label" for="discount-list ">${ __('Discount list') }</label>
+                                                    <label class="discount-list form-label" for="discount-list ">${ __html('Discount list') }</label>
                                                     <ul class="mb-4">
                                                
                                                     </ul>
                                                 </div>
-                                                <div class="add-mix-ctn text-left mt-3 mb-2"><a class="add-mix-block" href="#" data-action="add">${ __('+ add variation') }</a></div>
+                                                <div class="add-mix-ctn text-left mt-3 mb-2"><a class="add-mix-block" href="#" data-action="add">${ __html('+ add variation') }</a></div>
                                             </div>
 
                                             <div class="variation-blocks">
@@ -95,11 +97,11 @@ return `
                                             <div style='margin:24px 0 48px;border-bottom:0px solid #ccc;'></div>
 
                                             <div class="mb-3 mw">
-                                                <h4 id="elan" class="card-title">${ __('Inventory') }</h4>
+                                                <h4 id="elan" class="card-title">${ __html('Inventory') }</h4>
                                                 <label for="stock_sku" class="form-label"> <span class="lang"></span></label>
                                                 <div class="input-group">
                                                     <input id="stock_sku" type="text" style="width:100%;" class="form-control" placeholder="" maxlength="200">
-                                                    <p class="form-text">${ __('Product stock unit identification number or SKU.') }</p>
+                                                    <p class="form-text">${ __html('Product stock unit identification number or SKU.') }</p>
                                                 </div>
                                             </div>
 
@@ -107,32 +109,32 @@ return `
                                                 <div class="form-check">
                                                     <input id="stock_management" class="form-check-input stock-management" name="stock_management" type="checkbox" value="0" data-type="checkbox">
                                                     <label class="form-check-label" for="stock_management">
-                                                        ${ __('Stock management') }
+                                                        ${ __html('Stock management') }
                                                     </label>
                                                 </div>
-                                                <p class="form-text">${ __('Enable stock management.') }</p>
+                                                <p class="form-text">${ __html('Enable stock management.') }</p>
                                             </div>
 
                                             <div class="mb-3 mw stock-cont">
-                                                <label class="form-label" for="stock_quantity">${ __('Stock quantity') }</label>
+                                                <label class="form-label" for="stock_quantity">${ __html('Stock quantity') }</label>
                                                 <input id="stock_quantity" type="text" class="form-control" placeholder="0">
-                                                <p class="form-text">${ __('Total number of products left.') }</p>
+                                                <p class="form-text">${ __html('Total number of products left.') }</p>
                                             </div>
 
                                             <div class="mb-3 mw stock-cont">
-                                                <label class="form-label" for="stock_low_threshold">${ __('Low stock') }</label>
+                                                <label class="form-label" for="stock_low_threshold">${ __html('Low stock') }</label>
                                                 <input id="stock_low_threshold" type="text" class="form-control" placeholder="0">
-                                                <p class="form-text">${ __('Low stock threshold.') }</p>
+                                                <p class="form-text">${ __html('Low stock threshold.') }</p>
                                             </div>
 
                                             <div class="mb-3 mw stock-cont">
-                                                <label class="form-label" >${ __('Inventory table') }</label>
+                                                <label class="form-label" >${ __html('Inventory table') }</label>
                                                 <div class="inventory-cont">
 
                                                 </div>
-                                                <div class="add-mix-ctn text-left mt-1 mb-2"><a class="add-inventory" href="#" data-action="add" style="font-size: 0.875rem;">${ __('+ add inventory') }</a></div>
+                                                <div class="add-mix-ctn text-left mt-1 mb-2"><a class="add-inventory" href="#" data-action="add" style="font-size: 0.875rem;">${ __html('+ add inventory') }</a></div>
 
-                                                <p class="form-text d-none">${ __('Low stock threshold.') }</p>
+                                                <p class="form-text d-none">${ __html('Low stock threshold.') }</p>
                                             </div>
                                         </div>
                                     </div>
@@ -157,11 +159,11 @@ return `
                     <div class="card border-white shadow-sm p-sm-3">
                         <div class="card-body">
 
-                            <h4 class="card-title" style="display:none;">${ __('General') }</h4>
+                            <h4 class="card-title" style="display:none;">${ __html('General') }</h4>
                             <div class="landing_status"></div>
                             <input type="hidden" class="form-control" id="landing-slug" value="">
 
-                            <h4 id="elan" class="card-title mb-4">${ __('Status') }</h4>
+                            <h4 id="elan" class="card-title mb-4">${ __html('Status') }</h4>
                             <div id="status-cont" class="mb-3">
 
                                 <div class="col-sm-12">
@@ -169,7 +171,7 @@ return `
                                         <label class="form-check-label status-publish form-label">
                                             <input type="radio" class="form-check-input" name="p-status"
                                                 id="p-status1" value="1">
-                                                ${ __('Published') }
+                                                ${ __html('Published') }
                                         </label>
                                     </div>
                                 </div>
@@ -178,18 +180,18 @@ return `
                                     <div class="form-check">
                                         <label class="form-check-label status-draft form-label">
                                             <input type="radio" class="form-check-input" name="p-status"  id="p-status0" value="0">
-                                            ${ __('Draft') }
+                                            ${ __html('Draft') }
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <h4 id="elan" class="card-title mb-4">${ __('Categories') }</h4>
+                            <h4 id="elan" class="card-title mb-4">${ __html('Categories') }</h4>
                             <div id="p-cats" class="simple-tags mb-4" data-simple-tags=""></div>
                             <div class="clearfix"> </div>
 
                             <div class="d-grid gap-2">
-                                <button class="btn btn-primary btn-save" type="button">${ __('Save') }</button>
+                                <button class="btn btn-primary btn-save" type="button">${ __html('Save') }</button>
                             </div>
 
                         </div>

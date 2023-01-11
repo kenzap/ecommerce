@@ -1,12 +1,9 @@
-import { H, __html, __attr, html, attr, showLoader, hideLoader, parseApiError, getCookie, onClick, onKeyUp, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { formatStatus, priceFormat, formatTime, stockBadge, simpleTags, getPageNumber, onlyNumbers, formatTimeDetailed, mt } from "../_/_helpers.js"
+import { H, __html, __attr, html, attr, parseApiError, simulateClick, toast } from '@kenzap/k-cloud';
+import { priceFormat, formatTime, stockBadge, getPageNumber, onlyNumbers, mt } from "../_/_helpers.js"
 import { inventoryEdit } from "../_/_mod_inventory_edit.js"
 
 // html inventory list loader
 export const inventoryView = (_this) => {
-
-    // console.log(_this.state.response.inventory);
-    // console.log(_this.state.id);
 
     let inventory = { img: [], price: 0, price_per_unit: 0, price_per_unit_prev: 0, status: "1", tags: [], stock_amount: 0, stock_unit: "kg", stock_warning: "", title: "", updated: 0 };
 
@@ -15,8 +12,6 @@ export const inventoryView = (_this) => {
     inventory.stock_amount = parseFloat(inventory.stock_amount);
 
     if(!inventory.price) inventory.price = 0;
-
-    // console.log(inventory);
 
     let modal = document.querySelector(".modal");
     let modalCont = new bootstrap.Modal(modal);
@@ -29,8 +24,6 @@ export const inventoryView = (_this) => {
         <button class="btn btn-outline-secondary remove-application btn-lg d-none" type="button" title="${ __html('Remove application.') }"><span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg></span></button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${ __html('Close') }</button>
     `;
-
-    // console.log(_this.state.settings);
 
     let modalHTml = `
 
@@ -163,24 +156,9 @@ export const inventoryView = (_this) => {
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(liveStock);
 
-    // // init tags
-    // let tags = modal.querySelector('#tags');
-    // if (inventory.tags) tags.setAttribute('data-simple-tags', inventory.tags );
-    // const sTags = new simpleTags(tags);
-
     // restrict to numbers only
     onlyNumbers('#stock_price', [8, 46, 190, 189, 229]);
-    // onlyNumbers('#stock_warning', [8, 46, 190]);
     onlyNumbers('#stock_amount', [8, 46, 190, 189, 229]);
-
-    // // stock unit changed
-    // modal.querySelector("#stock_unit").addEventListener('change', e => {
-
-    //     e.preventDefault();
-
-    //     modal.querySelector("#stock_warning_unit").innerHTML = e.currentTarget.value;
-    //     modal.querySelector("#stock_amount_unit").innerHTML = e.currentTarget.value;
-    // });
 
     // btn settings
     modal.querySelector(".btn-settings").addEventListener('click', e => {
@@ -268,13 +246,6 @@ export const inventoryView = (_this) => {
                     data:       data
                 }
             }
-
-            // update query
-            // if(_this.state.action == 'edit' && _this.state.id){
-
-            //     query.update.type = 'update';
-            //     query.update.id = _this.state.id;
-            // }
                     
             // show loading
             _this.state.btnHTML = modal.querySelector('.btn-stock-update').innerHTML;
@@ -294,19 +265,7 @@ export const inventoryView = (_this) => {
 
                 if (response.success){
 
-                    // restore loading button state
-                    // modal.querySelector('.btn-stock-update').dataset.loading = "";
-                    // modal.querySelector('.btn-stock-update').innerHTML =  _this.state.btnHTML;
-
                     updateStock(_this, inventory, data);
-
-                    // _this.getData();
-
-                    // toast(__html('Stock updated'));
-
-                    // open product editing page
-                    // window.location.href = link(`/product-edit/?id=${ response.product.id}`)
-
                 }else{
 
                     parseApiError(response);
@@ -327,12 +286,6 @@ export const inventoryView = (_this) => {
         // let price_avg_new = parseFloat(data.price) / parseFloat(data.amount);
 
         if(!inventory.price) inventory.price = 0;
-
-        // let price_avg = (parseFloat(data.price) + parseFloat(inventory.price)) / (parseFloat(data.amount) + parseFloat(inventory.stock_amount));
-        // console.log(data);
-        // console.log(inventory);
-        // console.log(price_avg);
-        // return;
 
         let data_query = null;
 
@@ -368,15 +321,6 @@ export const inventoryView = (_this) => {
             }
         }
 
-        // console.log(query);
-        // return;
-
-        // update query
-        // if(_this.state.action == 'edit' && _this.state.id){
-        //     query.update.type = 'update';
-        //     query.update.id = _this.state.id;
-        // }
-        
         // send data
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
@@ -396,17 +340,9 @@ export const inventoryView = (_this) => {
 
                 modalCont.hide();
 
-                // updateStock(_this, data);
-
-                // getHistory(_this);
-
                 _this.getData();
 
                 toast(__html('Stock updated'));
-
-
-                // open product editing page
-                // window.location.href = link(`/product-edit/?id=${ response.product.id}`)
 
             }else{
 
@@ -453,10 +389,6 @@ export const inventoryView = (_this) => {
         })
         .then(response => response.json())
         .then(response => {
-
-            // // restore loading button state
-            // modal.querySelector('.btn-add-item').dataset.loading = "";
-            // modal.querySelector('.btn-add-item').innerHTML = btnHTML;
 
             if (response.success){
 
@@ -583,6 +515,4 @@ export const inventoryView = (_this) => {
     getHistory(_this);
 
     modalCont.show();
-
-    // setTimeout( () => modal.querySelector("#title").focus(), 100);
 }

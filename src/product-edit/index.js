@@ -1,28 +1,44 @@
-// js dependencies
-import { H, __html, __attr, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, loadScript, toast, link } from '@kenzap/k-cloud';
-import { getProductId, makeNumber, numsOnly, priceFormat, onlyNumbers, loadAddon, initFooter } from "../_/_helpers.js"
+import { H, __html, __attr, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, toast, link } from '@kenzap/k-cloud';
+import { getProductId, makeNumber, priceFormat, onlyNumbers, loadAddon, initFooter } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
 import { inventoryTable } from "../_/_mod_product_edit_inventory_edit.js"
 
-// where everything happens
-const _this = {
+/**
+ * Main product listing page of the dashboard.
+ * Loads HTMLContent from _cnt_product_list.js file.
+ * Renders product list in a dynamic table.
+ * 
+ * @version 1.0
+ */
+class ProductEdit {
 
-    init: () => {
+    // construct class
+    constructor(){
         
-        _this.getData(); 
-    },
-    state: {
-        ajaxQueue: 0,
-        settings: {}, // where all requested settings are cached
-    },
-    getData: () => {
+        this.state = {
+            ajaxQueue: 0,
+            settings: {}, // where all requested settings are cached
+        };
+    
+        // connect to backend
+        this.getData();
+    }
+
+    /**
+     * Get data from the cloud and authenticate the user.
+     * Load translation strings, product data, settings and basic user info.
+     * Get any additional data by extending the query object.
+     * 
+     * @version 1.0
+     * @link https://developer.kenzap.cloud/
+     */
+    getData = () => {
 
         // block ui during load
         showLoader();
 
         let id = getProductId();
-        let sid = spaceID();
 
         fetch('https://api-v1.kenzap.cloud/', {
             method: 'post',
@@ -63,40 +79,33 @@ const _this = {
 
             if (response.success){
 
-                _this.state.response = response;
-                _this.state.settings = response.settings;
+                this.state.response = response;
+                this.state.settings = response.settings;
 
                 // init header
                 initHeader(response);
   
-                // get core html content 
-                document.querySelector('#contents').innerHTML = HTMLContent(__);
+                // html content 
+                document.querySelector('#contents').innerHTML = HTMLContent();
 
                 // check product response
                 if (response.product.length == 0) {
              
-                    // $(".list").html(/*html*/`<tr><td colspan="3">No products to display. Please create one by clicking on the button above.</td></tr>`);
-                    // $( "#loader" ).fadeOut( "fast" );
-                    _this.initListeners('all');
+                    this.initListeners('all');
                     return;
                 }
 
-                // let st = parseInt(data.list[i].status);
-                let img = 'https://cdn.kenzap.com/loading.png';
-
-                // if(typeof(response.product[i].img) !== 'undefined' && response.product[i].img[0] == 'true') img = 'https://preview.kenzap.cloud/S1000452/_site/images/product-'+response.product[i].id+'-1-100x100.jpeg?1630925420';
-                
                 // bind frontend data
-                _this.renderPage(response.product);
+                this.render(response.product);
 
                 // load images if any
-                _this.loadImages(response.product);
+                this.loadImages(response.product);
 
                 // init page listeners
-                _this.initListeners('all');
+                this.initListeners('all');
 
                 // footer note
-                initFooter(_this);
+                initFooter(this);
 
                 // load addons
                 if(response.settings.addons) if(response.settings.addons.product_edit) response.settings.addons.product_edit.forEach(obj => { loadAddon(obj.src, obj.version); })
@@ -104,8 +113,9 @@ const _this = {
             }
         })
         .catch(error => { parseApiError(error); });
-    },
-    renderPage: (product) => {
+    }
+
+    render = (product) => {
 
         let d = document;
 
@@ -126,21 +136,19 @@ const _this = {
 
         // price section
         d.querySelector("#p-price").value = product.price; onlyNumbers('#p-price', [8, 46, 190]);
-        // d.querySelector("#p-priced").value = product.priced;
-        d.querySelector("#p-price-symb").innerHTML = _this.state.settings['currency_symb'] ? _this.state.settings['currency_symb'] : "";
+        d.querySelector("#p-price-symb").innerHTML = this.state.settings['currency_symb'] ? this.state.settings['currency_symb'] : "";
 
         // discounts 
         document.querySelector(".discount-blocks").dataset.data = encodeURIComponent(JSON.stringify(product.discounts ? product.discounts : []));
-        _this.renderDiscounts();
+        this.renderDiscounts();
 
         // price variation section
-        // console.log(product.variations);
         for(let m in product.variations){ 
 
             let vr = product.variations[m];
             let data = []; data['title'] = vr['title']; data['type'] = vr['type']; data['required'] = vr['required']; data['index'] = m;
   
-            d.querySelector(".variation-blocks").innerHTML += _this.structMixBlock(data);
+            d.querySelector(".variation-blocks").innerHTML += this.structMixBlock(data);
 
             for(let n in vr['data']){
   
@@ -151,7 +159,7 @@ const _this = {
               data['type'] = vr['type'];
   
               // console.log(data['title']);
-              d.querySelector(".var-block[data-index='"+m+"'] .offer-pricef").innerHTML += _this.structMixRow(data);
+              d.querySelector(".var-block[data-index='"+m+"'] .offer-pricef").innerHTML += this.structMixRow(data);
             }
         }
 
@@ -173,44 +181,44 @@ const _this = {
         const tags = new simpleTags(__, pcats);
         
         // render inventory table fot stock
-        inventoryTable(_this);
-    },
-    initListeners: (type = 'partial') => {
+        inventoryTable(this);
+    }
 
-        // console.log('initListeners ');
+    initListeners = (type = 'partial') => {
 
         // listeners that can be initiated only once
         if(type == 'all'){
 
             // product save button
-            onClick('.btn-save', _this.listeners.saveProduct);
+            onClick('.btn-save', this.listeners.saveProduct);
             
             // modal success button
-            onClick('.p-modal .btn-primary', _this.listeners.modalSuccessBtn);
+            onClick('.p-modal .btn-primary', this.listeners.modalSuccessBtn);
         }
 
         // add discount
-        onClick('.add-discount', _this.listeners.addDiscountBlock);
+        onClick('.add-discount', this.listeners.addDiscountBlock);
 
         // add variation block
-        onClick('.add-mix-block', _this.listeners.addMixBlock);
+        onClick('.add-mix-block', this.listeners.addMixBlock);
         
         // edit variation block
-        onClick('.edit-block', _this.listeners.editBlock);
+        onClick('.edit-block', this.listeners.editBlock);
 
         // remove variation block
-        onClick('.remove-block', _this.listeners.removeBlock);
+        onClick('.remove-block', this.listeners.removeBlock);
 
         // add variation option
-        onClick('.add-mix', _this.listeners.addMixOption);
+        onClick('.add-mix', this.listeners.addMixOption);
 
         // remove variation option
-        onClick('.remove-option', _this.listeners.removeOption);
+        onClick('.remove-option', this.listeners.removeOption);
 
         // stock management enable disable
-        onClick('.stock-management', _this.listeners.stockManagement);
-    },
-    listeners: {
+        onClick('.stock-management', this.listeners.stockManagement);
+    }
+
+    listeners = {
 
         editBlock: (e) => {
 
@@ -220,8 +228,6 @@ const _this = {
             amb.dataset.action = 'edit';
             amb.dataset.index = e.currentTarget.dataset.index;
             setTimeout(() => simulateClick(amb), 10);
-
-            console.log('editBlock');
         },
 
         removeBlock: (e) => {
@@ -231,10 +237,7 @@ const _this = {
             let c = confirm(__html('Remove entire block?'));
             if(c){ 
                 e.currentTarget.parentNode.parentNode.remove();
-                // e.currentTarget.parentElement.parentElement.remove();
              }
-
-            console.log('removeBlock');
         },
 
         addMixBlock: (e) => {
@@ -244,8 +247,6 @@ const _this = {
             let action = e.currentTarget.dataset.action; // $(this).attr('data-action');
             let index = e.currentTarget.dataset.index; // $(this).attr('data-index');
             e.currentTarget.dataset.action = 'add'; // $(this).attr('data-action', 'add');
-
-            console.log('index: ' + index);
 
             // init defaults
             let modal_title = __html('Add Variation Block');
@@ -264,7 +265,6 @@ const _this = {
                 required = parseInt(document.querySelector(".var-block[data-index='"+index+"']").dataset.required);
 
                 modal_btn = __html('Save');
-                // console.log(variations);
             }
 
             let pmodal = document.querySelector(".p-modal");
@@ -312,7 +312,7 @@ const _this = {
 
             setTimeout( () => pmodal.querySelector("#mtitle").focus(),100 );
 
-            _this.listeners.modalSuccessBtnFunc = (e) => {
+            this.listeners.modalSuccessBtnFunc = (e) => {
 
                 e.preventDefault();
 
@@ -336,18 +336,16 @@ const _this = {
                 if(action == 'add'){
 
                     if(document.querySelector(".variation-blocks .var-block") == null){
-                        document.querySelector(".variation-blocks").innerHTML = _this.structMixBlock(data);
+                        document.querySelector(".variation-blocks").innerHTML = this.structMixBlock(data);
                     }else{
-                        document.querySelector(".variation-blocks .var-block:last-of-type").insertAdjacentHTML('afterend', _this.structMixBlock(data));
+                        document.querySelector(".variation-blocks .var-block:last-of-type").insertAdjacentHTML('afterend', this.structMixBlock(data));
                     }
                 }
 
                 pmodalCont.hide();
 
-                setTimeout(() => _this.initListeners('partial'), 10);
+                setTimeout(() => this.initListeners('partial'), 10);
             }
-
-           //  console.log('addMixBlock');
         },
 
         addMixOption: (e) => {
@@ -384,7 +382,7 @@ const _this = {
 
             setTimeout( () => pmodal.querySelector("#mtitle").focus(),100 );
 
-            _this.listeners.modalSuccessBtnFunc = (e) => {
+            this.listeners.modalSuccessBtnFunc = (e) => {
 
                 e.preventDefault();
 
@@ -398,14 +396,14 @@ const _this = {
                 console.log(sel);
                 
                 if(document.querySelector(sel + " .offer-pricef li") == null){
-                    document.querySelector(sel + " .offer-pricef").innerHTML = _this.structMixRow(data);
+                    document.querySelector(sel + " .offer-pricef").innerHTML = this.structMixRow(data);
                 }else{
-                    document.querySelector(sel + " .offer-pricef li:last-of-type").insertAdjacentHTML('afterend', _this.structMixRow(data));
+                    document.querySelector(sel + " .offer-pricef li:last-of-type").insertAdjacentHTML('afterend', this.structMixRow(data));
                 }
 
                 pmodalCont.hide();
 
-                setTimeout(() => _this.initListeners('partial'), 10);
+                setTimeout(() => this.initListeners('partial'), 10);
             };
         },
 
@@ -651,7 +649,7 @@ const _this = {
                 };
             });
 
-            _this.listeners.modalSuccessBtnFunc = (e) => {
+            this.listeners.modalSuccessBtnFunc = (e) => {
 
                 e.preventDefault();
 
@@ -769,16 +767,12 @@ const _this = {
 
                 document.querySelector(".discount-blocks").dataset.data = encodeURIComponent(JSON.stringify(discounts));
 
-                _this.renderDiscounts();
-
-                console.log(obj);
+                this.renderDiscounts();
 
                 pmodalCont.hide();
 
-                setTimeout(() => _this.initListeners('partial'), 10);
+                setTimeout(() => this.initListeners('partial'), 10);
             }
-
-           //  console.log('addMixBlock');
         },
 
         saveProduct: (e) => {
@@ -812,7 +806,7 @@ const _this = {
             data["discounts"] = JSON.parse(decodeURIComponent(document.querySelector('.discount-blocks').dataset.data));
 
             // inventory
-            data["stock"] = { inventory: _this.state.response.product.stock.inventory };
+            data["stock"] = { inventory: this.state.response.product.stock.inventory };
             data['stock']['sku'] = document.querySelector('#stock_sku').value;
             data['stock']['management'] = document.querySelector('#stock_management').checked;
             data['stock']['qty'] = document.querySelector('#stock_quantity').value; 
@@ -883,14 +877,12 @@ const _this = {
                 if (response.success){
 
                     // upload desc images
-                    _this.uploadImages();
+                    this.uploadImages();
                     
                 }else{
 
                     parseApiError(response);
                 }
-                
-                console.log('Success:', response);
             })
             .catch(error => { parseApiError(error); });
         },
@@ -927,7 +919,6 @@ const _this = {
                 let reader = new FileReader();
                 reader.onload = function(e) {
                   
-                    // console.log('target '+e.currentTarget.result);
                     document.querySelector('.images-'+index).setAttribute('src', e.currentTarget.result);
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -951,8 +942,7 @@ const _this = {
 
         modalSuccessBtn: (e) => {
             
-            console.log('calling modalSuccessBtnFunc');
-            _this.listeners.modalSuccessBtnFunc(e);
+            this.listeners.modalSuccessBtnFunc(e);
         },
 
         stockManagement: (e) => {
@@ -965,9 +955,9 @@ const _this = {
         },
 
         modalSuccessBtnFunc: null
-    },
+    }
 
-    structMixBlock: (data) => {
+    structMixBlock = (data) => {
 
         let html = `
         <div class="mb-4 var-block mw" data-title="${ data.title }" data-type="${ data.type }" data-required="${ data.required }" data-index="${ data.index }" >
@@ -991,18 +981,20 @@ const _this = {
         </div>`;
     
         return html;
-    },
-    structMixRow: (data) => {
+    }
+
+    structMixRow = (data) => {
 
         return `
-        <li data-title="${ data.title }" data-price="${ data.price }" data-cond="" class="pt-2 pb-2"><div class="form-check"><label class="form-check-label form-label"><input class="${ data.type } form-check-input" type="${ data.type }" checked="" data-ft="${ data.title }">${ data.title } &nbsp;&nbsp;&nbsp; ${ priceFormat(_this, data.price) }</label></div>
+        <li data-title="${ data.title }" data-price="${ data.price }" data-cond="" class="pt-2 pb-2"><div class="form-check"><label class="form-check-label form-label"><input class="${ data.type } form-check-input" type="${ data.type }" checked="" data-ft="${ data.title }">${ data.title } &nbsp;&nbsp;&nbsp; ${ priceFormat(this, data.price) }</label></div>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff0079" class="remove-option bi bi-x-circle" viewBox="0 0 16 16">\
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
             </svg>
         </li>`;
-    },
-    loadImages: (product) => {
+    }
+
+    loadImages = (product) => {
 
         let d = document;
         let lang = 'en';
@@ -1026,13 +1018,13 @@ const _this = {
         d.querySelector(".ic").innerHTML = t;
     
         // new image listener
-        onClick('.p-img-cont img', _this.listeners.openImage);
+        onClick('.p-img-cont img', this.listeners.openImage);
 
         // new remove listener
-        onClick('.p-img-cont .remove', _this.listeners.removeImage);
+        onClick('.p-img-cont .remove', this.listeners.removeImage);
 
         // image preview listener
-        onChange('.p-img-cont .file', _this.listeners.previewImage);
+        onChange('.p-img-cont .file', this.listeners.previewImage);
     
         // iterate all images
         for(let fi=0; fi<5; fi++){
@@ -1054,9 +1046,10 @@ const _this = {
                 }
             }, 300, image_url, ".images-", fi );
         }
-    },
+    }
+
     // general method for image upload
-    uploadImages: () => {
+    uploadImages = () => {
 
         if( document.querySelector(".imgupnote") ) document.querySelector(".imgupnote").remove();
 
@@ -1068,7 +1061,6 @@ const _this = {
             let id = getProductId();
             let sid = spaceID();
 
-            // console.log(file);
             let file = fileEl.files[0];
             if(typeof(file) === "undefined") continue;
 
@@ -1090,7 +1082,7 @@ const _this = {
             // clear input file so that its not updated again
             file.value = '';
 
-            _this.state.ajaxQueue+=1;
+            this.state.ajaxQueue+=1;
 
             fetch("https://api-v1.kenzap.cloud/upload/",{
                 body: fd,
@@ -1099,8 +1091,8 @@ const _this = {
             .then(response => response.json())
             .then(response => {
 
-                _this.state.ajaxQueue -= 1;
-                if(response.success && _this.state.ajaxQueue == 0){
+                this.state.ajaxQueue -= 1;
+                if(response.success && this.state.ajaxQueue == 0){
 
                     toast( __html("Product updated") );
 
@@ -1111,15 +1103,16 @@ const _this = {
         }
         
         // image upload notice
-        if(_this.state.ajaxQueue == 0){
+        if(this.state.ajaxQueue == 0){
 
             toast( __html("Product updated") );
 
             hideLoader();
         }
-    },
+    }
+
     // render discounts
-    renderDiscounts: () => {
+    renderDiscounts = () => {
 
         let discounts = document.querySelector('.discount-blocks').dataset.data;
         let dow = [__html('Monday'), __html('Tuesday'), __html('Wednesday'), __html('Thursday'), __html('Friday'), __html('Saturday'), __html('Sunday')];
@@ -1129,7 +1122,7 @@ const _this = {
         let html = '';
         discounts.forEach((el, index) => {
 
-            let dv = el.type == 'value' ? priceFormat(_this, el.value) : el.percent + '% (' + priceFormat(_this, (makeNumber(document.querySelector("#p-price").value) * ((100-el.percent)/100))) + ')';
+            let dv = el.type == 'value' ? priceFormat(this, el.value) : el.percent + '% (' + priceFormat(this, (makeNumber(document.querySelector("#p-price").value) * ((100-el.percent)/100))) + ')';
 
             let time = '';
             switch(el.availability){
@@ -1159,8 +1152,8 @@ const _this = {
         document.querySelector('.discount-blocks ul').innerHTML = html; 
 
         // remove discount listener
-        onClick('.remove-discount', _this.listeners.removeDiscount);
+        onClick('.remove-discount', this.listeners.removeDiscount);
     }
 }
 
-_this.init();
+new ProductEdit();

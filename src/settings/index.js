@@ -1,25 +1,42 @@
-// js dependencies
-import { H, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, simulateClick, toast, link } from '@kenzap/k-cloud';
+import { H, __html, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, toast, link } from '@kenzap/k-cloud';
 import { getCurrencies, initFooter } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_settings.js"
 import { printerSettings } from "../_/_printer_settings.js"
 
-// where everything happens
-const _this = {
-   
-    state:{
-        firstLoad: true,
-        response: null,
-        limit: 10, // number of records to load per table
-    },
-    init: () => {
-         
-        _this.getData();
-    },
-    getData: () => {
+/**
+ * Settings page of the dashboard.
+ * Loads HTMLContent from _cnt_settings.js file.
+ * Renders settings options in tabbed view.
+ * 
+ * @version 1.0
+ */
+class Settings {
+
+    // construct class
+    constructor(){
+        
+        this.state = {
+            firstLoad: true,
+            response: null,
+            limit: 10, // number of records to load per table
+        };
+    
+        // connect to backend
+        this.getData();
+    }
+
+    /**
+     * Get data from the cloud and authenticate the user.
+     * Load translation strings, settings and basic user info.
+     * Get any additional data by extending the query object.
+     * 
+     * @version 1.0
+     * @link https://developer.kenzap.cloud/
+     */
+    getData = () => {
 
         // show loader during first load
-        if (_this.state.firstLoad) showLoader();
+        if (this.state.firstLoad) showLoader();
 
         // search content
         let s = document.querySelector('.search-cont input') ? document.querySelector('.search-cont input').value : '';
@@ -55,8 +72,8 @@ const _this = {
         .then(response => response.json())
         .then(response => {
 
-            _this.state.settings = response.settings;
-            _this.state.user = response.user;
+            this.state.settings = response.settings;
+            this.state.user = response.user;
 
             // hide UI loader
             hideLoader();
@@ -67,19 +84,19 @@ const _this = {
                 initHeader(response);
                 
                 // get core html content 
-                _this.loadPageStructure();  
+                this.html();  
 
                 // render table
-                _this.renderPage(response);
+                this.render(response);
 
                 // bind content listeners
-                _this.initListeners();
+                this.initListeners();
             
                 // initiate footer
-                initFooter(_this);
+                initFooter(this);
 
                 // first load
-                _this.state.firstLoad = false;
+                this.state.firstLoad = false;
 
             }else{
 
@@ -87,8 +104,9 @@ const _this = {
             }
         })
         .catch(error => { parseApiError(error); });
-    },
-    authUser: (response) => {
+    }
+
+    authUser = (response) => {
 
         if(response.user){
             
@@ -97,35 +115,37 @@ const _this = {
                 
             }
         }
-    },
-    loadPageStructure: () => {
+    }
 
-        if(!_this.state.firstLoad) return;
+    html = () => {
+
+        if(!this.state.firstLoad) return;
 
         // get core html content 
         document.querySelector('#contents').innerHTML = HTMLContent();
-    },
-    renderPage: (response) => {
+    }
 
-        _this.state.response = response;
+    render = (response) => {
 
-        if(_this.state.firstLoad){
+        this.state.response = response;
+
+        if(this.state.firstLoad){
 
             // initiate breadcrumbs
             initBreadcrumbs(
                 [
-                    { link: link('https://dashboard.kenzap.cloud'), text: __('Home') },
-                    { link: link('/'), text: __('E-commerce') },
-                    { text: __('Settings') }
+                    { link: link('https://dashboard.kenzap.cloud'), text: __html('Home') },
+                    { link: link('/'), text: __html('E-commerce') },
+                    { text: __html('Settings') }
                 ]
             );
         }
 
         // setup currencies
-        let coptions = '<option value="">'+__('Choose currency')+'</option>';
+        let coptions = '<option value="">'+__html('Choose currency')+'</option>';
         for (let c of getCurrencies()){
 
-            coptions += `<option value="${ c.code }">${ __(c.name) } (${ __(c.code) })</option>`;
+            coptions += `<option value="${ c.code }">${ __html(c.name) } (${ __html(c.code) })</option>`;
         }
         document.querySelector("#currency").innerHTML = coptions;
 
@@ -157,36 +177,36 @@ const _this = {
                 case 'select':
                 case 'textarea': field.value = localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) : ""; break;
                 case 'checkbox': console.log(localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) : false); field.checked = localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) == "true" ? true : false : false; break;
-                // case 'radio': document.querySelector("[name='"+field+"'][value='"+response.settings[field]+"']").checked = true; break;
             }
         }
 
         // printer settings
-        printerSettings.init(_this);
+        printerSettings.init(this);
 
         // webhooks
         if(response.settings.webhooks) response.settings.webhooks.forEach((hook, i) => {
 
-            console.log(hook);
             document.querySelector('[name="webhook1_trigger"]').value = hook['trigger'];
             document.querySelector('[name="webhook1_url"]').value = hook['url'];
         });
-    },
-    initListeners: () => {
+    }
+
+    initListeners = () => {
 
         // break here if initListeners is called more than once
-        if(!_this.state.firstLoad) return;
+        if(!this.state.firstLoad) return;
 
         // add product modal
-        onClick('.btn-save', _this.saveSettings);
-    },
-    listeners: {
+        onClick('.btn-save', this.saveSettings);
+    }
+
+    listeners = {
 
         removeProduct: (e) => {
 
             e.preventDefault();
 
-            let c = confirm( __('Completely remove this product?') );
+            let c = confirm( __html('Completely remove this product?') );
 
             if(!c) return;
   
@@ -209,9 +229,7 @@ const _this = {
 
                 if (response.success){
 
-                    // modalCont.hide();
-
-                    _this.getData();
+                    this.getData();
 
                 }else{
 
@@ -231,26 +249,25 @@ const _this = {
             document.querySelector('.table-p-list thead tr th:nth-child(2) .search-cont input').focus();
 
             // search products
-            onKeyUp('.table-p-list thead tr th:nth-child(2) .search-cont input', _this.listeners.searchProducts);
+            onKeyUp('.table-p-list thead tr th:nth-child(2) .search-cont input', this.listeners.searchProducts);
         },
  
         searchProducts: (e) => {
 
             e.preventDefault();
 
-            _this.getData();
-
-            // console.log('search products ' +e.currentTarget.value);
+            this.getData();
         },
 
         modalSuccessBtn: (e) => {
             
-            _this.listeners.modalSuccessBtnFunc(e);
+            this.listeners.modalSuccessBtnFunc(e);
         },
 
         modalSuccessBtnFunc: null
-    },
-    saveSettings: (e) => {
+    }
+
+    saveSettings = (e) => {
 
         e.preventDefault();
 
@@ -287,7 +304,7 @@ const _this = {
         }
 
         // do not save last_order_id if it was unchanged. Avoids conflicts.
-        if(_this.state.response.settings.last_order_id == data.last_order_id){
+        if(this.state.response.settings.last_order_id == data.last_order_id){
 
             delete data.last_order_id;
         }
@@ -296,7 +313,7 @@ const _this = {
         if(data['printers']) data['printers'] = JSON.parse(data['printers']);
 
         // get templates
-        data = printerSettings.save(_this, data);
+        data = printerSettings.save(this, data);
 
         // webhooks
         data.webhooks = [];
@@ -331,12 +348,6 @@ const _this = {
             if (response.success){
 
                 toast('Changes applied');
-
-                // modalCont.hide();
-                // _this.getData();
-                // open product editing page
-                // window.location.href = `/product-edit/?id=${ response.product.id}`
-
             }else{
 
                 parseApiError(response);
@@ -344,12 +355,12 @@ const _this = {
             
         })
         .catch(error => { parseApiError(error); });
-    },
-    initFooter: () => {
+    }
+
+    initFooter = () => {
         
-        initFooter(__('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
-        // initFooter(__('Copyright © %1$ %2$ Kenzap%3$. All rights reserved.', new Date().getFullYear(), '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>'), __('Kenzap Cloud Services - Dashboard'));
+        initFooter(__html('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
     }
 }
 
-_this.init();
+new Settings();

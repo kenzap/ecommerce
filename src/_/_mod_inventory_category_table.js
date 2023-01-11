@@ -1,14 +1,8 @@
-import { H, __html, __attr, html, attr, showLoader, hideLoader, parseApiError, getCookie, onClick, onKeyUp, spaceID, simulateClick, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { formatStatus, priceFormat, formatTime, stockBadge, simpleTags, getPageNumber, getProductId, onlyNumbers, formatTimeDetailed, mt } from "../_/_helpers.js"
+import { H, __html, __attr, html, attr, parseApiError } from '@kenzap/k-cloud';
+import { getPageNumber } from "../_/_helpers.js"
 
 // html inventory list loader
 export const categoryTable = (_this) => {
-
-    // if(!_this.state.response.product.stock.inventory) _this.state.response.product.stock.inventory = [];
-
-    // e.preventDefault();
-
-    // document.querySelector(".add-inventory").dataset.assigned = true;
 
     let modal = document.querySelector(".modal");
     _this.state.modalCont = new bootstrap.Modal(modal);
@@ -55,23 +49,7 @@ export const categoryTable = (_this) => {
                         key:        'ecommerce-inventory',
                         fields:     ['_id', 'tags'],
                         limit:      limit,
-                        // term:[
-                        //     {
-                        //         "field": "iid",
-                        //         "relation": "=",
-                        //         "type": "string",
-                        //         "value": _this.state.id
-                        //     }
-                        // ],
                         offset:     s.length > 0 ? 0 : getPageNumber() * limit - limit,     // automatically calculate the offset of table pagination
-                        // search:     {                                                                               // if s is empty search query is ignored
-                        //                 field: 'title',
-                        //                 s: 'ASC'
-                        //             },
-                        // sortby:     {
-                        //                 field: 'created',
-                        //                 order: 'DESC'
-                        //             },
                         term:          [
                             {
                                 type:       'string',
@@ -128,9 +106,6 @@ export const categoryTable = (_this) => {
                         </tr>`;
 
                 }).join('');
-
-                // only numbers
-                // onlyNumbers('.stock_amount', [8, 46, 190, 189]);
 
                 // add inventory item
                 [...document.querySelectorAll(".add-inventory-item")].forEach(item => {

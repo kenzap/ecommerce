@@ -1,1 +1,1672 @@
-!function(){"use strict";function e(e){return function(e){if(Array.isArray(e))return n(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||t(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function t(e,t){if(e){if("string"==typeof e)return n(e,t);var o=Object.prototype.toString.call(e).slice(8,-1);return"Object"===o&&e.constructor&&(o=e.constructor.name),"Map"===o||"Set"===o?Array.from(e):"Arguments"===o||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(o)?n(e,t):void 0}}function n(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,o=new Array(t);n<t;n++)o[n]=e[n];return o}function o(e,n){var o="undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(!o){if(Array.isArray(e)||(o=t(e))||n&&e&&"number"==typeof e.length){o&&(e=o);var a=0,c=function(){};return{s:c,n:function(){return a>=e.length?{done:!0}:{done:!1,value:e[a++]}},e:function(e){throw e},f:c}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var r,l=!0,i=!1;return{s:function(){o=o.call(e)},n:function(){var e=o.next();return l=e.done,e},e:function(e){i=!0,r=e},f:function(){try{l||null==o.return||o.return()}finally{if(i)throw r}}}}const a=e=>0===(e=String(e)).length?"":e.replace(/[&<>'"]/g,(e=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&apos;",'"':"&quot;"}[e]))),c=(e,...t)=>{if(0===(e=String(e)).length)return"";return((e,t,...n)=>{let o=(e,t)=>(t.forEach(((t,n)=>{e=e.replace("%"+(n+1)+"$",t)})),e);return void 0===window.i18n||void 0===window.i18n.state.locale.values[e]?o(e,n):o(t(window.i18n.state.locale.values[e]),n)})(e,(e=>e.replace(/[&<>'"]/g,(e=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&apos;",'"':"&quot;"}[e])))),...t)},r=()=>{let e=document.querySelector(".loader");e&&(e.style.display="block")},l=()=>{let e=document.querySelector(".loader");e&&(e.style.display="none")},i=e=>{let t=new URLSearchParams(window.location.search),n=t.get("sid")?t.get("sid"):"",o=-1==e.indexOf("?")?"?sid="+n:"&sid="+n;return e+o},s=()=>{let e=new URLSearchParams(window.location.search);return e.get("sid")?e.get("sid"):""},d=e=>{let t=e+"=",n=decodeURIComponent(document.cookie).split(";");for(let e=0;e<n.length;e++){let o=n[e];for(;" "==o.charAt(0);)o=o.substring(1);if(0==o.indexOf(t))return o.substring(t.length,o.length)}return""},u=()=>{let e=localStorage.hasOwnProperty("header")&&localStorage.hasOwnProperty("header-version")?localStorage.getItem("header-version"):0,t=window.location.hostname+"/"+s()+"/"+d("locale");return t!=d("check")&&(e=0,console.log("refresh")),((e,t,n)=>{let o="";if(n){let e=new Date;e.setTime(e.getTime()+24*n*60*60*1e3),o=";expires="+e.toUTCString()}document.cookie=e+"="+(escape(t)||"")+o+";path=/;domain=.kenzap.cloud"})("check",t,5),e},m=()=>({Accept:"application/json","Content-Type":"application/json",Authorization:"Bearer "+d("kenzap_api_key"),"Kenzap-Locale":d("locale")?d("locale"):"en","Kenzap-Header":u(),"Kenzap-Token":d("kenzap_token"),"Kenzap-Sid":s()});d("kenzap_api_key"),d("locale")&&d("locale"),u(),d("kenzap_token"),s();const p=e=>{if(console.log(e),isNaN(e.code)){let t=e;try{t=JSON.stringify(t)}catch(e){}let n=new URLSearchParams;return n.append("cmd","report"),n.append("sid",s()),n.append("token",d("kenzap_token")),n.append("data",t),fetch("https://api-v1.kenzap.cloud/error/",{method:"post",headers:{Accept:"application/json","Content-type":"application/x-www-form-urlencoded"},body:n}),void alert("Can not connect to Kenzap Cloud")}if(401===e.code){if(-1!=window.location.href.indexOf("localhost"))return void alert(e.reason);location.href="https://auth.kenzap.com/?app=65432108792785&redirect="+window.location.href}else alert(e.reason)},v=(e,t)=>{if(document.querySelector(e))for(let n of document.querySelectorAll(e))n.removeEventListener("click",t,!0),n.addEventListener("click",t,!0)},f=(e,t)=>{if(document.querySelector(e))for(let n of document.querySelectorAll(e))n.removeEventListener("change",t,!0),n.addEventListener("change",t,!0)},y=e=>{let t=new MouseEvent("click",{bubbles:!0,cancelable:!0,view:window});e.dispatchEvent(t)},h=e=>{if(!document.querySelector(".toast")){let e='\n        <div class="toast-cont position-fixed bottom-0 p-2 m-4 end-0 align-items-center" style="z-index:10000;">\n            <div class="toast hide align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">\n                <div class="d-flex">\n                    <div class="toast-body"></div>\n                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>\n                </div>\n            </div>\n        </div>';document.querySelector("body > div")&&document.querySelector("body > div").insertAdjacentHTML("afterend",e)}let t=new bootstrap.Toast(document.querySelector(".toast"));document.querySelector(".toast .toast-body").innerHTML=e,t.show()};var b=function(){var e=new URLSearchParams(window.location.search);return e.get("id")?e.get("id"):""},g=function(e,t){switch(t=k(t),t=(Math.round(100*parseFloat(t))/100).toFixed(2),e.state.settings.currency_symb_loc){case"left":t=e.state.settings.currency_symb+" "+t;break;case"right":t+=e.state.settings.currency_symb}return t},k=function(e){return e=e||0,e=parseFloat(e),e=Math.round(100*e)/100},w=function(t,n){document.querySelector(t)&&(n.push.apply(n,[9,37,38,39,40,98,100,102,104]),e(document.querySelectorAll(t)).forEach((function(e){e.addEventListener("keydown",(function(e){var t=e.key.toLowerCase();"control"!=t&&"meta"!=t||(window[t]=!0),console.log(t.length+" / "+o+" / "+e.which);var o=t>="0"&&t<="9";return(window.control||window.meta)&&[86,88,65,67,90].includes(e.which)?(console.log("pushing"),!0):o||n.includes(e.which)?void 0:(e.preventDefault(),!1)})),e.addEventListener("keyup",(function(e){var t=e.key.toLowerCase();"control"!=t&&"meta"!=t||(window[t]=!1)}))})))},S=function(e,t){if(!t)throw new Error("DOM Element is undifined! Please choose HTML target element.");var n,o,a,c,r,l,i=t;function s(){n.innerHTML="",c.forEach((function(e,t){if(e=e.trim()){var o=document.createElement("li");o.innerHTML="".concat(e," <a>&times;</a>"),o.querySelector("a").addEventListener("click",(function(){var e;e=t,c=c.filter((function(t,n){return n!==e&&t})),s()})),n.appendChild(o)}})),i.setAttribute("data-simple-tags",c.toString())}a=(a=i.getAttribute("data-simple-tags")).split(","),c=a.map((function(e){return e.trim()})),r=document.createElement("ul"),(l=document.createElement("input")).setAttribute("placeholder",e("new category")),i.appendChild(r),i.appendChild(l),n=i.firstElementChild,o=i.lastElementChild,s(),o.addEventListener("keyup",(function(e){var t=this.value.trim();(t.includes(",")||13===e.keyCode)&&(""!==t.replace(",","")&&c.push(t.replace(",","")),this.value=""),s()}))},x=function t(n){n.state.response.product.stock.inventory||(n.state.response.product.stock.inventory=[]),document.querySelector(".modal-backdrop")&&document.querySelector(".modal-backdrop").remove(),document.querySelector(".inventory-cont").innerHTML='\n    <div class="table-responsive-">\n        <table class="table table-hover table-borderless align-middle table-striped table-history-list mb-0" style="">\n            <thead>\n                <tr>\n                    <th class="form-text">\n                        '.concat(c("Title"),'\n                    </th>\n                    <th class="form-text">\n                        ').concat(c("Amount"),'\n                    </th>\n                    <th class="form-text">\n                        ').concat(c("Price"),'\n                    </th>\n                    <th>\n                    \n                    </th>\n                </tr>\n            </thead>\n            <tbody id="inventory-history">\n\n                ').concat(0==n.state.response.product.stock.inventory.length?'\n                    <tr>\n                        <td class="form-text" colspan="4">\n                            '.concat(c("no data to display"),"\n                        </td>\n                    </tr>\n                    "):"","\n\n                ").concat(n.state.response.product.stock.inventory.map((function(e,t){return'\n                            <tr>\n                                <td class="form-text text-dark">\n                                    '.concat(e.title,'\n                                </td>\n                                <td class="form-text">\n                                    <div class="fw-bold ').concat(e.amount<0?"text-danger":"text-success",'">').concat((e.amount<0?"":"+")+e.amount+e.stock_unit,'</div>\n                                </td>\n                                <td id="itid').concat(a(e.id),'" data-amount="').concat(a(e.amount),'" class="form-text text-dark">\n\n                                </td>\n                                <td class="text-end d-none-">\n                                    <div class="dropdown inventorTableActionsCont">\n                                        <svg id="inventoryHistoryActions').concat(t,'" data-bs-toggle="dropdown" data-boundary="viewport" aria-expanded="false" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical dropdown-toggle po" viewBox="0 0 16 16">\n                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>\n                                        </svg>\n                                        <ul class="dropdown-menu" aria-labelledby="inventoryHistoryActions').concat(t,'">\n                                            <li><a class="dropdown-item po d-none" href="#" data-action="copy" data-id="').concat(a(e.id),'" data-index="').concat(t,'">').concat(c("Copy"),'</a></li>\n                                            <li><hr class="dropdown-divider d-none"></li>\n                                            <li><a class="dropdown-item po" href="#" data-action="remove" data-id="').concat(a(e.id),'" data-index="').concat(t,'">').concat(c("Remove"),"</a></li>\n                                        </ul>\n                                    </div>\n                                </td>\n                            </tr>\n                        ")})).join(""),"\n\n                ").concat(n.state.response.product.stock.inventory.length>0?'\n                    <tr>\n                        <td class="form-text"></td>\n                        <td class="form-text"></td>\n                        <td id="itidtotal" class="form-text" colspan="2">\n                            \n                        </td>\n                    </tr>\n                    ':"","\n\n            </tbody>\n        </table>\n    </div>\n    "),e(document.querySelectorAll(".inventorTableActionsCont .dropdown-item")).forEach((function(e){e.addEventListener("click",(function(e){switch(e.preventDefault(),e.currentTarget.dataset.action){case"copy":break;case"remove":if(!confirm(c("Remove this record?")))return;o(n,e.currentTarget.dataset.id)}}))})),document.querySelector(".add-inventory").dataset.assigned||document.querySelector(".add-inventory").addEventListener("click",(function(o){o.preventDefault(),document.querySelector(".add-inventory").dataset.assigned=!0;var r=document.querySelector(".modal");n.state.modalCont=new bootstrap.Modal(r),r.querySelector(".modal-dialog").classList.add("modal-lg"),r.querySelector(".modal-title").innerHTML=c("Add Inventory Item"),r.querySelector(".modal-footer").innerHTML='\n            <button type="button" class="btn btn-success btn-modal btn-add btn-inventory-add d-none">'.concat(c("Add"),'</button>\n            <button class="btn btn-outline-secondary remove-application btn-lg d-none" type="button" title="').concat(c("Remove application."),'"><span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg></span></button>\n            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">').concat(c("Close"),"</button>\n        "),r.querySelector(".modal-body").innerHTML='\n            <div class="row mb-4">\n                <div class="col-sm-12">\n                    <div class="table-responsive-">\n                        <table class="table table-hover table-borderless align-middle table-striped table-inventory-list mb-0" style="">\n                            <thead>\n                                <tr>\n                                    <th>\n                                        '.concat(c("Title"),"\n                                    </th>\n                                    <th>\n                                        ").concat(c("Amount"),'\n                                    </th>\n                                    <th>\n                                    \n                                    </th>\n                                </tr>\n                            </thead>\n                            <tbody id="inventory-list">\n                                <tr>\n                                    <td colspan="3">\n                                        ').concat(c("Loading"),"\n                                    </td>\n                                </tr>\n                            </tbody>\n                        </table>\n                    </div>\n                </div>\n            </div>\n        ");!function(n){var o,r;fetch("https://api-v1.kenzap.cloud/",{method:"post",headers:m(),body:JSON.stringify({query:{inventory:{type:"find",key:"ecommerce-inventory",fields:["_id","img","status","tags","price","price_prev","price_per_unit","price_per_unit_prev","title","stock_amount","stock_unit","stock_warning","updated"],limit:50,offset:"".length>0?0:50*(o=new URLSearchParams(window.location.search),r=o.get("page")?o.get("page"):1,parseInt(r))-50,search:{field:"title",s:""},sortby:{field:"created",order:"DESC"}}}})}).then((function(e){return e.json()})).then((function(o){if(o.success){if(n.state.inventory=o.inventory,0==o.inventory.length)return void(document.querySelector("#inventory-list").innerHTML='<tr><td colspan="3" class="form-text">'.concat(c("No data to display."),"</td></tr>"));document.querySelector("#inventory-list").innerHTML=o.inventory.map((function(e,t){return'\n                            <tr>\n                                <td data-id="'.concat(a(e._id),'">\n                                    ').concat(e.title,'\n                                </td>\n                                <td data-id="').concat(a(e._id),'">\n                                    <div class="input-group mb-sm-2" style="max-width:200px;">\n                                        <input id="stock_amount').concat(t,'" type="text" class="form-control stock_amount inp" name="stock_amount" aria-label="Current stock amount" aria-describedby="basic-addon1" value="" autocomplete="off">\n                                        <span class="input-group-text" id="stock_amount_unit">').concat(e.stock_unit,'</span>\n                                    </div>\n                                </td>\n                                <td class="text-end d-none- add-inventory-item" data-index="').concat(t,'" data-id="').concat(a(e._id),'">\n                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle text-success po" viewBox="0 0 16 16">\n                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>\n                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>\n                                    </svg>\n                                </td>\n                            </tr>')})).join(""),w(".stock_amount",[8,46,190,189]),e(document.querySelectorAll(".add-inventory-item")).forEach((function(e){e.addEventListener("click",(function(e){var o=e.currentTarget.dataset.index,a=document.querySelector("#stock_amount"+o).value;if(0!=a.length)if(isNaN(a))alert(c("Amount should be a number"));else if(a<0)alert(c("Amount should be a positive number"));else{var r={id:e.currentTarget.dataset.id,amount:a,title:n.state.inventory[o].title,stock_unit:n.state.inventory[o].stock_unit};!function(e,n){var o=b(),a=s();e.state.response.product.stock.inventory.push(n),fetch("https://api-v1.kenzap.cloud/",{method:"post",headers:m(),body:JSON.stringify({query:{product:{type:"update",key:"ecommerce-product",id:o,sid:a,data:{stock:e.state.response.product.stock}}}})}).then((function(e){return e.json()})).then((function(n){n.success?(e.state.modalCont&&e.state.modalCont.hide(),t(e)):p(n)})).catch((function(e){p(e)}))}(n,r)}else alert(c("Please enter amount"))}))}))}else p(o)})).catch((function(e){p(e)}))}(n),n.state.modalCont.show()}));var o=function(e,n){var o=s();e.state.response.product.stock.inventory=e.state.response.product.stock.inventory.filter((function(e){return e.id!=n})),fetch("https://api-v1.kenzap.cloud/",{method:"post",headers:m(),body:JSON.stringify({query:{product:{type:"update",key:"ecommerce-product",id:b(),sid:o,data:{stock:e.state.response.product.stock}}}})}).then((function(e){return e.json()})).then((function(n){n.success?(e.state.modalCont&&e.state.modalCont.hide(),t(e),h(c("Record removed"))):p(n)})).catch((function(e){p(e)}))};!function(e){var t=e.state.response.product.stock.inventory.map((function(e){return e.id}));fetch("https://api-v1.kenzap.cloud/",{method:"post",headers:m(),body:JSON.stringify({query:{inventory_price:{type:"find",key:"ecommerce-inventory",fields:["_id","img","status","tags","price","price_prev","price_per_unit","price_per_unit_prev","title","stock_amount","stock_unit","stock_warning","updated"],id:t}}})}).then((function(e){return e.json()})).then((function(t){if(t.success){var n=0;t.inventory_price.forEach((function(t){var o=t.price_per_unit*parseFloat(document.querySelector("#itid"+t._id).dataset.amount);n+=o,document.querySelector("#itid"+t._id).innerHTML=g(e,o)})),document.querySelector("#itidtotal")&&(document.querySelector("#itidtotal").innerHTML=g(e,n))}else p(t)})).catch((function(e){p(e)}))}(n)},q={init:function(){q.getData()},state:{ajaxQueue:0,settings:{}},getData:function(){r();var e=b();s(),fetch("https://api-v1.kenzap.cloud/",{method:"post",headers:m(),body:JSON.stringify({query:{user:{type:"authenticate",fields:["avatar"],token:d("kenzap_token")},product:{type:"find",key:"ecommerce-product",id:e,fields:["_id","id","img","status","price","discounts","variations","title","sdesc","ldesc","stock","cats","updated"]},settings:{type:"get",key:"ecommerce-settings",fields:["currency","currency_symb","currency_symb_loc","tax_calc","tax_auto_rate","tax_rate","tax_display","scripts_product_edit","addons"]},locale:{type:"locale",source:["extension"],key:"ecommerce"}}})}).then((function(e){return e.json()})).then((function(e){var t;if(l(),e.success){if(e.success){if(q.state.response=e,q.state.settings=e.settings,(e=>{if(e.header&&localStorage.setItem("header",e.header),!document.querySelector("#k-script")){let e=document.createElement("div");e.innerHTML=localStorage.getItem("header"),e=e.firstChild,document.body.prepend(e),Function(document.querySelector("#k-script").innerHTML).call("test")}e.locale&&window.i18n.init(e.locale)})(e),document.querySelector("#contents").innerHTML=function(e){return'\n  <div class="container p-edit">\n    <div class="d-flex justify-content-between bd-highlight mb-3">\n        <nav class="bc" aria-label="breadcrumb"></nav>\n        \n    </div>\n    <div class="row">\n        <div class="col-lg-9 grid-margin grid-margin-lg-0 grid-margin-md-0 stretch-card">\n            <div class="sections" id="sections" role="tablist" style="width:100%;">\n\n                <div class="row">\n                    <div class="col-12 grid-margin stretch-card">\n                        <div class="card border-white shadow-sm p-sm-3">\n                            <div class="card-body">\n\n                                <div class="landing_status"></div>\n                                <input type="hidden" class="form-control" id="landing-slug" value="">\n\n                                <h4 id="elan" class="card-title mb-4">'.concat(e("Description"),'</h4>\n\n                                <div id="placeholders">\n\n                                    <div class="mb-3">\n                                        <label class="banner-title-l form-label" for="p-title">').concat(e("Title"),'</label>\n                                        <input type="text" class="form-control inp" id="p-title" placeholder="').concat(e("Sushi set.."),'">\n                                        <p class="form-text"> </p>\n                                    </div>\n\n                                    <div class="mb-3">\n                                        <label class="banner-descshort-l form-label" for="p-sdesc">').concat(e("Short Description"),'</label>\n                                        <textarea class="form-control inp" id="p-sdesc" placeholder="  " maxlength="120" rows="2"></textarea>\n                                    </div>\n\n                                    <div class="mb-3">\n                                        <label class="banner-descshort-l form-label" for="desc">').concat(e("Images"),'</label>\n                                        <div class="clearfix"></div>\n                                        <div class="ic"></div>\n                                        <div class="clearfix"></div>\n                                    </div>\n\n                                    <div class="mb-3">\n                                        <div class="clearfix"></div>\n                                        <div style="clear:both;margin-top:16px;"></div>\n                                        <label class="banner-descshort-l form-label" for="p-desc">').concat(e("Description"),'</label>\n                                        <textarea class="form-control inp" id="p-ldesc" placeholder=" " maxlength="2000" rows="10"></textarea>\n                                    </div>\n\n                                    <div class="mb-3 mw">\n                                        <div class="list-wrapper">\n                                            <ul class="d-flex flex-column-reverse features"> </ul>\n                                        </div>\n                                        <p class="form-text"> </p>\n                                    </div>\n\n                                    <div class="price_group mt-3 mb-3">\n                                        <h4 class="card-title mb-3">').concat(e("Price"),'</h4>\n                                        <div class="price_group_base">\n                                            <div class="mb-3">\n                                                <div class="input-group">\n                                                    <div id="p-price-c">\n                                                        <label for="p-price" class="form-label">').concat(e("Default"),' <span class="lang"></span></label>\n                                                        <div class="input-group pe-3 mb-3">\n                                                            <span id="p-price-symb" class="input-group-text">$</span>\n                                                            <input id="p-price" type="text" class="form-control inp" placeholder="55.00" autocomplete="off">\n                                                        </div>\n                                                    </div>\n                                                    <div id="p-priced-c" class="d-flex align-content-end flex-wrap">\n                                                        <a class="btn btn-outline-secondary mb-3 add-discount" href="#" role="button" id="btn-discount" >\n                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>\n                                                            ').concat(e("discount"),'\n                                                        </a>\n                                                        <div class="d-none">\n                                                            <label for="p-priced pe-3 mb-3" class="form-label">').concat(e("Discounted"),' <span class="lang"></span></label>\n                                                            <input id="p-priced" type="text" class="form-control" placeholder="45.00" autocomplete="off">\n                                                        </div>\n                                                    </div>\n                                                </div>\n                                                \n                                                <div class="discount-blocks mw">\n                                                    <label class="discount-list form-label" for="discount-list ">').concat(e("Discount list"),'</label>\n                                                    <ul class="mb-4">\n                                               \n                                                    </ul>\n                                                </div>\n                                                <div class="add-mix-ctn text-left mt-3 mb-2"><a class="add-mix-block" href="#" data-action="add">').concat(e("+ add variation"),'</a></div>\n                                            </div>\n\n                                            <div class="variation-blocks">\n                        \n                                            </div>\n\n                                            <div style=\'margin:24px 0 48px;border-bottom:0px solid #ccc;\'></div>\n\n                                            <div class="mb-3 mw">\n                                                <h4 id="elan" class="card-title">').concat(e("Inventory"),'</h4>\n                                                <label for="stock_sku" class="form-label"> <span class="lang"></span></label>\n                                                <div class="input-group">\n                                                    <input id="stock_sku" type="text" style="width:100%;" class="form-control" placeholder="" maxlength="200">\n                                                    <p class="form-text">').concat(e("Product stock unit identification number or SKU."),'</p>\n                                                </div>\n                                            </div>\n\n                                            <div class="mb-3 mw">\n                                                <div class="form-check">\n                                                    <input id="stock_management" class="form-check-input stock-management" name="stock_management" type="checkbox" value="0" data-type="checkbox">\n                                                    <label class="form-check-label" for="stock_management">\n                                                        ').concat(e("Stock management"),'\n                                                    </label>\n                                                </div>\n                                                <p class="form-text">').concat(e("Enable stock management."),'</p>\n                                            </div>\n\n                                            <div class="mb-3 mw stock-cont">\n                                                <label class="form-label" for="stock_quantity">').concat(e("Stock quantity"),'</label>\n                                                <input id="stock_quantity" type="text" class="form-control" placeholder="0">\n                                                <p class="form-text">').concat(e("Total number of products left."),'</p>\n                                            </div>\n\n                                            <div class="mb-3 mw stock-cont">\n                                                <label class="form-label" for="stock_low_threshold">').concat(e("Low stock"),'</label>\n                                                <input id="stock_low_threshold" type="text" class="form-control" placeholder="0">\n                                                <p class="form-text">').concat(e("Low stock threshold."),'</p>\n                                            </div>\n\n                                            <div class="mb-3 mw stock-cont">\n                                                <label class="form-label" >').concat(e("Inventory table"),'</label>\n                                                <div class="inventory-cont">\n\n                                                </div>\n                                                <div class="add-mix-ctn text-left mt-1 mb-2"><a class="add-inventory" href="#" data-action="add" style="font-size: 0.875rem;">').concat(e("+ add inventory"),'</a></div>\n\n                                                <p class="form-text d-none">').concat(e("Low stock threshold."),'</p>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div class="desc-repeater-cont">\n\n                                </div>\n\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n\n            </div>\n        </div>\n        <div class="col-lg-3 mt-3 mt-lg-0 grid-margin grid-margin-lg-0 grid-margin-md-0">\n\n            <div class="row">\n                <div class="col-12 grid-margin stretch-card">\n                    <div class="card border-white shadow-sm p-sm-3">\n                        <div class="card-body">\n\n                            <h4 class="card-title" style="display:none;">').concat(e("General"),'</h4>\n                            <div class="landing_status"></div>\n                            <input type="hidden" class="form-control" id="landing-slug" value="">\n\n                            <h4 id="elan" class="card-title mb-4">').concat(e("Status"),'</h4>\n                            <div id="status-cont" class="mb-3">\n\n                                <div class="col-sm-12">\n                                    <div class="form-check">\n                                        <label class="form-check-label status-publish form-label">\n                                            <input type="radio" class="form-check-input" name="p-status"\n                                                id="p-status1" value="1">\n                                                ').concat(e("Published"),'\n                                        </label>\n                                    </div>\n                                </div>\n\n                                <div class="col-sm-12">\n                                    <div class="form-check">\n                                        <label class="form-check-label status-draft form-label">\n                                            <input type="radio" class="form-check-input" name="p-status"  id="p-status0" value="0">\n                                            ').concat(e("Draft"),'\n                                        </label>\n                                    </div>\n                                </div>\n                            </div>\n\n                            <h4 id="elan" class="card-title mb-4">').concat(e("Categories"),'</h4>\n                            <div id="p-cats" class="simple-tags mb-4" data-simple-tags=""></div>\n                            <div class="clearfix"> </div>\n\n                            <div class="d-grid gap-2">\n                                <button class="btn btn-primary btn-save" type="button">').concat(e("Save"),'</button>\n                            </div>\n\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n        </div>\n    </div>\n  </div>\n\n  <div class="modal p-modal" tabindex="-1">\n    <div class="modal-dialog">\n        <div class="modal-content">\n            <div class="modal-header">\n                <h5 class="modal-title"></h5>\n                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n            </div>\n            <div class="modal-body">\n\n            </div>\n            <div class="modal-footer">\n                <button type="button" class="btn btn-primary btn-modal"></button>\n                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"></button>\n            </div>\n        </div>\n    </div>\n  </div>\n\n  <div class="position-fixed bottom-0 p-2 m-4 end-0 align-items-center">\n    <div class="toast hide align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive"\n        aria-atomic="true" data-bs-delay="3000">\n        <div class="d-flex">\n            <div class="toast-body"></div>\n            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>\n        </div>\n    </div>\n  </div>\n  ')}(__),0==e.product.length)return void q.initListeners("all");q.renderPage(e.product),q.loadImages(e.product),q.initListeners("all"),t=c("E-commerce 2.1.1 by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.",'<a class="text-muted" href="https://kenzap.com/" target="_blank">',"</a>",'<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">',"</a>"),document.querySelector("footer .row").innerHTML='\n    <div class="d-sm-flex justify-content-center justify-content-sm-between">\n        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">'.concat(t,'</span>\n        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center text-muted">').concat("","</span>\n    </div>"),e.settings.addons&&e.settings.addons.product_edit&&e.settings.addons.product_edit.forEach((function(e){!function(e,t,n){var o=new URL(e);if(d("debug")&&(e="http://localhost:3000"+o.pathname),console.log(e),document.getElementById(e))"function"==typeof n&&n.call();else switch(e.split(".").slice(-1)[0]){case"js":var a=document.createElement("script");a.setAttribute("src",e),a.id=e,a.onload=a.onreadystatechange=function(){this.readyState&&"complete"!=this.readyState||"function"==typeof n&&n.call()},document.body.appendChild(a);break;case"css":var c=document.getElementsByTagName("head")[0],r=document.createElement("link");r.id=e,r.rel="stylesheet",r.type="text/css",r.href=e,c.appendChild(r)}}(e.src,e.version)}))}}else p(e)})).catch((function(e){p(e)}))},renderPage:function(e){var t=document;for(var n in(e=>{let t='<ol class="breadcrumb mt-2 mb-0">';for(let n of e)void 0===n.link?t+=`<li class="breadcrumb-item">${n.text}</li>`:t+=`<li class="breadcrumb-item"><a href="${n.link}">${n.text}</a></li>`;t+="</ol>",document.querySelector(".bc").innerHTML=t})([{link:i("https://dashboard.kenzap.cloud"),text:c("Home")},{link:i("/"),text:c("E-commerce")},{link:i("/product-list/"),text:c("Product List")},{text:c("Product Edit")}]),t.querySelector("#p-title").value=e.title,t.querySelector("#p-sdesc").value=e.sdesc,t.querySelector("#p-ldesc").value=e.ldesc,t.querySelector("#p-price").value=e.price,w("#p-price",[8,46,190]),t.querySelector("#p-price-symb").innerHTML=q.state.settings.currency_symb?q.state.settings.currency_symb:"",document.querySelector(".discount-blocks").dataset.data=encodeURIComponent(JSON.stringify(e.discounts?e.discounts:[])),q.renderDiscounts(),e.variations){var a=e.variations[n],r=[];for(var l in r.title=a.title,r.type=a.type,r.required=a.required,r.index=n,t.querySelector(".variation-blocks").innerHTML+=q.structMixBlock(r),a.data){var s=a.data[l],d=[];d.title=s.title,d.price=s.price,d.type=a.type,t.querySelector(".var-block[data-index='"+n+"'] .offer-pricef").innerHTML+=q.structMixRow(d)}}e.stock||(e.stock={management:!1,sku:"",qty:0,low_threshold:0,inventory:[]});var u,m=o(document.querySelectorAll(".stock-cont"));try{for(m.s();!(u=m.n()).done;){var p=u.value;1==e.stock.management?p.classList.remove("d-none"):p.classList.add("d-none")}}catch(e){m.e(e)}finally{m.f()}document.querySelector("#stock_sku").value=e.stock.sku?e.stock.sku:"",document.querySelector("#stock_management").checked=e.stock.management,document.querySelector("#stock_quantity").value=e.stock.qty?k(e.stock.qty):0,document.querySelector("#stock_low_threshold").value=e.stock.low_threshold?k(e.stock.low_threshold):0,document.querySelector("#p-status"+e.status).checked=!0;var v=document.querySelector("#p-cats");e.cats&&v.setAttribute("data-simple-tags",e.cats),new S(__,v),x(q)},initListeners:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"partial";"all"==e&&(v(".btn-save",q.listeners.saveProduct),v(".p-modal .btn-primary",q.listeners.modalSuccessBtn)),v(".add-discount",q.listeners.addDiscountBlock),v(".add-mix-block",q.listeners.addMixBlock),v(".edit-block",q.listeners.editBlock),v(".remove-block",q.listeners.removeBlock),v(".add-mix",q.listeners.addMixOption),v(".remove-option",q.listeners.removeOption),v(".stock-management",q.listeners.stockManagement)},listeners:{editBlock:function(e){e.preventDefault();var t=document.querySelector(".add-mix-block");t.dataset.action="edit",t.dataset.index=e.currentTarget.dataset.index,setTimeout((function(){return y(t)}),10),console.log("editBlock")},removeBlock:function(e){e.preventDefault(),confirm(c("Remove entire block?"))&&e.currentTarget.parentNode.parentNode.remove(),console.log("removeBlock")},addMixBlock:function(e){e.preventDefault();var t=e.currentTarget.dataset.action,n=e.currentTarget.dataset.index;e.currentTarget.dataset.action="add",console.log("index: "+n);var o=c("Add Variation Block"),a="",r="",l=0,i=c("Add"),s=c("Cancel");"edit"==t&&(o=c("Edit Variation Block"),a=document.querySelector(".var-block[data-index='"+n+"']").dataset.title,r=document.querySelector(".var-block[data-index='"+n+"']").dataset.type,l=parseInt(document.querySelector(".var-block[data-index='"+n+"']").dataset.required),i=c("Save"));var d=document.querySelector(".p-modal"),u=new bootstrap.Modal(d);d.querySelector(".modal-title").innerHTML=o,d.querySelector(".btn-primary").innerHTML=i,d.querySelector(".btn-secondary").innerHTML=s,u.show();var m='\n            <div class="form-cont">\n                <div class="form-group mb-3">\n                    <label for="mtitle" class="form-label">'.concat(c("Save"),'</label>\n                    <input type="text" class="form-control" id="mtitle" autocomplete="off" placeholder="Rice type" value="').concat(a,'">\n                </div>\n                <div class="form-group mb-3">\n                    <label for="mtype" class="form-label">').concat(c("Input type"),'</label>\n                    <select id="mtype" class="form-control " >\n                        <option ').concat("radio"==r?'selected="selected"':"",' value="radio">').concat(c("Radio buttons"),"</option>\n                        <option ").concat("checkbox"==r?'selected="selected"':"",' value="checkbox">').concat(c("Checkboxes"),'</option>\n                    </select>\n                    <p class="form-text">').concat(c("Define how this renders on frontend."),'</p>\n                </div>\n                <div class="form-group mb-3">\n                    <div class="form-check">\n                        <label for="id="mtype"" class="form-check-label form-label">\n                            <input id="mrequired" type="checkbox" class="form-check-input" ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Required"),'\n                        </label>\n                    </div>\n                    <p class="form-text">').concat(c("Make this variation mandatory for users."),'</p>\n                </div>\n                <div class="form-group mb-3 dn">\n                    <label for="mtype" class="form-label">').concat(c("Minimum required"),'</label>\n                    <select id="mtype" class="form-control" >\n                        <option value="1">1</option>\n                        <option value="2">2</option>\n                    </select>\n                </div>\n            </div>');d.querySelector(".modal-body").innerHTML=m,setTimeout((function(){return d.querySelector("#mtitle").focus()}),100),q.listeners.modalSuccessBtnFunc=function(e){e.preventDefault();var o=d.querySelector(".p-modal #mtitle").value,a=d.querySelector(".p-modal #mtype").value,r=d.querySelector(".p-modal #mrequired:checked");if(r=null==r?0:"1"==r.value?1:0,o.length<2)alert(c("Please provide longer title"));else{var l=[];l.title=o,l.type=a,l.required=r,l.index=document.querySelectorAll(".var-block").length,"edit"==t&&(document.querySelector(".var-block[data-index='"+n+"']").dataset.title=o,document.querySelector(".var-block[data-index='"+n+"']").dataset.type=a,document.querySelector(".var-block[data-index='"+n+"']").dataset.required=r,document.querySelector(".var-block[data-index='"+n+"'] .title").innerHTML=o),"add"==t&&(null==document.querySelector(".variation-blocks .var-block")?document.querySelector(".variation-blocks").innerHTML=q.structMixBlock(l):document.querySelector(".variation-blocks .var-block:last-of-type").insertAdjacentHTML("afterend",q.structMixBlock(l))),u.hide(),setTimeout((function(){return q.initListeners("partial")}),10)}}},addMixOption:function(e){var t=e.currentTarget;e.preventDefault();var n=document.querySelector(".p-modal"),o=new bootstrap.Modal(n);o.show(),n.querySelector(".modal-title").innerHTML=c("Add Variation"),n.querySelector(".btn-primary").innerHTML=c("Add"),n.querySelector(".btn-secondary").innerHTML=c("Cancel");var a='\n            <div class="form-cont">\n                <div class="form-group">\n                    <label for="mtitle" class="form-label">'.concat(c("Title"),'</label>\n                    <input type="text" class="form-control" id="mtitle" autocomplete="off" placeholder="').concat(c("Brown rice"),'">\n                </div>\n                <div class="form-group mt-3">\n                    <label for="mprice" class="form-label">').concat(c("Price"),'</label>\n                    <div class="input-group mb-3">\n                        <span class="input-group-text">$</span>\n                        <input id="mprice" type="text" class="form-control" placeholder="0.00" value="" >\n                        <p class="form-text">').concat(c("You can change default currency under Dashboard &gt; Settings."),"</p>\n                    </div>\n                </div>\n            </div>");n.querySelector(".modal-body").innerHTML=a,setTimeout((function(){return n.querySelector("#mtitle").focus()}),100),q.listeners.modalSuccessBtnFunc=function(e){e.preventDefault();var a=n.querySelector(".p-modal #mtitle").value,c=n.querySelector(".p-modal #mprice").value;if(a.length<2)alert("Please provide longer title");else{var r=[];r.title=a,r.price=c,r.type=t.parentElement.parentElement.dataset.type;var l=".var-block[data-index='"+t.parentElement.parentElement.dataset.index+"']";console.log(l),null==document.querySelector(l+" .offer-pricef li")?document.querySelector(l+" .offer-pricef").innerHTML=q.structMixRow(r):document.querySelector(l+" .offer-pricef li:last-of-type").insertAdjacentHTML("afterend",q.structMixRow(r)),o.hide(),setTimeout((function(){return q.initListeners("partial")}),10)}}},removeOption:function(e){e.preventDefault(),confirm("Remove option?")&&e.currentTarget.parentElement.remove()},removeDiscount:function(e){if(e.preventDefault(),confirm("Remove discount?")){e.currentTarget.parentElement.remove();var t=JSON.parse(decodeURIComponent(document.querySelector(".discount-blocks").dataset.data));t.splice(e.currentTarget.dataset.index,1),document.querySelector(".discount-blocks").dataset.data=encodeURIComponent(JSON.stringify(t))}},addDiscountBlock:function(e){e.preventDefault();var t=e.currentTarget.dataset.action,n=e.currentTarget.dataset.index;e.currentTarget.dataset.action="add";var a=c("Add discount"),r="",l=0,i=c("Add"),s=c("Cancel");"edit"==t&&(a=c("Edit Variation Block"),document.querySelector(".var-block[data-index='"+n+"']").dataset.title,r=document.querySelector(".var-block[data-index='"+n+"']").dataset.type,l=parseInt(document.querySelector(".var-block[data-index='"+n+"']").dataset.required),i=c("Save"));var d=document.querySelector(".p-modal"),u=new bootstrap.Modal(d);d.querySelector(".modal-title").innerHTML=a,d.querySelector(".btn-primary").innerHTML=i,d.querySelector(".btn-secondary").innerHTML=s,u.show();var m='\n            <div class="form-cont">\n                <div class="form-group mb-3">\n                    <div class="row">\n                        <div class="col-lg-6">\n                            <label for="discount-type" class="form-label">'.concat(c("Type"),'</label>\n                            <select id="discount-type" class="form-control" >\n                                <option ').concat("percent"==r?'selected="selected"':"",' value="percent">').concat(c("By percent"),"</option>\n                                <option ").concat("value"==r?'selected="selected"':"",' value="value">').concat(c("By value"),"</option>\n                                <option ").concat("never"==r?'selected="selected"':"",' value="never">').concat(c("never discount"),'</option>\n                            </select>\n                        </div>\n                        <div id="discount-percent-cont" class="col-lg-6">\n                            <label for="discount-percent" class="form-label">').concat(c("Percent %"),'</label>\n                            <input type="text" class="form-control" id="discount-percent" autocomplete="off" placeholder="').concat(c("5"),'">\n                        </div>\n                        <div id="discount-value-cont" class="col-lg-6 d-none">\n                            <label for="discount-value" class="form-label">').concat(c("Value"),'</label>\n                            <input type="text" class="form-control" id="discount-value" autocomplete="off" placeholder="').concat(c("12.00"),'">\n                        </div>\n                    </div>\n                    <p class="form-text discount-hint-cont">').concat(c("Define how big is the discount (numeric value only)."),'</p>\n                    <p class="form-text discount-never-cont d-none">').concat(c("Never apply general discount for this product"),'</p>\n                </div>\n                <div class="discount-availability-cont form-group mb-3">\n                    <label for="discount-availability" class="form-label">').concat(c("Availability"),'</label>\n                    <select id="discount-availability" class="form-control " >\n                        <option ').concat("",' value="admin">').concat(c("Admin"),"</option>\n                        <option ").concat("",' value="always">').concat(c("Always"),"</option>\n                        <option ").concat("",' value="hourly">').concat(c("Hourly"),"</option>\n                        <option ").concat("",' value="weekly">').concat(c("Weekly"),'</option>\n                        <option class="d-none" ').concat("",' value="monthly">').concat(c("Monthly"),'</option>\n                    </select>\n                    <p class="form-text">').concat(c("Restrict discount availability."),'</p>\n                </div>\n                <div id="discount-weekly" class="discount-weekly-cont form-group mb-3 d-none">\n                    <label for="mtype" class="form-label">').concat(c("Days of week"),'</label>\n                    <div class="form-check">\n                        <label for="week-monday" class="form-check-label form-label">\n                            <input id="week-monday" type="checkbox" class="form-check-input " ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Monday"),'\n                        </label>\n                    </div>\n                    <div class="form-check">\n                        <label for="week-tuesday" class="form-check-label form-label">\n                            <input id="week-tuesday" type="checkbox" class="form-check-input" ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Tuesday"),'\n                        </label>\n                    </div>\n                    <div class="form-check">\n                        <label id="week-wednesday" class="form-check-label form-label">\n                            <input id="week-wednesday" type="checkbox" class="form-check-input" ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Wednesday"),'\n                        </label>\n                    </div>\n                    <div class="form-check">\n                        <label id="week-thursday" class="form-check-label form-label">\n                            <input id="week-thursday" type="checkbox" class="form-check-input" ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Thursday"),'\n                        </label>\n                    </div>\n                    <div class="form-check">\n                        <label id="week-friday" class="form-check-label form-label">\n                            <input id="week-friday" type="checkbox" class="form-check-input" ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Friday"),'\n                        </label>\n                    </div>\n                    <div class="form-check">\n                        <label id="week-saturday" class="form-check-label form-label">\n                            <input id="week-saturday" type="checkbox" class="form-check-input" ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Saturday"),'\n                        </label>\n                    </div>\n                    <div class="form-check">\n                        <label id="week-sunday" class="form-check-label form-label">\n                            <input id="week-sunday" type="checkbox" class="form-check-input" ').concat(1==l?'checked="checked"':"",' value="1">\n                            ').concat(c("Sunday"),'\n                        </label>\n                    </div>\n                    <p class="form-text">').concat(c("Days of the week when discount is available."),'</p>\n                </div>\n                <div id="discount-hourly" class="form-group discount-hourly-cont mb-3 d-none">\n                    <div class="row">\n                        <div class="col-lg-6">\n                            <div class="form-group mb-3 mt-1">\n                                <label for="discount-hour-from" class="form-label">').concat(c("From"),'</label>\n                                <input id="discount-hour-from" type="text" class="form-control" maxlength="5" autocomplete="off" placeholder="').concat(c("12:00"),'">\n                            </div>\n                        </div>\n                        <div class="col-lg-6">\n                            <div class="form-group mb-3 mt-1">\n                                <label for="discount-hour-to" class="form-label">').concat(c("To"),'</label>\n                                <input id="discount-hour-to" type="text" class="form-control" maxlength="5" autocomplete="off" placeholder="').concat(c("17:00"),'">\n                            </div>\n                        </div>\n                    </div>\n                    <p class="form-text">').concat(c("Time range when discount is available."),'</p>\n                </div>\n                <div class="form-group discount-note-cont mb-3">\n                    <div class="form-group mb-3 mt-1">\n                        <label for="discount-note" class="form-label">').concat(c("Note"),'</label>\n                        <input id="discount-note" type="text" class="form-control" maxlength="25" autocomplete="off" placeholder="').concat(c(""),'">\n                        <p class="form-text">').concat(c("Example: •happy hour promo."),"</p>\n                    </div>\n                </div> \n            </div>");d.querySelector(".modal-body").innerHTML=m,setTimeout((function(){return d.querySelector("#discount-type").focus()}),100),f("#discount-availability",(function(e){switch(console.log(e.currentTarget.value),e.currentTarget.value){case"admin":case"always":document.querySelector("#discount-weekly").classList.add("d-none"),document.querySelector("#discount-hourly").classList.add("d-none");break;case"hourly":document.querySelector("#discount-weekly").classList.add("d-none"),document.querySelector("#discount-hourly").classList.remove("d-none");break;case"weekly":document.querySelector("#discount-weekly").classList.remove("d-none"),document.querySelector("#discount-hourly").classList.remove("d-none")}})),w("#discount-percent",[8]),w("#discount-value",[8,46]),w("#discount-hour-from",[8,58]),w("#discount-hour-to",[8,58]),f("#discount-type",(function(e){switch(console.log(e.currentTarget.value),document.querySelector(".discount-never-cont").classList.add("d-none"),document.querySelector(".discount-hint-cont").classList.remove("d-none"),document.querySelector(".discount-availability-cont").classList.remove("d-none"),document.querySelector(".discount-hint-cont").classList.remove("d-none"),e.currentTarget.value){case"percent":document.querySelector("#discount-percent-cont").classList.remove("d-none"),document.querySelector("#discount-value-cont").classList.add("d-none");break;case"value":document.querySelector("#discount-percent-cont").classList.add("d-none"),document.querySelector("#discount-value-cont").classList.remove("d-none");break;case"never":document.querySelector("#discount-percent-cont").classList.add("d-none"),document.querySelector("#discount-value-cont").classList.add("d-none"),document.querySelector(".discount-never-cont").classList.remove("d-none"),document.querySelector(".discount-availability-cont").classList.add("d-none"),document.querySelector(".discount-hint-cont").classList.add("d-none")}})),q.listeners.modalSuccessBtnFunc=function(e){e.preventDefault();var t={},n=!0;document.querySelector(".form-cont").classList.add("was-validated"),document.querySelector("#discount-percent").setCustomValidity(""),document.querySelector("#discount-hour-from").setCustomValidity(""),document.querySelector("#discount-hour-to").setCustomValidity("");var a=document.querySelector(".discount-blocks").dataset.data;if(a=a?JSON.parse(decodeURIComponent(a)):[],t.note=document.querySelector("#discount-note").value,t.type=document.querySelector("#discount-type").value,"percent"==t.type?(t.percent=document.querySelector("#discount-percent").value,""==t.percent&&(document.querySelector("#discount-percent").setCustomValidity("Percent field can not be empty."),n=!1)):"value"==t.type?(t.value=document.querySelector("#discount-value").value,""==t.value&&(document.querySelector("#discount-value").setCustomValidity("Value field can not be empty."),n=!1)):"value"==t.type&&(t.value="-"),t.availability=document.querySelector("#discount-availability").value,"always"==t.availability);else if("admin"==t.availability);else if("hourly"==t.availability)t.hours={from:document.querySelector("#discount-hour-from").value,to:document.querySelector("#discount-hour-to").value},t.hours.from.length<2&&(document.querySelector("#discount-hour-from").setCustomValidity("Wrong time format"),n=!1),t.hours.to.length<2&&(document.querySelector("#discount-hour-to").setCustomValidity("Wrong time format"),n=!1);else if("weekly"==t.availability){t.hours={from:document.querySelector("#discount-hour-from").value,to:document.querySelector("#discount-hour-to").value},t.hours.from.length<2&&(document.querySelector("#discount-hour-from").setCustomValidity("Wrong time format"),n=!1),t.hours.to.length<2&&(document.querySelector("#discount-hour-to").setCustomValidity("Wrong time format"),n=!1),t.dow=[];var c,r=o(document.querySelectorAll("#discount-weekly input"));try{for(r.s();!(c=r.n()).done;){var l=c.value;t.dow.push(l.checked)}}catch(e){r.e(e)}finally{r.f()}}n?(a.push(t),document.querySelector(".discount-blocks").dataset.data=encodeURIComponent(JSON.stringify(a)),q.renderDiscounts(),console.log(t),u.hide(),setTimeout((function(){return q.initListeners("partial")}),10)):alert("Please enter all fields correctly.")}},saveProduct:function(e){e.preventDefault();var t,n={},a=o(document.querySelectorAll(".inp"));try{for(a.s();!(t=a.n()).done;){var c=t.value;n[c.id.replace("p-","")]=c.value.trim()}}catch(e){a.e(e)}finally{a.f()}n.cats=[];var l,i=o(document.querySelectorAll("#p-cats ul li"));try{for(i.s();!(l=i.n()).done;){var d=l.value;n.cats.push(d.innerHTML.replace("<a>×</a>","").trim())}}catch(e){i.e(e)}finally{i.f()}n.img=[];var u,v=o(document.querySelectorAll(".p-img"));try{for(v.s();!(u=v.n()).done;){var f=!u.value.getAttribute("src").includes("placeholder");n.img.push(f)}}catch(e){v.e(e)}finally{v.f()}n.discounts=JSON.parse(decodeURIComponent(document.querySelector(".discount-blocks").dataset.data)),n.stock={inventory:q.state.response.product.stock.inventory},n.stock.sku=document.querySelector("#stock_sku").value,n.stock.management=document.querySelector("#stock_management").checked,n.stock.qty=document.querySelector("#stock_quantity").value,n.stock.low_threshold=document.querySelector("#stock_low_threshold").value,n.status=document.querySelector('input[name="p-status"]:checked').value,n.variations=[];var y,h=0,g=o(document.querySelectorAll(".variation-blocks .var-block"));try{for(g.s();!(y=g.n()).done;){var k,w=y.value,S=0,x=o(w.querySelectorAll(".offer-pricef li"));try{for(x.s();!(k=x.n()).done;){var L=k.value;void 0===n.variations[h]&&(n.variations[h]={title:w.getAttribute("data-title"),type:w.getAttribute("data-type"),required:w.getAttribute("data-required"),data:[]}),n.variations[h].data[S]={title:L.getAttribute("data-title"),price:L.getAttribute("data-price"),cond:L.getAttribute("data-cond")},S++}}catch(e){x.e(e)}finally{x.f()}h++}}catch(e){g.e(e)}finally{g.f()}var _=b(),T=s();r(),fetch("https://api-v1.kenzap.cloud/",{method:"post",headers:m(),body:JSON.stringify({query:{product:{type:"update",key:"ecommerce-product",id:_,sid:T,data:n}}})}).then((function(e){return e.json()})).then((function(e){e.success?q.uploadImages():p(e),console.log("Success:",e)})).catch((function(e){p(e)}))},openImage:function(e){e.preventDefault(),y(document.querySelector(".aif-"+e.currentTarget.dataset.index))},previewImage:function(e){e.preventDefault();var t=e.currentTarget;if(t.files&&t.files[0]){if("image/jpeg"!=t.files[0].type&&"image/jpg"!=t.files[0].type&&"image/png"!=t.files[0].type)return void h(c("Please provide image in JPEG format"));if(t.files[0].size>5e6)return void h(c("Please provide image less than 5 MB in size!"));var n=t.dataset.index,o=new FileReader;o.onload=function(e){document.querySelector(".images-"+n).setAttribute("src",e.currentTarget.result)},o.readAsDataURL(t.files[0]),e.currentTarget.parentElement.querySelector(".remove").classList.remove("hd")}},removeImage:function(e){var t=e.currentTarget.parentElement.dataset.index;document.querySelector(".aif-"+t).value="",document.querySelector(".images-"+t).setAttribute("src","https://account.kenzap.com/images/placeholder.jpg"),e.currentTarget.classList.add("hd")},modalSuccessBtn:function(e){console.log("calling modalSuccessBtnFunc"),q.listeners.modalSuccessBtnFunc(e)},stockManagement:function(e){var t,n=o(document.querySelectorAll(".stock-cont"));try{for(n.s();!(t=n.n()).done;){var a=t.value;e.currentTarget.checked?a.classList.remove("d-none"):a.classList.add("d-none"),e.currentTarget.value=e.currentTarget.checked?"1":"0"}}catch(e){n.e(e)}finally{n.f()}},modalSuccessBtnFunc:null},structMixBlock:function(e){return'\n        <div class="mb-4 var-block mw" data-title="'.concat(e.title,'" data-type="').concat(e.type,'" data-required="').concat(e.required,'" data-index="').concat(e.index,'" >\n            <label for="offer-pricef" class="form-label pb-2"><span class="title">').concat(e.title,'</span>\n                &nbsp;&nbsp;\n                <svg class="bi bi-pencil-fill edit-block ms-3" title="edit block" data-index="').concat(e.index,'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">\n                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>\n                </svg>\n                <svg class="bi bi-trash remove-block ms-3" title="edit block" data-index="').concat(e.index,'"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff0079" viewBox="0 0 16 16">\n                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>\n                </svg>\n            </label>\n            <div class="list-wrapper">\n                <ul class="d-flex flex-column-reverse offer-pricef" >\n                \n                </ul>\n            </div>\n            <p class="form-text"><a class="add-mix" href="#">').concat(c("+ add option"),"</a> ").concat(c("to differentiate price offering."),'</p>\n            <div class="add-mix-ctn d-none"><a class="add-mix" href="#">').concat(c("+ add option"),"</a></div>\n        </div>")},structMixRow:function(e){return'\n        <li data-title="'.concat(e.title,'" data-price="').concat(e.price,'" data-cond="" class="pt-2 pb-2"><div class="form-check"><label class="form-check-label form-label"><input class="').concat(e.type,' form-check-input" type="').concat(e.type,'" checked="" data-ft="').concat(e.title,'">').concat(e.title," &nbsp;&nbsp;&nbsp; ").concat(g(q,e.price),'</label></div>\n            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff0079" class="remove-option bi bi-x-circle" viewBox="0 0 16 16">                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>\n                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>\n            </svg>\n        </li>')},loadImages:function(e){for(var t=document,n=b(),o=s(),a="",r=0;r<5;r++){var l=void 0!==e.img&&"true"==e.img[r]?"https://preview.kenzap.cloud/S"+s()+"/_site/images/product-"+e.id+"-"+(r+1)+"-100x100.jpeg?"+e.updated:"https://account.kenzap.com/images/placeholder.jpg";a+='          <div class="p-img-cont float-start">            <p data-index="'.concat(r,'">              <img class="p-img images-').concat(r,'" data-index="').concat(r,'" width="100" height="100" src="').concat(l,'" />              <span class="remove hd" title="').concat(c("Remove"),'">×</span>            </p>            <input type="file" name="img[]" data-type="search" data-index="').concat(r,'" class="file aif-').concat(r,' d-none">          </div>')}t.querySelector(".ic").innerHTML=a,v(".p-img-cont img",q.listeners.openImage),v(".p-img-cont .remove",q.listeners.removeImage),f(".p-img-cont .file",q.listeners.previewImage);for(var i=0;i<5;i++){var d=CDN+"/S"+o+"/product-"+n+"-"+(parseInt(i)+1)+"-250.jpeg?"+e.updated;setTimeout((function(n,o,a){var c=!0;if(void 0!==e.img&&(e.img[a]||(c=!1)),c){var r=new Image;r.onload=function(){t.querySelector(o+a).setAttribute("src",n),t.querySelector(o+a).parentElement.querySelector(".remove").classList.remove("hd")},r.src=n}}),300,d,".images-",i)}},uploadImages:function(){document.querySelector(".imgupnote")&&document.querySelector(".imgupnote").remove();var e,t=0,n=o(document.querySelectorAll(".file"));try{for(n.s();!(e=n.n()).done;){var a=e.value;t+=1;var r=b(),i=s(),u=a.files[0];if(void 0!==u){var m=new FormData;m.append("id",r),m.append("sid",i),m.append("pid",r),m.append("key","image"),m.append("sizes","1000|500|250|100x100"),m.append("file",u),m.append("slug","product-"+r+"-"+t),m.append("token",d("kenzap_token")),u.value="",q.state.ajaxQueue+=1,fetch("https://api-v1.kenzap.cloud/upload/",{body:m,method:"post"}).then((function(e){return e.json()})).then((function(e){q.state.ajaxQueue-=1,e.success&&0==q.state.ajaxQueue&&(h(c("Product updated")),l())}))}}}catch(e){n.e(e)}finally{n.f()}0==q.state.ajaxQueue&&(h(c("Product updated")),l())},renderDiscounts:function(){var e=document.querySelector(".discount-blocks").dataset.data,t=[c("Monday"),c("Tuesday"),c("Wednesday"),c("Thursday"),c("Friday"),c("Saturday"),c("Sunday")];e=JSON.parse(decodeURIComponent(e));var n="";e.forEach((function(e,o){var a="value"==e.type?g(q,e.value):e.percent+"% ("+g(q,k(document.querySelector("#p-price").value)*((100-e.percent)/100))+")",r="";switch(e.availability){case"admin":r=c("Admin")+" "+a;break;case"always":r=c("Always")+" "+a;break;case"hourly":r=e.hours.from+"-"+e.hours.to+" "+a;break;case"weekly":e.dow.forEach((function(e,n){r+=1==e?t[n]+" ":""})),r+="<b>"+e.hours.from+"-"+e.hours.to+"</b> "+a}"never"==e.type&&(r=c("Avoid discount calculation for this product.")),n+='\n            <li class="form-text mb-2" >\n                '.concat(r,'\n                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff0079" class="remove-discount bi bi-x-circle" data-index=').concat(o,' viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path></svg>\n            </li>')})),""==n?document.querySelector(".discount-list").classList.add("d-none"):document.querySelector(".discount-list").classList.remove("d-none"),document.querySelector(".discount-blocks ul").innerHTML=n,v(".remove-discount",q.listeners.removeDiscount)}};q.init()}();
+
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35731/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function () {
+  'use strict';
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
+    }
+  }
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    Object.defineProperty(Constructor, "prototype", {
+      writable: false
+    });
+    return Constructor;
+  }
+  function _defineProperty(obj, key, value) {
+    key = _toPropertyKey(key);
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+    return obj;
+  }
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  }
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+  }
+  function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+  }
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+    return arr2;
+  }
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+  function _createForOfIteratorHelper(o, allowArrayLike) {
+    var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+    if (!it) {
+      if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+        if (it) o = it;
+        var i = 0;
+        var F = function () {};
+        return {
+          s: F,
+          n: function () {
+            if (i >= o.length) return {
+              done: true
+            };
+            return {
+              done: false,
+              value: o[i++]
+            };
+          },
+          e: function (e) {
+            throw e;
+          },
+          f: F
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    var normalCompletion = true,
+      didErr = false,
+      err;
+    return {
+      s: function () {
+        it = it.call(o);
+      },
+      n: function () {
+        var step = it.next();
+        normalCompletion = step.done;
+        return step;
+      },
+      e: function (e) {
+        didErr = true;
+        err = e;
+      },
+      f: function () {
+        try {
+          if (!normalCompletion && it.return != null) it.return();
+        } finally {
+          if (didErr) throw err;
+        }
+      }
+    };
+  }
+  function _toPrimitive(input, hint) {
+    if (typeof input !== "object" || input === null) return input;
+    var prim = input[Symbol.toPrimitive];
+    if (prim !== undefined) {
+      var res = prim.call(input, hint || "default");
+      if (typeof res !== "object") return res;
+      throw new TypeError("@@toPrimitive must return a primitive value.");
+    }
+    return (hint === "string" ? String : Number)(input);
+  }
+  function _toPropertyKey(arg) {
+    var key = _toPrimitive(arg, "string");
+    return typeof key === "symbol" ? key : String(key);
+  }
+
+  /**
+   * @name initHeader
+   * @description Initiates Kenzap Cloud extension header and related scripts. Verifies user sessions, handles SSO, does cloud space navigation, initializes i18n localization. 
+   * @param {object} response
+   */
+  const initHeader = (response) => {
+
+      // cache header from backend
+      if(response.header) localStorage.setItem('header', response.header);
+    
+      // load header to html if not present
+      if(!document.querySelector("#k-script")){
+    
+          let child = document.createElement('div');
+          child.innerHTML = localStorage.getItem('header');
+          child = child.firstChild;
+          document.body.prepend(child);
+    
+          // run header scripts
+          Function(document.querySelector("#k-script").innerHTML).call('test');
+      }
+    
+      // load locales if present
+      if(response.locale) window.i18n.init(response.locale); 
+  };
+
+  /*
+   * Translates string based on preloaded i18n locale values.
+   * 
+   * @param text {String} text to translate
+   * @param cb {Function} callback function to escape text variable
+   * @param p {String} list of parameters, to be replaced with %1$, %2$..
+   * @returns {String} - text
+   */
+  const __esc = (text, cb, ...p) => {
+
+      let match = (input, pa) => {
+
+          pa.forEach((p, i) => { input = input.replace('%'+(i+1)+'$', p); }); 
+          
+          return input;
+      };
+
+      if(typeof window.i18n === 'undefined') return match(text, p);
+      if(window.i18n.state.locale.values[text] === undefined) return match(text, p);
+
+      return match(cb(window.i18n.state.locale.values[text]), p);
+  };
+
+  /*
+   * Converts special characters `&`, `<`, `>`, `"`, `'` to HTML entities.
+   * 
+   * @param text {String}  text
+   * @returns {String} - text
+   */
+  const attr = (text) => {
+
+      text = String(text);
+
+      if(text.length === 0){
+  		return '';
+  	}
+
+      return text.replace(/[&<>'"]/g, tag => (
+          {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              "'": '&apos;',
+              '"': '&quot;'
+          } [tag]));
+  };
+
+  /*
+   * Converts special characters `&`, `<`, `>`, `"`, `'` to HTML entities and does translation
+   * 
+   * @param text {String}  text
+   * @returns {String} - text
+   */
+  const __attr = (text, ...p) => {
+
+      text = String(text);
+
+      if(text.length === 0){
+  		return '';
+  	}
+
+      let cb = (text) => {
+
+          return text.replace(/[<>'"]/g, tag => (
+              {
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  "'": '&apos;',
+                  '"': '&quot;'
+              } [tag]));
+      };
+
+      return __esc(text, cb, ...p);
+  };
+
+  /*
+   * Converts special characters `&`, `<`, `>`, `"`, `'` to HTML entities and does translations
+   * 
+   * @param text {String}  text
+   * @returns {String} - text
+   */
+  const __html = (text, ...p) => {
+
+      text = String(text);
+
+      if(text.length === 0){
+  		return '';
+  	}
+
+      let cb = (text) => {
+
+          return text.replace(/[&<>'"]/g, tag => (
+              {
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  "'": '&apos;',
+                  '"': '&quot;'
+              } [tag]));
+      };
+
+      return __esc(text, cb, ...p);
+  };
+
+  /**
+   * @name showLoader
+   * @description Initiates full screen three dots loader.
+   */
+  const showLoader = () => {
+
+      let el = document.querySelector(".loader");
+      if (el) el.style.display = 'block';
+  };
+
+  /**
+   * @name hideLoader
+   * @description Removes full screen three dots loader.
+   */
+  const hideLoader = () => {
+
+      let el = document.querySelector(".loader");
+      if (el) el.style.display = 'none';
+  };
+
+  /**
+   * @name link
+   * @description Handles Cloud navigation links between extensions and its pages. Takes care of custom url parameters.
+   * @param {string} slug - Any inbound link
+   * 
+   * @returns {string} link - Returns original link with kenzp cloud space ID identifier.
+   */
+  const link = (slug) => {
+      
+      let urlParams = new URLSearchParams(window.location.search);
+      let sid = urlParams.get('sid') ? urlParams.get('sid') : "";
+
+      let postfix = slug.indexOf('?') == -1 ? '?sid='+sid : '&sid='+sid;
+
+      return slug + postfix;
+  };
+
+  /**
+   * @name spaceID
+   * @description Gets current Kenzap Cloud space ID identifier from the URL.
+   * 
+   * @returns {string} id - Kenzap Cloud space ID.
+   */
+   const spaceID = () => {
+      
+      let urlParams = new URLSearchParams(window.location.search);
+      let id = urlParams.get('sid') ? urlParams.get('sid') : "";
+
+      return id;
+  };
+
+  /**
+   * @name setCookie
+   * @description Set cookie by its name to all .kenzap.cloud subdomains
+   * @param {string} name - Cookie name.
+   * @param {string} value - Cookie value.
+   * @param {string} days - Number of days when cookie expires.
+   */
+   const setCookie = (name, value, days) => {
+
+      let expires = "";
+      if (days) {
+          let date = new Date();
+          date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+          expires = ";expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (escape(value) || "") + expires + ";path=/;domain=.kenzap.cloud"; 
+  };
+
+  /**
+   * @name getCookie
+   * @description Read cookie by its name.
+   * @param {string} cname - Cookie name.
+   * 
+   * @returns {string} value - Cookie value.
+   */
+  const getCookie = (cname) => {
+
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+          }
+      }
+      return "";
+  };
+
+  /**
+   * @name checkHeader
+   * @description This function tracks UI updates, creates header version checksum and compares it after every page reload
+   * @param {object} object - API response.
+   */
+   const checkHeader = () => {
+
+      let version = (localStorage.hasOwnProperty('header') && localStorage.hasOwnProperty('header-version')) ? localStorage.getItem('header-version') : 0;
+      let check = window.location.hostname + '/' + spaceID() + '/' + getCookie('locale');
+      if(check != getCookie('check')){ version = 0; console.log('refresh'); }
+      
+      setCookie('check', check, 5);
+
+      return version
+  };
+
+  /**
+   * @name headers
+   * @description Default headers object for all Kenzap Cloud fetch queries.
+   * @param {object} headers
+   */
+   const H = () => {
+
+      return {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
+          'Kenzap-Locale': getCookie('locale') ? getCookie('locale') : "en",
+          'Kenzap-Header': checkHeader(),
+          'Kenzap-Token': getCookie('kenzap_token'),
+          'Kenzap-Sid': spaceID()
+      }
+  };
+
+  /**
+   * @name headers
+   * @description Default headers object for all Kenzap Cloud fetch queries. 
+   * @param {object} headers
+   * @deprecated
+   */
+   ({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + getCookie('kenzap_api_key'),
+      'Kenzap-Locale': getCookie('locale') ? getCookie('locale') : "en",
+      'Kenzap-Header': checkHeader(),
+      'Kenzap-Token': getCookie('kenzap_token'),
+      'Kenzap-Sid': spaceID(),
+  });
+
+  /**
+   * @name parseApiError
+   * @description Set default logics for different API Error responses.
+   * @param {object} object - API response.
+   */
+   const parseApiError = (data) => {
+
+      // outout to frontend console
+      console.log(data);
+
+      // unstructured failure
+      if(isNaN(data.code)){
+      
+          // structure failure data
+          let log = data;
+          try{ log = JSON.stringify(log); }catch(e){ }
+
+          let params = new URLSearchParams();
+          params.append("cmd", "report");
+          params.append("sid", spaceID());
+          params.append("token", getCookie('kenzap_token'));
+          params.append("data", log);
+          
+          // report error
+          fetch('https://api-v1.kenzap.cloud/error/', { method: 'post', headers: { 'Accept': 'application/json', 'Content-type': 'application/x-www-form-urlencoded', }, body: params });
+
+          alert('Can not connect to Kenzap Cloud');  
+          return;
+      }
+      
+      // handle cloud error codes
+      switch(data.code){
+
+          // unauthorized
+          case 401:
+
+              // dev mode
+              if(window.location.href.indexOf('localhost')!=-1){ 
+
+                  alert(data.reason); 
+                  return; 
+              }
+
+              // production mode
+              location.href="https://auth.kenzap.com/?app=65432108792785&redirect="+window.location.href; break;
+          
+          // something else
+          default:
+
+              alert(data.reason); 
+              break;
+      }
+  };
+
+  /**
+   * @name initBreadcrumbs
+   * @description Render ui breadcrumbs.
+   * @param {array} data - List of link objects containing link text and url. If url is missing then renders breadcrumb as static text. Requires html holder with .bc class.
+   */
+  const initBreadcrumbs = (data) => {
+
+      let html = '<ol class="breadcrumb mt-2 mb-0">';
+      for(let bc of data){
+          
+          if(typeof(bc.link) === 'undefined'){
+
+              html += `<li class="breadcrumb-item">${ bc.text }</li>`;
+          }else {
+
+              html += `<li class="breadcrumb-item"><a href="${ bc.link }">${ bc.text }</a></li>`;
+          }
+      }
+      html += '</ol>';
+      
+      document.querySelector(".bc").innerHTML = html;
+  };
+
+  /**
+   * @name onClick
+   * @description One row click event listener declaration. Works with one or many HTML selectors.
+   * @param {string} sel - HTML selector, id, class, etc.
+   * @param {string} fn - callback function fired on click event.
+   */
+  const onClick = (sel, fn) => {
+
+      if(document.querySelector(sel)) for( let e of document.querySelectorAll(sel) ){
+
+          e.removeEventListener('click', fn, true);
+          e.addEventListener('click', fn, true);
+      }
+  };
+
+  /**
+   * @name onChange
+   * @description One row change event listener declaration. Works with one or many HTML selectors.
+   * @param {string} sel - HTML selector, id, class, etc.
+   * @param {string} fn - callback function fired on click event.
+   */
+  const onChange = (sel, fn) => {
+
+      if(document.querySelector(sel)) for( let e of document.querySelectorAll(sel) ){
+
+          e.removeEventListener('change', fn, true);
+          e.addEventListener('change', fn, true);
+      }
+  };
+
+  /**
+   * @name simulateClick
+   * @description Trigger on click event without user interaction.
+   * @param {string} elem - HTML selector, id, class, etc.
+   */
+   const simulateClick = (elem) => {
+
+  	// create our event (with options)
+  	let evt = new MouseEvent('click', {
+  		bubbles: true,
+  		cancelable: true,
+  		view: window
+  	});
+
+  	// if cancelled, don't dispatch the event
+  	!elem.dispatchEvent(evt);
+  };
+
+  /**
+   * @name toast
+   * @description Triggers toast notification. Adds toast html to the page if missing.
+   * @param {string} text - Toast notification.
+   */
+   const toast = (text) => {
+
+      // only add once
+      if(!document.querySelector(".toast")){
+
+          let html = `
+        <div class="toast-cont position-fixed bottom-0 p-2 m-4 end-0 align-items-center" style="z-index:10000;">
+            <div class="toast hide align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+                <div class="d-flex">
+                    <div class="toast-body"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>`;
+          if(document.querySelector('body > div')) document.querySelector('body > div').insertAdjacentHTML('afterend', html);
+      }
+
+      let toast = new bootstrap.Toast(document.querySelector('.toast'));
+      document.querySelector('.toast .toast-body').innerHTML = text;  
+      toast.show();
+  };
+
+  var getProductId = function getProductId() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var id = urlParams.get('id') ? urlParams.get('id') : "";
+    return id;
+  };
+  var getPageNumber = function getPageNumber() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var page = urlParams.get('page') ? urlParams.get('page') : 1;
+    return parseInt(page);
+  };
+  var priceFormat = function priceFormat(_this, price) {
+    price = makeNumber(price);
+    price = (Math.round(parseFloat(price) * 100) / 100).toFixed(2);
+    switch (_this.state.settings.currency_symb_loc) {
+      case 'left':
+        price = _this.state.settings.currency_symb + ' ' + price;
+        break;
+      case 'right':
+        price = price + _this.state.settings.currency_symb;
+        break;
+    }
+    return price;
+  };
+  var makeNumber = function makeNumber(price) {
+    price = price ? price : 0;
+    price = parseFloat(price);
+    price = Math.round(price * 100) / 100;
+    return price;
+  };
+  var onlyNumbers = function onlyNumbers(sel, chars) {
+    if (!document.querySelector(sel)) return;
+    chars.push.apply(chars, [9, 37, 38, 39, 40, 98, 100, 102, 104]);
+    _toConsumableArray(document.querySelectorAll(sel)).forEach(function (el) {
+      el.addEventListener('keydown', function (e) {
+        var key = e.key.toLowerCase();
+        if (key == 'control' || key == 'meta') {
+          window[key] = true;
+        }
+        console.log(key.length + " / " + isNumber + " / " + e.which);
+        var isNumber = key >= '0' && key <= '9';
+        if ((window['control'] || window['meta']) && [86, 88, 65, 67, 90].includes(e.which)) {
+          console.log("pushing");
+          return true;
+        }
+        if (!isNumber && !chars.includes(e.which)) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      el.addEventListener('keyup', function (e) {
+        var key = e.key.toLowerCase();
+        if (key == 'control' || key == 'meta') {
+          window[key] = false;
+        }
+      });
+    });
+  };
+  var loadAddon = function loadAddon(dep, version, cb) {
+    var url = new URL(dep);
+    if (getCookie('debug')) dep = 'http://localhost:3000' + url.pathname;
+    console.log(dep);
+    if (document.getElementById(dep)) {
+      if (typeof cb === 'function') cb.call();
+      return;
+    }
+    var t = dep.split('.').slice(-1)[0];
+    switch (t) {
+      case 'js':
+        var js = document.createElement("script");
+        js.setAttribute("src", dep);
+        js.id = dep;
+        js.onload = js.onreadystatechange = function () {
+          if (!this.readyState || this.readyState == 'complete') if (typeof cb === 'function') cb.call();
+        };
+        document.body.appendChild(js);
+        break;
+      case 'css':
+        var head = document.getElementsByTagName('head')[0];
+        var css = document.createElement('link');
+        css.id = dep;
+        css.rel = 'stylesheet';
+        css.type = 'text/css';
+        css.href = dep;
+        head.appendChild(css);
+        break;
+    }
+  };
+  var initFooter = function initFooter(_this) {
+    var left = __html('E-commerce 2.1.1 by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>');
+    var right = "";
+    document.querySelector("footer .row").innerHTML = "\n    <div class=\"d-sm-flex justify-content-center justify-content-sm-between\">\n        <span class=\"text-muted text-center text-sm-left d-block d-sm-inline-block\">".concat(left, "</span>\n        <span class=\"float-none float-sm-right d-block mt-1 mt-sm-0 text-center text-muted\">").concat(right, "</span>\n    </div>");
+  };
+
+  var simpleTags = function simpleTags(__, element) {
+    if (!element) {
+      throw new Error("DOM Element is undifined! Please choose HTML target element.");
+    }
+    var DOMParent = element;
+    var DOMList;
+    var DOMInput;
+    var dataAttribute;
+    var arrayOfList;
+    function DOMCreate() {
+      var ul = document.createElement("ul");
+      var input = document.createElement("input");
+      input.setAttribute('placeholder', __('new category'));
+      DOMParent.appendChild(ul);
+      DOMParent.appendChild(input);
+      DOMList = DOMParent.firstElementChild;
+      DOMInput = DOMParent.lastElementChild;
+    }
+    function DOMRender() {
+      DOMList.innerHTML = "";
+      arrayOfList.forEach(function (currentValue, index) {
+        currentValue = currentValue.trim();
+        if (currentValue) {
+          var li = document.createElement("li");
+          li.innerHTML = "".concat(currentValue, " <a>&times;</a>");
+          li.querySelector("a").addEventListener("click", function () {
+            onDelete(index);
+          });
+          DOMList.appendChild(li);
+        }
+      });
+      setAttribute();
+    }
+    function onKeyUp() {
+      DOMInput.addEventListener("keyup", function (event) {
+        var text = this.value.trim();
+        if (text.includes(",") || event.keyCode === 13) {
+          if (text.replace(",", "") !== "") {
+            arrayOfList.push(text.replace(",", ""));
+          }
+          this.value = "";
+        }
+        DOMRender();
+      });
+    }
+    function onDelete(id) {
+      arrayOfList = arrayOfList.filter(function (currentValue, index) {
+        if (index === id) {
+          return false;
+        }
+        return currentValue;
+      });
+      DOMRender();
+    }
+    function getAttribute() {
+      dataAttribute = DOMParent.getAttribute("data-simple-tags");
+      dataAttribute = dataAttribute.split(",");
+      arrayOfList = dataAttribute.map(function (currentValue) {
+        return currentValue.trim();
+      });
+    }
+    function setAttribute() {
+      DOMParent.setAttribute("data-simple-tags", arrayOfList.toString());
+    }
+    getAttribute();
+    DOMCreate();
+    DOMRender();
+    onKeyUp();
+  };
+
+  var HTMLContent = function HTMLContent(__) {
+    return "\n  <div class=\"container p-edit\">\n    <div class=\"d-flex justify-content-between bd-highlight mb-3\">\n        <nav class=\"bc\" aria-label=\"breadcrumb\"></nav>\n        \n    </div>\n    <div class=\"row\">\n        <div class=\"col-lg-9 grid-margin grid-margin-lg-0 grid-margin-md-0 stretch-card\">\n            <div class=\"sections\" id=\"sections\" role=\"tablist\" style=\"width:100%;\">\n\n                <div class=\"row\">\n                    <div class=\"col-12 grid-margin stretch-card\">\n                        <div class=\"card border-white shadow-sm p-sm-3\">\n                            <div class=\"card-body\">\n\n                                <div class=\"landing_status\"></div>\n                                <input type=\"hidden\" class=\"form-control\" id=\"landing-slug\" value=\"\">\n\n                                <h4 id=\"elan\" class=\"card-title mb-4\">".concat(__html('Description'), "</h4>\n\n                                <div id=\"placeholders\">\n\n                                    <div class=\"mb-3\">\n                                        <label class=\"banner-title-l form-label\" for=\"p-title\">").concat(__html('Title'), "</label>\n                                        <input type=\"text\" class=\"form-control inp\" id=\"p-title\" placeholder=\"").concat(__attr('Sushi set..'), "\">\n                                        <p class=\"form-text\"> </p>\n                                    </div>\n\n                                    <div class=\"mb-3\">\n                                        <label class=\"banner-descshort-l form-label\" for=\"p-sdesc\">").concat(__html('Short Description'), "</label>\n                                        <textarea class=\"form-control inp\" id=\"p-sdesc\" placeholder=\"  \" maxlength=\"120\" rows=\"2\"></textarea>\n                                    </div>\n\n                                    <div class=\"mb-3\">\n                                        <label class=\"banner-descshort-l form-label\" for=\"desc\">").concat(__html('Images'), "</label>\n                                        <div class=\"clearfix\"></div>\n                                        <div class=\"ic\"></div>\n                                        <div class=\"clearfix\"></div>\n                                    </div>\n\n                                    <div class=\"mb-3\">\n                                        <div class=\"clearfix\"></div>\n                                        <div style=\"clear:both;margin-top:16px;\"></div>\n                                        <label class=\"banner-descshort-l form-label\" for=\"p-desc\">").concat(__html('Description'), "</label>\n                                        <textarea class=\"form-control inp\" id=\"p-ldesc\" placeholder=\" \" maxlength=\"2000\" rows=\"10\"></textarea>\n                                    </div>\n\n                                    <div class=\"mb-3 mw\">\n                                        <div class=\"list-wrapper\">\n                                            <ul class=\"d-flex flex-column-reverse features\"> </ul>\n                                        </div>\n                                        <p class=\"form-text\"> </p>\n                                    </div>\n\n                                    <div class=\"price_group mt-3 mb-3\">\n                                        <h4 class=\"card-title mb-3\">").concat(__html('Price'), "</h4>\n                                        <div class=\"price_group_base\">\n                                            <div class=\"mb-3\">\n                                                <div class=\"input-group\">\n                                                    <div id=\"p-price-c\">\n                                                        <label for=\"p-price\" class=\"form-label\">").concat(__html('Default'), " <span class=\"lang\"></span></label>\n                                                        <div class=\"input-group pe-3 mb-3\">\n                                                            <span id=\"p-price-symb\" class=\"input-group-text\">$</span>\n                                                            <input id=\"p-price\" type=\"text\" class=\"form-control inp\" placeholder=\"55.00\" autocomplete=\"off\">\n                                                        </div>\n                                                    </div>\n                                                    <div id=\"p-priced-c\" class=\"d-flex align-content-end flex-wrap\">\n                                                        <a class=\"btn btn-outline-secondary mb-3 add-discount\" href=\"#\" role=\"button\" id=\"btn-discount\" >\n                                                            <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" class=\"bi bi-plus\" viewBox=\"0 0 16 16\"><path d=\"M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z\"/></svg>\n                                                            ").concat(__html('discount'), "\n                                                        </a>\n                                                        <div class=\"d-none\">\n                                                            <label for=\"p-priced pe-3 mb-3\" class=\"form-label\">").concat(__html('Discounted'), " <span class=\"lang\"></span></label>\n                                                            <input id=\"p-priced\" type=\"text\" class=\"form-control\" placeholder=\"45.00\" autocomplete=\"off\">\n                                                        </div>\n                                                    </div>\n                                                </div>\n                                                \n                                                <div class=\"discount-blocks mw\">\n                                                    <label class=\"discount-list form-label\" for=\"discount-list \">").concat(__html('Discount list'), "</label>\n                                                    <ul class=\"mb-4\">\n                                               \n                                                    </ul>\n                                                </div>\n                                                <div class=\"add-mix-ctn text-left mt-3 mb-2\"><a class=\"add-mix-block\" href=\"#\" data-action=\"add\">").concat(__html('+ add variation'), "</a></div>\n                                            </div>\n\n                                            <div class=\"variation-blocks\">\n                        \n                                            </div>\n\n                                            <div style='margin:24px 0 48px;border-bottom:0px solid #ccc;'></div>\n\n                                            <div class=\"mb-3 mw\">\n                                                <h4 id=\"elan\" class=\"card-title\">").concat(__html('Inventory'), "</h4>\n                                                <label for=\"stock_sku\" class=\"form-label\"> <span class=\"lang\"></span></label>\n                                                <div class=\"input-group\">\n                                                    <input id=\"stock_sku\" type=\"text\" style=\"width:100%;\" class=\"form-control\" placeholder=\"\" maxlength=\"200\">\n                                                    <p class=\"form-text\">").concat(__html('Product stock unit identification number or SKU.'), "</p>\n                                                </div>\n                                            </div>\n\n                                            <div class=\"mb-3 mw\">\n                                                <div class=\"form-check\">\n                                                    <input id=\"stock_management\" class=\"form-check-input stock-management\" name=\"stock_management\" type=\"checkbox\" value=\"0\" data-type=\"checkbox\">\n                                                    <label class=\"form-check-label\" for=\"stock_management\">\n                                                        ").concat(__html('Stock management'), "\n                                                    </label>\n                                                </div>\n                                                <p class=\"form-text\">").concat(__html('Enable stock management.'), "</p>\n                                            </div>\n\n                                            <div class=\"mb-3 mw stock-cont\">\n                                                <label class=\"form-label\" for=\"stock_quantity\">").concat(__html('Stock quantity'), "</label>\n                                                <input id=\"stock_quantity\" type=\"text\" class=\"form-control\" placeholder=\"0\">\n                                                <p class=\"form-text\">").concat(__html('Total number of products left.'), "</p>\n                                            </div>\n\n                                            <div class=\"mb-3 mw stock-cont\">\n                                                <label class=\"form-label\" for=\"stock_low_threshold\">").concat(__html('Low stock'), "</label>\n                                                <input id=\"stock_low_threshold\" type=\"text\" class=\"form-control\" placeholder=\"0\">\n                                                <p class=\"form-text\">").concat(__html('Low stock threshold.'), "</p>\n                                            </div>\n\n                                            <div class=\"mb-3 mw stock-cont\">\n                                                <label class=\"form-label\" >").concat(__html('Inventory table'), "</label>\n                                                <div class=\"inventory-cont\">\n\n                                                </div>\n                                                <div class=\"add-mix-ctn text-left mt-1 mb-2\"><a class=\"add-inventory\" href=\"#\" data-action=\"add\" style=\"font-size: 0.875rem;\">").concat(__html('+ add inventory'), "</a></div>\n\n                                                <p class=\"form-text d-none\">").concat(__html('Low stock threshold.'), "</p>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n\n                                <div class=\"desc-repeater-cont\">\n\n                                </div>\n\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n\n            </div>\n        </div>\n        <div class=\"col-lg-3 mt-3 mt-lg-0 grid-margin grid-margin-lg-0 grid-margin-md-0\">\n\n            <div class=\"row\">\n                <div class=\"col-12 grid-margin stretch-card\">\n                    <div class=\"card border-white shadow-sm p-sm-3\">\n                        <div class=\"card-body\">\n\n                            <h4 class=\"card-title\" style=\"display:none;\">").concat(__html('General'), "</h4>\n                            <div class=\"landing_status\"></div>\n                            <input type=\"hidden\" class=\"form-control\" id=\"landing-slug\" value=\"\">\n\n                            <h4 id=\"elan\" class=\"card-title mb-4\">").concat(__html('Status'), "</h4>\n                            <div id=\"status-cont\" class=\"mb-3\">\n\n                                <div class=\"col-sm-12\">\n                                    <div class=\"form-check\">\n                                        <label class=\"form-check-label status-publish form-label\">\n                                            <input type=\"radio\" class=\"form-check-input\" name=\"p-status\"\n                                                id=\"p-status1\" value=\"1\">\n                                                ").concat(__html('Published'), "\n                                        </label>\n                                    </div>\n                                </div>\n\n                                <div class=\"col-sm-12\">\n                                    <div class=\"form-check\">\n                                        <label class=\"form-check-label status-draft form-label\">\n                                            <input type=\"radio\" class=\"form-check-input\" name=\"p-status\"  id=\"p-status0\" value=\"0\">\n                                            ").concat(__html('Draft'), "\n                                        </label>\n                                    </div>\n                                </div>\n                            </div>\n\n                            <h4 id=\"elan\" class=\"card-title mb-4\">").concat(__html('Categories'), "</h4>\n                            <div id=\"p-cats\" class=\"simple-tags mb-4\" data-simple-tags=\"\"></div>\n                            <div class=\"clearfix\"> </div>\n\n                            <div class=\"d-grid gap-2\">\n                                <button class=\"btn btn-primary btn-save\" type=\"button\">").concat(__html('Save'), "</button>\n                            </div>\n\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n        </div>\n    </div>\n  </div>\n\n  <div class=\"modal p-modal\" tabindex=\"-1\">\n    <div class=\"modal-dialog\">\n        <div class=\"modal-content\">\n            <div class=\"modal-header\">\n                <h5 class=\"modal-title\"></h5>\n                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>\n            </div>\n            <div class=\"modal-body\">\n\n            </div>\n            <div class=\"modal-footer\">\n                <button type=\"button\" class=\"btn btn-primary btn-modal\"></button>\n                <button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\"></button>\n            </div>\n        </div>\n    </div>\n  </div>\n\n  <div class=\"position-fixed bottom-0 p-2 m-4 end-0 align-items-center\">\n    <div class=\"toast hide align-items-center text-white bg-dark border-0\" role=\"alert\" aria-live=\"assertive\"\n        aria-atomic=\"true\" data-bs-delay=\"3000\">\n        <div class=\"d-flex\">\n            <div class=\"toast-body\"></div>\n            <button type=\"button\" class=\"btn-close btn-close-white me-2 m-auto\" data-bs-dismiss=\"toast\" aria-label=\"Close\"></button>\n        </div>\n    </div>\n  </div>\n  ");
+  };
+
+  var inventoryTable = function inventoryTable(_this) {
+    if (!_this.state.response.product.stock.inventory) _this.state.response.product.stock.inventory = [];
+    if (document.querySelector('.modal-backdrop')) document.querySelector('.modal-backdrop').remove();
+    document.querySelector('.inventory-cont').innerHTML = "\n    <div class=\"table-responsive-\">\n        <table class=\"table table-hover table-borderless align-middle table-striped table-history-list mb-0\" style=\"\">\n            <thead>\n                <tr>\n                    <th class=\"form-text\">\n                        ".concat(__html("Title"), "\n                    </th>\n                    <th class=\"form-text\">\n                        ").concat(__html('Amount'), "\n                    </th>\n                    <th class=\"form-text\">\n                        ").concat(__html('Price'), "\n                    </th>\n                    <th>\n                    \n                    </th>\n                </tr>\n            </thead>\n            <tbody id=\"inventory-history\">\n\n                ").concat(_this.state.response.product.stock.inventory.length == 0 ? "\n                    <tr>\n                        <td class=\"form-text\" colspan=\"4\">\n                            ".concat(__html("no data to display"), "\n                        </td>\n                    </tr>\n                    ") : '', "\n\n                ").concat(_this.state.response.product.stock.inventory.map(function (row, i) {
+      return "\n                            <tr>\n                                <td class=\"form-text text-dark\">\n                                    ".concat(row.title, "\n                                </td>\n                                <td class=\"form-text\">\n                                    <div class=\"fw-bold ").concat(row.amount < 0 ? 'text-danger' : 'text-success', "\">").concat((row.amount < 0 ? '' : '+') + row.amount + row.stock_unit, "</div>\n                                </td>\n                                <td id=\"itid").concat(attr(row.id), "\" data-amount=\"").concat(attr(row.amount), "\" class=\"form-text text-dark\">\n\n                                </td>\n                                <td class=\"text-end d-none-\">\n                                    <div class=\"dropdown inventorTableActionsCont\">\n                                        <svg id=\"inventoryHistoryActions").concat(i, "\" data-bs-toggle=\"dropdown\" data-boundary=\"viewport\" aria-expanded=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-three-dots-vertical dropdown-toggle po\" viewBox=\"0 0 16 16\">\n                                            <path d=\"M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z\"/>\n                                        </svg>\n                                        <ul class=\"dropdown-menu\" aria-labelledby=\"inventoryHistoryActions").concat(i, "\">\n                                            <li><a class=\"dropdown-item po d-none\" href=\"#\" data-action=\"copy\" data-id=\"").concat(attr(row.id), "\" data-index=\"").concat(i, "\">").concat(__html('Copy'), "</a></li>\n                                            <li><hr class=\"dropdown-divider d-none\"></li>\n                                            <li><a class=\"dropdown-item po\" href=\"#\" data-action=\"remove\" data-id=\"").concat(attr(row.id), "\" data-index=\"").concat(i, "\">").concat(__html('Remove'), "</a></li>\n                                        </ul>\n                                    </div>\n                                </td>\n                            </tr>\n                        ");
+    }).join(''), "\n\n                ").concat(_this.state.response.product.stock.inventory.length > 0 ? "\n                    <tr>\n                        <td class=\"form-text\"></td>\n                        <td class=\"form-text\"></td>\n                        <td id=\"itidtotal\" class=\"form-text\" colspan=\"2\">\n                            \n                        </td>\n                    </tr>\n                    " : '', "\n\n            </tbody>\n        </table>\n    </div>\n    ");
+    _toConsumableArray(document.querySelectorAll(".inventorTableActionsCont .dropdown-item")).forEach(function (row) {
+      row.addEventListener("click", function (e) {
+        e.preventDefault();
+        switch (e.currentTarget.dataset.action) {
+          case 'copy':
+            break;
+          case 'remove':
+            if (!confirm(__html('Remove this record?'))) return;
+            removeInventoryRow(_this, e.currentTarget.dataset.id);
+            break;
+        }
+      });
+    });
+    if (!document.querySelector(".add-inventory").dataset.assigned) document.querySelector(".add-inventory").addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelector(".add-inventory").dataset.assigned = true;
+      var modal = document.querySelector(".modal");
+      _this.state.modalCont = new bootstrap.Modal(modal);
+      modal.querySelector(".modal-dialog").classList.add('modal-lg');
+      modal.querySelector(".modal-title").innerHTML = __html('Add Inventory Item');
+      modal.querySelector('.modal-footer').innerHTML = "\n            <button type=\"button\" class=\"btn btn-success btn-modal btn-add btn-inventory-add d-none\">".concat(__html('Add'), "</button>\n            <button class=\"btn btn-outline-secondary remove-application btn-lg d-none\" type=\"button\" title=\"").concat(__html('Remove application.'), "\"><span><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-trash\" viewBox=\"0 0 16 16\"><path d=\"M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z\"/><path fill-rule=\"evenodd\" d=\"M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z\"/></svg></span></button>\n            <button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">").concat(__html('Close'), "</button>\n        ");
+      modal.querySelector(".modal-body").innerHTML = "\n            <div class=\"row mb-4\">\n                <div class=\"col-sm-12\">\n                    <div class=\"table-responsive-\">\n                        <table class=\"table table-hover table-borderless align-middle table-striped table-inventory-list mb-0\" style=\"\">\n                            <thead>\n                                <tr>\n                                    <th>\n                                        ".concat(__html("Title"), "\n                                    </th>\n                                    <th>\n                                        ").concat(__html('Amount'), "\n                                    </th>\n                                    <th>\n                                    \n                                    </th>\n                                </tr>\n                            </thead>\n                            <tbody id=\"inventory-list\">\n                                <tr>\n                                    <td colspan=\"3\">\n                                        ").concat(__html("Loading"), "\n                                    </td>\n                                </tr>\n                            </tbody>\n                        </table>\n                    </div>\n                </div>\n            </div>\n        ");
+      var addToInventory = function addToInventory(_this, obj) {
+        var id = getProductId();
+        var sid = spaceID();
+        _this.state.response.product.stock.inventory.push(obj);
+        fetch('https://api-v1.kenzap.cloud/', {
+          method: 'post',
+          headers: H(),
+          body: JSON.stringify({
+            query: {
+              product: {
+                type: 'update',
+                key: 'ecommerce-product',
+                id: id,
+                sid: sid,
+                data: {
+                  stock: _this.state.response.product.stock
+                }
+              }
+            }
+          })
+        }).then(function (response) {
+          return response.json();
+        }).then(function (response) {
+          if (response.success) {
+            if (_this.state.modalCont) _this.state.modalCont.hide();
+            inventoryTable(_this);
+          } else {
+            parseApiError(response);
+          }
+        })["catch"](function (error) {
+          parseApiError(error);
+        });
+      };
+      var loadInventory = function loadInventory(_this) {
+        var limit = 50;
+        var s = "";
+        fetch('https://api-v1.kenzap.cloud/', {
+          method: 'post',
+          headers: H(),
+          body: JSON.stringify({
+            query: {
+              inventory: {
+                type: 'find',
+                key: 'ecommerce-inventory',
+                fields: ['_id', 'img', 'status', 'tags', 'price', 'price_prev', 'price_per_unit', 'price_per_unit_prev', 'title', 'stock_amount', 'stock_unit', 'stock_warning', 'updated'],
+                limit: limit,
+                offset: s.length > 0 ? 0 : getPageNumber() * limit - limit,
+                search: {
+                  field: 'title',
+                  s: s
+                },
+                sortby: {
+                  field: 'created',
+                  order: 'DESC'
+                }
+              }
+            }
+          })
+        }).then(function (response) {
+          return response.json();
+        }).then(function (response) {
+          if (response.success) {
+            _this.state.inventory = response.inventory;
+            if (response.inventory.length == 0) {
+              document.querySelector("#inventory-list").innerHTML = "<tr><td colspan=\"3\" class=\"form-text\">".concat(__html("No data to display."), "</td></tr>");
+              return;
+            }
+            document.querySelector("#inventory-list").innerHTML = response.inventory.map(function (inventory, i) {
+              return "\n                            <tr>\n                                <td data-id=\"".concat(attr(inventory._id), "\">\n                                    ").concat(inventory.title, "\n                                </td>\n                                <td data-id=\"").concat(attr(inventory._id), "\">\n                                    <div class=\"input-group mb-sm-2\" style=\"max-width:200px;\">\n                                        <input id=\"stock_amount").concat(i, "\" type=\"text\" class=\"form-control stock_amount inp\" name=\"stock_amount\" aria-label=\"Current stock amount\" aria-describedby=\"basic-addon1\" value=\"\" autocomplete=\"off\">\n                                        <span class=\"input-group-text\" id=\"stock_amount_unit\">").concat(inventory.stock_unit, "</span>\n                                    </div>\n                                </td>\n                                <td class=\"text-end d-none- add-inventory-item\" data-index=\"").concat(i, "\" data-id=\"").concat(attr(inventory._id), "\">\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" class=\"bi bi-plus-circle text-success po\" viewBox=\"0 0 16 16\">\n                                        <path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"/>\n                                        <path d=\"M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z\"/>\n                                    </svg>\n                                </td>\n                            </tr>");
+            }).join('');
+            onlyNumbers('.stock_amount', [8, 46, 190, 189]);
+            _toConsumableArray(document.querySelectorAll(".add-inventory-item")).forEach(function (item) {
+              item.addEventListener('click', function (el) {
+                var i = el.currentTarget.dataset.index;
+                var amount = document.querySelector("#stock_amount" + i).value;
+                if (amount.length == 0) {
+                  alert(__html('Please enter amount'));
+                  return;
+                }
+                if (isNaN(amount)) {
+                  alert(__html('Amount should be a number'));
+                  return;
+                }
+                if (amount < 0) {
+                  alert(__html('Amount should be a positive number'));
+                  return;
+                }
+                var obj = {
+                  id: el.currentTarget.dataset.id,
+                  amount: amount,
+                  title: _this.state.inventory[i].title,
+                  stock_unit: _this.state.inventory[i].stock_unit
+                };
+                addToInventory(_this, obj);
+              });
+            });
+          } else {
+            parseApiError(response);
+          }
+        })["catch"](function (error) {
+          parseApiError(error);
+        });
+      };
+      loadInventory(_this);
+      _this.state.modalCont.show();
+    });
+    var removeInventoryRow = function removeInventoryRow(_this, id) {
+      var sid = spaceID();
+      _this.state.response.product.stock.inventory = _this.state.response.product.stock.inventory.filter(function (el) {
+        return el.id != id;
+      });
+      fetch('https://api-v1.kenzap.cloud/', {
+        method: 'post',
+        headers: H(),
+        body: JSON.stringify({
+          query: {
+            product: {
+              type: 'update',
+              key: 'ecommerce-product',
+              id: getProductId(),
+              sid: sid,
+              data: {
+                stock: _this.state.response.product.stock
+              }
+            }
+          }
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (response) {
+        if (response.success) {
+          if (_this.state.modalCont) _this.state.modalCont.hide();
+          inventoryTable(_this);
+          toast(__html('Record removed'));
+        } else {
+          parseApiError(response);
+        }
+      })["catch"](function (error) {
+        parseApiError(error);
+      });
+    };
+    var loadInventoryPrice = function loadInventoryPrice(_this) {
+      var ids = _this.state.response.product.stock.inventory.map(function (obj) {
+        return obj.id;
+      });
+      fetch('https://api-v1.kenzap.cloud/', {
+        method: 'post',
+        headers: H(),
+        body: JSON.stringify({
+          query: {
+            inventory_price: {
+              type: 'find',
+              key: 'ecommerce-inventory',
+              fields: ['_id', 'img', 'status', 'tags', 'price', 'price_prev', 'price_per_unit', 'price_per_unit_prev', 'title', 'stock_amount', 'stock_unit', 'stock_warning', 'updated'],
+              id: ids
+            }
+          }
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (response) {
+        if (response.success) {
+          var price_total = 0;
+          response.inventory_price.forEach(function (inv) {
+            var price = inv.price_per_unit * parseFloat(document.querySelector('#itid' + inv._id).dataset.amount);
+            price_total += price;
+            document.querySelector('#itid' + inv._id).innerHTML = priceFormat(_this, price);
+          });
+          if (document.querySelector('#itidtotal')) document.querySelector('#itidtotal').innerHTML = priceFormat(_this, price_total);
+        } else {
+          parseApiError(response);
+        }
+      })["catch"](function (error) {
+        parseApiError(error);
+      });
+    };
+    loadInventoryPrice(_this);
+  };
+
+  var ProductEdit = _createClass(function ProductEdit() {
+    var _this = this;
+    _classCallCheck(this, ProductEdit);
+    _defineProperty(this, "getData", function () {
+      showLoader();
+      var id = getProductId();
+      fetch('https://api-v1.kenzap.cloud/', {
+        method: 'post',
+        headers: H(),
+        body: JSON.stringify({
+          query: {
+            user: {
+              type: 'authenticate',
+              fields: ['avatar'],
+              token: getCookie('kenzap_token')
+            },
+            product: {
+              type: 'find',
+              key: 'ecommerce-product',
+              id: id,
+              fields: ['_id', 'id', 'img', 'status', 'price', 'discounts', 'variations', 'title', 'sdesc', 'ldesc', 'stock', 'cats', 'updated']
+            },
+            settings: {
+              type: 'get',
+              key: 'ecommerce-settings',
+              fields: ['currency', 'currency_symb', 'currency_symb_loc', 'tax_calc', 'tax_auto_rate', 'tax_rate', 'tax_display', 'scripts_product_edit', 'addons']
+            },
+            locale: {
+              type: 'locale',
+              source: ['extension'],
+              key: 'ecommerce'
+            }
+          }
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (response) {
+        hideLoader();
+        if (!response.success) {
+          parseApiError(response);
+          return;
+        }
+        if (response.success) {
+          _this.state.response = response;
+          _this.state.settings = response.settings;
+          initHeader(response);
+          document.querySelector('#contents').innerHTML = HTMLContent();
+          if (response.product.length == 0) {
+            _this.initListeners('all');
+            return;
+          }
+          _this.render(response.product);
+          _this.loadImages(response.product);
+          _this.initListeners('all');
+          initFooter();
+          if (response.settings.addons) if (response.settings.addons.product_edit) response.settings.addons.product_edit.forEach(function (obj) {
+            loadAddon(obj.src, obj.version);
+          });
+        }
+      })["catch"](function (error) {
+        parseApiError(error);
+      });
+    });
+    _defineProperty(this, "render", function (product) {
+      var d = document;
+      initBreadcrumbs([{
+        link: link('https://dashboard.kenzap.cloud'),
+        text: __html('Home')
+      }, {
+        link: link('/'),
+        text: __html('E-commerce')
+      }, {
+        link: link('/product-list/'),
+        text: __html('Product List')
+      }, {
+        text: __html('Product Edit')
+      }]);
+      d.querySelector("#p-title").value = product.title;
+      d.querySelector("#p-sdesc").value = product.sdesc;
+      d.querySelector("#p-ldesc").value = product.ldesc;
+      d.querySelector("#p-price").value = product.price;
+      onlyNumbers('#p-price', [8, 46, 190]);
+      d.querySelector("#p-price-symb").innerHTML = _this.state.settings['currency_symb'] ? _this.state.settings['currency_symb'] : "";
+      document.querySelector(".discount-blocks").dataset.data = encodeURIComponent(JSON.stringify(product.discounts ? product.discounts : []));
+      _this.renderDiscounts();
+      for (var m in product.variations) {
+        var vr = product.variations[m];
+        var data = [];
+        data['title'] = vr['title'];
+        data['type'] = vr['type'];
+        data['required'] = vr['required'];
+        data['index'] = m;
+        d.querySelector(".variation-blocks").innerHTML += _this.structMixBlock(data);
+        for (var n in vr['data']) {
+          var vrd = vr['data'][n];
+          var _data = [];
+          _data['title'] = vrd['title'];
+          _data['price'] = vrd['price'];
+          _data['type'] = vr['type'];
+          d.querySelector(".var-block[data-index='" + m + "'] .offer-pricef").innerHTML += _this.structMixRow(_data);
+        }
+      }
+      if (!product['stock']) product['stock'] = {
+        management: false,
+        sku: "",
+        qty: 0,
+        low_threshold: 0,
+        inventory: []
+      };
+      var _iterator = _createForOfIteratorHelper(document.querySelectorAll('.stock-cont')),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var el = _step.value;
+          product['stock']['management'] == true ? el.classList.remove('d-none') : el.classList.add('d-none');
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+      document.querySelector('#stock_sku').value = product['stock']['sku'] ? product['stock']['sku'] : "";
+      document.querySelector('#stock_management').checked = product['stock']['management'];
+      document.querySelector('#stock_quantity').value = product['stock']['qty'] ? makeNumber(product['stock']['qty']) : 0;
+      document.querySelector('#stock_low_threshold').value = product['stock']['low_threshold'] ? makeNumber(product['stock']['low_threshold']) : 0;
+      document.querySelector('#p-status' + product.status).checked = true;
+      var pcats = document.querySelector('#p-cats');
+      if (product.cats) pcats.setAttribute('data-simple-tags', product.cats);
+      new simpleTags(__, pcats);
+      inventoryTable(_this);
+    });
+    _defineProperty(this, "initListeners", function () {
+      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'partial';
+      if (type == 'all') {
+        onClick('.btn-save', _this.listeners.saveProduct);
+        onClick('.p-modal .btn-primary', _this.listeners.modalSuccessBtn);
+      }
+      onClick('.add-discount', _this.listeners.addDiscountBlock);
+      onClick('.add-mix-block', _this.listeners.addMixBlock);
+      onClick('.edit-block', _this.listeners.editBlock);
+      onClick('.remove-block', _this.listeners.removeBlock);
+      onClick('.add-mix', _this.listeners.addMixOption);
+      onClick('.remove-option', _this.listeners.removeOption);
+      onClick('.stock-management', _this.listeners.stockManagement);
+    });
+    _defineProperty(this, "listeners", {
+      editBlock: function editBlock(e) {
+        e.preventDefault();
+        var amb = document.querySelector('.add-mix-block');
+        amb.dataset.action = 'edit';
+        amb.dataset.index = e.currentTarget.dataset.index;
+        setTimeout(function () {
+          return simulateClick(amb);
+        }, 10);
+      },
+      removeBlock: function removeBlock(e) {
+        e.preventDefault();
+        var c = confirm(__html('Remove entire block?'));
+        if (c) {
+          e.currentTarget.parentNode.parentNode.remove();
+        }
+      },
+      addMixBlock: function addMixBlock(e) {
+        e.preventDefault();
+        var action = e.currentTarget.dataset.action;
+        var index = e.currentTarget.dataset.index;
+        e.currentTarget.dataset.action = 'add';
+        var modal_title = __html('Add Variation Block');
+        var title = "";
+        var type = "";
+        var required = 0;
+        var modal_btn = __html('Add'),
+          modal_cancel_btn = __html('Cancel');
+        if (action == 'edit') {
+          modal_title = __html('Edit Variation Block');
+          title = document.querySelector(".var-block[data-index='" + index + "']").dataset.title;
+          type = document.querySelector(".var-block[data-index='" + index + "']").dataset.type;
+          required = parseInt(document.querySelector(".var-block[data-index='" + index + "']").dataset.required);
+          modal_btn = __html('Save');
+        }
+        var pmodal = document.querySelector(".p-modal");
+        var pmodalCont = new bootstrap.Modal(pmodal);
+        pmodal.querySelector(".modal-title").innerHTML = modal_title;
+        pmodal.querySelector(".btn-primary").innerHTML = modal_btn;
+        pmodal.querySelector(".btn-secondary").innerHTML = modal_cancel_btn;
+        pmodalCont.show();
+        var modalHTml = "\n            <div class=\"form-cont\">\n                <div class=\"form-group mb-3\">\n                    <label for=\"mtitle\" class=\"form-label\">".concat(__html('Save'), "</label>\n                    <input type=\"text\" class=\"form-control\" id=\"mtitle\" autocomplete=\"off\" placeholder=\"Rice type\" value=\"").concat(title, "\">\n                </div>\n                <div class=\"form-group mb-3\">\n                    <label for=\"mtype\" class=\"form-label\">").concat(__html('Input type'), "</label>\n                    <select id=\"mtype\" class=\"form-control \" >\n                        <option ").concat(type == 'radio' ? 'selected="selected"' : '', " value=\"radio\">").concat(__html('Radio buttons'), "</option>\n                        <option ").concat(type == 'checkbox' ? 'selected="selected"' : '', " value=\"checkbox\">").concat(__html('Checkboxes'), "</option>\n                    </select>\n                    <p class=\"form-text\">").concat(__html('Define how this renders on frontend.'), "</p>\n                </div>\n                <div class=\"form-group mb-3\">\n                    <div class=\"form-check\">\n                        <label for=\"id=\"mtype\"\" class=\"form-check-label form-label\">\n                            <input id=\"mrequired\" type=\"checkbox\" class=\"form-check-input\" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Required'), "\n                        </label>\n                    </div>\n                    <p class=\"form-text\">").concat(__html('Make this variation mandatory for users.'), "</p>\n                </div>\n                <div class=\"form-group mb-3 dn\">\n                    <label for=\"mtype\" class=\"form-label\">").concat(__html('Minimum required'), "</label>\n                    <select id=\"mtype\" class=\"form-control\" >\n                        <option value=\"1\">1</option>\n                        <option value=\"2\">2</option>\n                    </select>\n                </div>\n            </div>");
+        pmodal.querySelector(".modal-body").innerHTML = modalHTml;
+        setTimeout(function () {
+          return pmodal.querySelector("#mtitle").focus();
+        }, 100);
+        _this.listeners.modalSuccessBtnFunc = function (e) {
+          e.preventDefault();
+          var mtitle = pmodal.querySelector(".p-modal #mtitle").value;
+          var mtype = pmodal.querySelector(".p-modal #mtype").value;
+          var mrequired = pmodal.querySelector(".p-modal #mrequired:checked");
+          mrequired = mrequired == null ? 0 : mrequired.value == "1" ? 1 : 0;
+          if (mtitle.length < 2) {
+            alert(__html('Please provide longer title'));
+            return;
+          }
+          var data = [];
+          data['title'] = mtitle;
+          data['type'] = mtype;
+          data['required'] = mrequired;
+          data['index'] = document.querySelectorAll(".var-block").length;
+          if (action == 'edit') {
+            document.querySelector(".var-block[data-index='" + index + "']").dataset.title = mtitle;
+            document.querySelector(".var-block[data-index='" + index + "']").dataset.type = mtype;
+            document.querySelector(".var-block[data-index='" + index + "']").dataset.required = mrequired;
+            document.querySelector(".var-block[data-index='" + index + "'] .title").innerHTML = mtitle;
+          }
+          if (action == 'add') {
+            if (document.querySelector(".variation-blocks .var-block") == null) {
+              document.querySelector(".variation-blocks").innerHTML = _this.structMixBlock(data);
+            } else {
+              document.querySelector(".variation-blocks .var-block:last-of-type").insertAdjacentHTML('afterend', _this.structMixBlock(data));
+            }
+          }
+          pmodalCont.hide();
+          setTimeout(function () {
+            return _this.initListeners('partial');
+          }, 10);
+        };
+      },
+      addMixOption: function addMixOption(e) {
+        var block_el = e.currentTarget;
+        e.preventDefault();
+        var pmodal = document.querySelector(".p-modal");
+        var pmodalCont = new bootstrap.Modal(pmodal);
+        pmodalCont.show();
+        pmodal.querySelector(".modal-title").innerHTML = __html('Add Variation');
+        pmodal.querySelector(".btn-primary").innerHTML = __html('Add');
+        pmodal.querySelector(".btn-secondary").innerHTML = __html('Cancel');
+        var modalHTML = "\n            <div class=\"form-cont\">\n                <div class=\"form-group\">\n                    <label for=\"mtitle\" class=\"form-label\">".concat(__html('Title'), "</label>\n                    <input type=\"text\" class=\"form-control\" id=\"mtitle\" autocomplete=\"off\" placeholder=\"").concat(__html('Brown rice'), "\">\n                </div>\n                <div class=\"form-group mt-3\">\n                    <label for=\"mprice\" class=\"form-label\">").concat(__html('Price'), "</label>\n                    <div class=\"input-group mb-3\">\n                        <span class=\"input-group-text\">$</span>\n                        <input id=\"mprice\" type=\"text\" class=\"form-control\" placeholder=\"0.00\" value=\"\" >\n                        <p class=\"form-text\">").concat(__html('You can change default currency under Dashboard &gt; Settings.'), "</p>\n                    </div>\n                </div>\n            </div>");
+        pmodal.querySelector(".modal-body").innerHTML = modalHTML;
+        setTimeout(function () {
+          return pmodal.querySelector("#mtitle").focus();
+        }, 100);
+        _this.listeners.modalSuccessBtnFunc = function (e) {
+          e.preventDefault();
+          var mtitle = pmodal.querySelector(".p-modal #mtitle").value;
+          var mprice = pmodal.querySelector(".p-modal #mprice").value;
+          if (mtitle.length < 2) {
+            alert("Please provide longer title");
+            return;
+          }
+          var data = [];
+          data['title'] = mtitle;
+          data['price'] = mprice;
+          data['type'] = block_el.parentElement.parentElement.dataset.type;
+          var sel = ".var-block[data-index='" + block_el.parentElement.parentElement.dataset.index + "']";
+          console.log(sel);
+          if (document.querySelector(sel + " .offer-pricef li") == null) {
+            document.querySelector(sel + " .offer-pricef").innerHTML = _this.structMixRow(data);
+          } else {
+            document.querySelector(sel + " .offer-pricef li:last-of-type").insertAdjacentHTML('afterend', _this.structMixRow(data));
+          }
+          pmodalCont.hide();
+          setTimeout(function () {
+            return _this.initListeners('partial');
+          }, 10);
+        };
+      },
+      removeOption: function removeOption(e) {
+        e.preventDefault();
+        if (confirm('Remove option?')) e.currentTarget.parentElement.remove();
+      },
+      removeDiscount: function removeDiscount(e) {
+        e.preventDefault();
+        if (confirm('Remove discount?')) {
+          e.currentTarget.parentElement.remove();
+          var discounts = JSON.parse(decodeURIComponent(document.querySelector('.discount-blocks').dataset.data));
+          discounts.splice(e.currentTarget.dataset.index, 1);
+          document.querySelector(".discount-blocks").dataset.data = encodeURIComponent(JSON.stringify(discounts));
+        }
+      },
+      addDiscountBlock: function addDiscountBlock(e) {
+        e.preventDefault();
+        var action = e.currentTarget.dataset.action;
+        var index = e.currentTarget.dataset.index;
+        e.currentTarget.dataset.action = 'add';
+        var modal_title = __html('Add discount');
+        var type = "";
+        var required = 0;
+        var modal_btn = __html('Add'),
+          modal_cancel_btn = __html('Cancel');
+        if (action == 'edit') {
+          modal_title = __html('Edit Variation Block');
+          document.querySelector(".var-block[data-index='" + index + "']").dataset.title;
+          type = document.querySelector(".var-block[data-index='" + index + "']").dataset.type;
+          required = parseInt(document.querySelector(".var-block[data-index='" + index + "']").dataset.required);
+          modal_btn = __html('Save');
+        }
+        var pmodal = document.querySelector(".p-modal");
+        var pmodalCont = new bootstrap.Modal(pmodal);
+        pmodal.querySelector(".modal-title").innerHTML = modal_title;
+        pmodal.querySelector(".btn-primary").innerHTML = modal_btn;
+        pmodal.querySelector(".btn-secondary").innerHTML = modal_cancel_btn;
+        pmodalCont.show();
+        var modalHTml = "\n            <div class=\"form-cont\">\n                <div class=\"form-group mb-3\">\n                    <div class=\"row\">\n                        <div class=\"col-lg-6\">\n                            <label for=\"discount-type\" class=\"form-label\">".concat(__html('Type'), "</label>\n                            <select id=\"discount-type\" class=\"form-control\" >\n                                <option ").concat(type == 'percent' ? 'selected="selected"' : '', " value=\"percent\">").concat(__html('By percent'), "</option>\n                                <option ").concat(type == 'value' ? 'selected="selected"' : '', " value=\"value\">").concat(__html('By value'), "</option>\n                                <option ").concat(type == 'never' ? 'selected="selected"' : '', " value=\"never\">").concat(__html('never discount'), "</option>\n                            </select>\n                        </div>\n                        <div id=\"discount-percent-cont\" class=\"col-lg-6\">\n                            <label for=\"discount-percent\" class=\"form-label\">").concat(__html('Percent %'), "</label>\n                            <input type=\"text\" class=\"form-control\" id=\"discount-percent\" autocomplete=\"off\" placeholder=\"").concat(__html('5'), "\">\n                        </div>\n                        <div id=\"discount-value-cont\" class=\"col-lg-6 d-none\">\n                            <label for=\"discount-value\" class=\"form-label\">").concat(__html('Value'), "</label>\n                            <input type=\"text\" class=\"form-control\" id=\"discount-value\" autocomplete=\"off\" placeholder=\"").concat(__html('12.00'), "\">\n                        </div>\n                    </div>\n                    <p class=\"form-text discount-hint-cont\">").concat(__html('Define how big is the discount (numeric value only).'), "</p>\n                    <p class=\"form-text discount-never-cont d-none\">").concat(__html('Never apply general discount for this product'), "</p>\n                </div>\n                <div class=\"discount-availability-cont form-group mb-3\">\n                    <label for=\"discount-availability\" class=\"form-label\">").concat(__html('Availability'), "</label>\n                    <select id=\"discount-availability\" class=\"form-control \" >\n                        <option ").concat('', " value=\"admin\">").concat(__html('Admin'), "</option>\n                        <option ").concat('', " value=\"always\">").concat(__html('Always'), "</option>\n                        <option ").concat('', " value=\"hourly\">").concat(__html('Hourly'), "</option>\n                        <option ").concat('', " value=\"weekly\">").concat(__html('Weekly'), "</option>\n                        <option class=\"d-none\" ").concat('', " value=\"monthly\">").concat(__html('Monthly'), "</option>\n                    </select>\n                    <p class=\"form-text\">").concat(__html('Restrict discount availability.'), "</p>\n                </div>\n                <div id=\"discount-weekly\" class=\"discount-weekly-cont form-group mb-3 d-none\">\n                    <label for=\"mtype\" class=\"form-label\">").concat(__html('Days of week'), "</label>\n                    <div class=\"form-check\">\n                        <label for=\"week-monday\" class=\"form-check-label form-label\">\n                            <input id=\"week-monday\" type=\"checkbox\" class=\"form-check-input \" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Monday'), "\n                        </label>\n                    </div>\n                    <div class=\"form-check\">\n                        <label for=\"week-tuesday\" class=\"form-check-label form-label\">\n                            <input id=\"week-tuesday\" type=\"checkbox\" class=\"form-check-input\" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Tuesday'), "\n                        </label>\n                    </div>\n                    <div class=\"form-check\">\n                        <label id=\"week-wednesday\" class=\"form-check-label form-label\">\n                            <input id=\"week-wednesday\" type=\"checkbox\" class=\"form-check-input\" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Wednesday'), "\n                        </label>\n                    </div>\n                    <div class=\"form-check\">\n                        <label id=\"week-thursday\" class=\"form-check-label form-label\">\n                            <input id=\"week-thursday\" type=\"checkbox\" class=\"form-check-input\" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Thursday'), "\n                        </label>\n                    </div>\n                    <div class=\"form-check\">\n                        <label id=\"week-friday\" class=\"form-check-label form-label\">\n                            <input id=\"week-friday\" type=\"checkbox\" class=\"form-check-input\" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Friday'), "\n                        </label>\n                    </div>\n                    <div class=\"form-check\">\n                        <label id=\"week-saturday\" class=\"form-check-label form-label\">\n                            <input id=\"week-saturday\" type=\"checkbox\" class=\"form-check-input\" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Saturday'), "\n                        </label>\n                    </div>\n                    <div class=\"form-check\">\n                        <label id=\"week-sunday\" class=\"form-check-label form-label\">\n                            <input id=\"week-sunday\" type=\"checkbox\" class=\"form-check-input\" ").concat(required == 1 ? 'checked="checked"' : '', " value=\"1\">\n                            ").concat(__html('Sunday'), "\n                        </label>\n                    </div>\n                    <p class=\"form-text\">").concat(__html('Days of the week when discount is available.'), "</p>\n                </div>\n                <div id=\"discount-hourly\" class=\"form-group discount-hourly-cont mb-3 d-none\">\n                    <div class=\"row\">\n                        <div class=\"col-lg-6\">\n                            <div class=\"form-group mb-3 mt-1\">\n                                <label for=\"discount-hour-from\" class=\"form-label\">").concat(__html('From'), "</label>\n                                <input id=\"discount-hour-from\" type=\"text\" class=\"form-control\" maxlength=\"5\" autocomplete=\"off\" placeholder=\"").concat(__html('12:00'), "\">\n                            </div>\n                        </div>\n                        <div class=\"col-lg-6\">\n                            <div class=\"form-group mb-3 mt-1\">\n                                <label for=\"discount-hour-to\" class=\"form-label\">").concat(__html('To'), "</label>\n                                <input id=\"discount-hour-to\" type=\"text\" class=\"form-control\" maxlength=\"5\" autocomplete=\"off\" placeholder=\"").concat(__html('17:00'), "\">\n                            </div>\n                        </div>\n                    </div>\n                    <p class=\"form-text\">").concat(__html('Time range when discount is available.'), "</p>\n                </div>\n                <div class=\"form-group discount-note-cont mb-3\">\n                    <div class=\"form-group mb-3 mt-1\">\n                        <label for=\"discount-note\" class=\"form-label\">").concat(__html('Note'), "</label>\n                        <input id=\"discount-note\" type=\"text\" class=\"form-control\" maxlength=\"25\" autocomplete=\"off\" placeholder=\"").concat(__html(''), "\">\n                        <p class=\"form-text\">").concat(__html('Example: •happy hour promo.'), "</p>\n                    </div>\n                </div> \n            </div>");
+        pmodal.querySelector(".modal-body").innerHTML = modalHTml;
+        setTimeout(function () {
+          return pmodal.querySelector("#discount-type").focus();
+        }, 100);
+        onChange('#discount-availability', function (e) {
+          console.log(e.currentTarget.value);
+          switch (e.currentTarget.value) {
+            case 'admin':
+              document.querySelector('#discount-weekly').classList.add('d-none');
+              document.querySelector('#discount-hourly').classList.add('d-none');
+              break;
+            case 'always':
+              document.querySelector('#discount-weekly').classList.add('d-none');
+              document.querySelector('#discount-hourly').classList.add('d-none');
+              break;
+            case 'hourly':
+              document.querySelector('#discount-weekly').classList.add('d-none');
+              document.querySelector('#discount-hourly').classList.remove('d-none');
+              break;
+            case 'weekly':
+              document.querySelector('#discount-weekly').classList.remove('d-none');
+              document.querySelector('#discount-hourly').classList.remove('d-none');
+              break;
+          }
+        });
+        onlyNumbers('#discount-percent', [8]);
+        onlyNumbers('#discount-value', [8, 46]);
+        onlyNumbers('#discount-hour-from', [8, 58]);
+        onlyNumbers('#discount-hour-to', [8, 58]);
+        onChange('#discount-type', function (e) {
+          console.log(e.currentTarget.value);
+          document.querySelector('.discount-never-cont').classList.add('d-none');
+          document.querySelector('.discount-hint-cont').classList.remove('d-none');
+          document.querySelector('.discount-availability-cont').classList.remove('d-none');
+          document.querySelector('.discount-hint-cont').classList.remove('d-none');
+          switch (e.currentTarget.value) {
+            case 'percent':
+              document.querySelector('#discount-percent-cont').classList.remove('d-none');
+              document.querySelector('#discount-value-cont').classList.add('d-none');
+              break;
+            case 'value':
+              document.querySelector('#discount-percent-cont').classList.add('d-none');
+              document.querySelector('#discount-value-cont').classList.remove('d-none');
+              break;
+            case 'never':
+              document.querySelector('#discount-percent-cont').classList.add('d-none');
+              document.querySelector('#discount-value-cont').classList.add('d-none');
+              document.querySelector('.discount-never-cont').classList.remove('d-none');
+              document.querySelector('.discount-availability-cont').classList.add('d-none');
+              document.querySelector('.discount-hint-cont').classList.add('d-none');
+              break;
+          }
+        });
+        _this.listeners.modalSuccessBtnFunc = function (e) {
+          e.preventDefault();
+          var obj = {},
+            allow = true;
+          document.querySelector(".form-cont").classList.add("was-validated");
+          document.querySelector("#discount-percent").setCustomValidity("");
+          document.querySelector("#discount-hour-from").setCustomValidity("");
+          document.querySelector("#discount-hour-to").setCustomValidity("");
+          var discounts = document.querySelector(".discount-blocks").dataset.data;
+          if (!discounts) {
+            discounts = [];
+          } else {
+            discounts = JSON.parse(decodeURIComponent(discounts));
+          }
+          obj.note = document.querySelector("#discount-note").value;
+          obj.type = document.querySelector("#discount-type").value;
+          if (obj.type == 'percent') {
+            obj.percent = document.querySelector("#discount-percent").value;
+            if (obj.percent == "") {
+              document.querySelector("#discount-percent").setCustomValidity("Percent field can not be empty.");
+              allow = false;
+            }
+          } else if (obj.type == 'value') {
+            obj.value = document.querySelector("#discount-value").value;
+            if (obj.value == "") {
+              document.querySelector("#discount-value").setCustomValidity("Value field can not be empty.");
+              allow = false;
+            }
+          } else if (obj.type == 'value') {
+            obj.value = "-";
+          }
+          obj.availability = document.querySelector("#discount-availability").value;
+          if (obj.availability == 'always') ; else if (obj.availability == 'admin') ; else if (obj.availability == 'hourly') {
+            obj.hours = {
+              from: document.querySelector("#discount-hour-from").value,
+              to: document.querySelector("#discount-hour-to").value
+            };
+            if (obj.hours.from.length < 2) {
+              document.querySelector("#discount-hour-from").setCustomValidity("Wrong time format");
+              allow = false;
+            }
+            if (obj.hours.to.length < 2) {
+              document.querySelector("#discount-hour-to").setCustomValidity("Wrong time format");
+              allow = false;
+            }
+          } else if (obj.availability == 'weekly') {
+            obj.hours = {
+              from: document.querySelector("#discount-hour-from").value,
+              to: document.querySelector("#discount-hour-to").value
+            };
+            if (obj.hours.from.length < 2) {
+              document.querySelector("#discount-hour-from").setCustomValidity("Wrong time format");
+              allow = false;
+            }
+            if (obj.hours.to.length < 2) {
+              document.querySelector("#discount-hour-to").setCustomValidity("Wrong time format");
+              allow = false;
+            }
+            obj.dow = [];
+            var _iterator2 = _createForOfIteratorHelper(document.querySelectorAll('#discount-weekly input')),
+              _step2;
+            try {
+              for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                var el = _step2.value;
+                obj.dow.push(el.checked);
+              }
+            } catch (err) {
+              _iterator2.e(err);
+            } finally {
+              _iterator2.f();
+            }
+          }
+          if (!allow) {
+            alert('Please enter all fields correctly.');
+            return;
+          }
+          discounts.push(obj);
+          document.querySelector(".discount-blocks").dataset.data = encodeURIComponent(JSON.stringify(discounts));
+          _this.renderDiscounts();
+          pmodalCont.hide();
+          setTimeout(function () {
+            return _this.initListeners('partial');
+          }, 10);
+        };
+      },
+      saveProduct: function saveProduct(e) {
+        e.preventDefault();
+        var data = {};
+        var _iterator3 = _createForOfIteratorHelper(document.querySelectorAll('.inp')),
+          _step3;
+        try {
+          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+            var inp = _step3.value;
+            data[inp.id.replace("p-", "")] = inp.value.trim();
+          }
+        } catch (err) {
+          _iterator3.e(err);
+        } finally {
+          _iterator3.f();
+        }
+        data["cats"] = [];
+        var _iterator4 = _createForOfIteratorHelper(document.querySelectorAll('#p-cats ul li')),
+          _step4;
+        try {
+          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+            var cat = _step4.value;
+            data["cats"].push(cat.innerHTML.replace('<a>×</a>', '').trim());
+          }
+        } catch (err) {
+          _iterator4.e(err);
+        } finally {
+          _iterator4.f();
+        }
+        data["img"] = [];
+        var _iterator5 = _createForOfIteratorHelper(document.querySelectorAll('.p-img')),
+          _step5;
+        try {
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+            var img = _step5.value;
+            var tf = !img.getAttribute('src').includes("placeholder") ? true : false;
+            data["img"].push(tf);
+          }
+        } catch (err) {
+          _iterator5.e(err);
+        } finally {
+          _iterator5.f();
+        }
+        data["discounts"] = JSON.parse(decodeURIComponent(document.querySelector('.discount-blocks').dataset.data));
+        data["stock"] = {
+          inventory: _this.state.response.product.stock.inventory
+        };
+        data['stock']['sku'] = document.querySelector('#stock_sku').value;
+        data['stock']['management'] = document.querySelector('#stock_management').checked;
+        data['stock']['qty'] = document.querySelector('#stock_quantity').value;
+        data['stock']['low_threshold'] = document.querySelector('#stock_low_threshold').value;
+        data["status"] = document.querySelector('input[name="p-status"]:checked').value;
+        data["variations"] = [];
+        var block_index = 0;
+        var _iterator6 = _createForOfIteratorHelper(document.querySelectorAll('.variation-blocks .var-block')),
+          _step6;
+        try {
+          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+            var block = _step6.value;
+            var option_index = 0;
+            var _iterator7 = _createForOfIteratorHelper(block.querySelectorAll('.offer-pricef li')),
+              _step7;
+            try {
+              for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+                var option = _step7.value;
+                if (typeof data["variations"][block_index] === 'undefined') data["variations"][block_index] = {
+                  'title': block.getAttribute('data-title'),
+                  'type': block.getAttribute('data-type'),
+                  'required': block.getAttribute('data-required'),
+                  'data': []
+                };
+                data["variations"][block_index]['data'][option_index] = {
+                  'title': option.getAttribute('data-title'),
+                  'price': option.getAttribute('data-price'),
+                  'cond': option.getAttribute('data-cond')
+                };
+                option_index++;
+              }
+            } catch (err) {
+              _iterator7.e(err);
+            } finally {
+              _iterator7.f();
+            }
+            block_index++;
+          }
+        } catch (err) {
+          _iterator6.e(err);
+        } finally {
+          _iterator6.f();
+        }
+        var id = getProductId();
+        var sid = spaceID();
+        showLoader();
+        fetch('https://api-v1.kenzap.cloud/', {
+          method: 'post',
+          headers: H(),
+          body: JSON.stringify({
+            query: {
+              product: {
+                type: 'update',
+                key: 'ecommerce-product',
+                id: id,
+                sid: sid,
+                data: data
+              }
+            }
+          })
+        }).then(function (response) {
+          return response.json();
+        }).then(function (response) {
+          if (response.success) {
+            _this.uploadImages();
+          } else {
+            parseApiError(response);
+          }
+        })["catch"](function (error) {
+          parseApiError(error);
+        });
+      },
+      openImage: function openImage(e) {
+        e.preventDefault();
+        simulateClick(document.querySelector(".aif-" + e.currentTarget.dataset.index));
+      },
+      previewImage: function previewImage(e) {
+        e.preventDefault();
+        var input = e.currentTarget;
+        if (input.files && input.files[0]) {
+          if (input.files[0].type != 'image/jpeg' && input.files[0].type != 'image/jpg' && input.files[0].type != 'image/png') {
+            toast(__html("Please provide image in JPEG format"));
+            return;
+          }
+          if (input.files[0].size > 5000000) {
+            toast(__html("Please provide image less than 5 MB in size!"));
+            return;
+          }
+          var index = input.dataset.index;
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            document.querySelector('.images-' + index).setAttribute('src', e.currentTarget.result);
+          };
+          reader.readAsDataURL(input.files[0]);
+          e.currentTarget.parentElement.querySelector('.remove').classList.remove("hd");
+        }
+      },
+      removeImage: function removeImage(e) {
+        var index = e.currentTarget.parentElement.dataset.index;
+        document.querySelector('.aif-' + index).value = '';
+        document.querySelector('.images-' + index).setAttribute('src', 'https://account.kenzap.com/images/placeholder.jpg');
+        e.currentTarget.classList.add("hd");
+      },
+      modalSuccessBtn: function modalSuccessBtn(e) {
+        _this.listeners.modalSuccessBtnFunc(e);
+      },
+      stockManagement: function stockManagement(e) {
+        var _iterator8 = _createForOfIteratorHelper(document.querySelectorAll('.stock-cont')),
+          _step8;
+        try {
+          for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+            var el = _step8.value;
+            e.currentTarget.checked ? el.classList.remove('d-none') : el.classList.add('d-none');
+            e.currentTarget.value = e.currentTarget.checked ? "1" : "0";
+          }
+        } catch (err) {
+          _iterator8.e(err);
+        } finally {
+          _iterator8.f();
+        }
+      },
+      modalSuccessBtnFunc: null
+    });
+    _defineProperty(this, "structMixBlock", function (data) {
+      var html = "\n        <div class=\"mb-4 var-block mw\" data-title=\"".concat(data.title, "\" data-type=\"").concat(data.type, "\" data-required=\"").concat(data.required, "\" data-index=\"").concat(data.index, "\" >\n            <label for=\"offer-pricef\" class=\"form-label pb-2\"><span class=\"title\">").concat(data.title, "</span>\n                &nbsp;&nbsp;\n                <svg class=\"bi bi-pencil-fill edit-block ms-3\" title=\"edit block\" data-index=\"").concat(data.index, "\" xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 16 16\">\n                    <path d=\"M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z\"/>\n                </svg>\n                <svg class=\"bi bi-trash remove-block ms-3\" title=\"edit block\" data-index=\"").concat(data.index, "\"  xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"#ff0079\" viewBox=\"0 0 16 16\">\n                    <path d=\"M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z\"></path>                    <path fill-rule=\"evenodd\" d=\"M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z\"></path>\n                </svg>\n            </label>\n            <div class=\"list-wrapper\">\n                <ul class=\"d-flex flex-column-reverse offer-pricef\" >\n                \n                </ul>\n            </div>\n            <p class=\"form-text\"><a class=\"add-mix\" href=\"#\">").concat(__html('+ add option'), "</a> ").concat(__html('to differentiate price offering.'), "</p>\n            <div class=\"add-mix-ctn d-none\"><a class=\"add-mix\" href=\"#\">").concat(__html('+ add option'), "</a></div>\n        </div>");
+      return html;
+    });
+    _defineProperty(this, "structMixRow", function (data) {
+      return "\n        <li data-title=\"".concat(data.title, "\" data-price=\"").concat(data.price, "\" data-cond=\"\" class=\"pt-2 pb-2\"><div class=\"form-check\"><label class=\"form-check-label form-label\"><input class=\"").concat(data.type, " form-check-input\" type=\"").concat(data.type, "\" checked=\"\" data-ft=\"").concat(data.title, "\">").concat(data.title, " &nbsp;&nbsp;&nbsp; ").concat(priceFormat(_this, data.price), "</label></div>\n            <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"#ff0079\" class=\"remove-option bi bi-x-circle\" viewBox=\"0 0 16 16\">                <path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"/>\n                <path d=\"M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z\"/>\n            </svg>\n        </li>");
+    });
+    _defineProperty(this, "loadImages", function (product) {
+      var d = document;
+      var id = getProductId();
+      var sid = spaceID();
+      var t = '';
+      for (var i = 0; i < 5; i++) {
+        var img = product.img !== undefined && product.img[i] == 'true' ? 'https://preview.kenzap.cloud/S' + spaceID() + '/_site/images/product-' + product.id + '-' + (i + 1) + '-100x100.jpeg?' + product.updated : 'https://account.kenzap.com/images/placeholder.jpg';
+        t += "          <div class=\"p-img-cont float-start\">            <p data-index=\"".concat(i, "\">              <img class=\"p-img images-").concat(i, "\" data-index=\"").concat(i, "\" width=\"100\" height=\"100\" src=\"").concat(img, "\" />              <span class=\"remove hd\" title=\"").concat(__html('Remove'), "\">\xD7</span>            </p>            <input type=\"file\" name=\"img[]\" data-type=\"search\" data-index=\"").concat(i, "\" class=\"file aif-").concat(i, " d-none\">          </div>");
+      }
+      d.querySelector(".ic").innerHTML = t;
+      onClick('.p-img-cont img', _this.listeners.openImage);
+      onClick('.p-img-cont .remove', _this.listeners.removeImage);
+      onChange('.p-img-cont .file', _this.listeners.previewImage);
+      for (var fi = 0; fi < 5; fi++) {
+        var image_url = CDN + '/S' + sid + '/product-' + id + '-' + (parseInt(fi) + 1) + '-250.jpeg?' + product.updated;
+        setTimeout(function (img, sel, _fi) {
+          var allow = true;
+          if (typeof product.img !== "undefined") {
+            if (!product.img[_fi]) allow = false;
+          }
+          if (allow) {
+            var _i = new Image();
+            _i.onload = function () {
+              d.querySelector(sel + _fi).setAttribute('src', img);
+              d.querySelector(sel + _fi).parentElement.querySelector('.remove').classList.remove('hd');
+            };
+            _i.src = img;
+          }
+        }, 300, image_url, ".images-", fi);
+      }
+    });
+    _defineProperty(this, "uploadImages", function () {
+      if (document.querySelector(".imgupnote")) document.querySelector(".imgupnote").remove();
+      var fi = 0;
+      var _iterator9 = _createForOfIteratorHelper(document.querySelectorAll(".file")),
+        _step9;
+      try {
+        for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+          var fileEl = _step9.value;
+          fi += 1;
+          var id = getProductId();
+          var sid = spaceID();
+          var file = fileEl.files[0];
+          if (typeof file === "undefined") continue;
+          var fd = new FormData();
+          var sizes = '1000|500|250|100x100';
+          fd.append('id', id);
+          fd.append('sid', sid);
+          fd.append('pid', id);
+          fd.append('key', 'image');
+          fd.append('sizes', sizes);
+          fd.append('file', file);
+          fd.append('slug', 'product-' + id + '-' + fi);
+          fd.append('token', getCookie('kenzap_token'));
+          file.value = '';
+          _this.state.ajaxQueue += 1;
+          fetch("https://api-v1.kenzap.cloud/upload/", {
+            body: fd,
+            method: "post"
+          }).then(function (response) {
+            return response.json();
+          }).then(function (response) {
+            _this.state.ajaxQueue -= 1;
+            if (response.success && _this.state.ajaxQueue == 0) {
+              toast(__html("Product updated"));
+              hideLoader();
+            }
+          });
+        }
+      } catch (err) {
+        _iterator9.e(err);
+      } finally {
+        _iterator9.f();
+      }
+      if (_this.state.ajaxQueue == 0) {
+        toast(__html("Product updated"));
+        hideLoader();
+      }
+    });
+    _defineProperty(this, "renderDiscounts", function () {
+      var discounts = document.querySelector('.discount-blocks').dataset.data;
+      var dow = [__html('Monday'), __html('Tuesday'), __html('Wednesday'), __html('Thursday'), __html('Friday'), __html('Saturday'), __html('Sunday')];
+      discounts = JSON.parse(decodeURIComponent(discounts));
+      var html = '';
+      discounts.forEach(function (el, index) {
+        var dv = el.type == 'value' ? priceFormat(_this, el.value) : el.percent + '% (' + priceFormat(_this, makeNumber(document.querySelector("#p-price").value) * ((100 - el.percent) / 100)) + ')';
+        var time = '';
+        switch (el.availability) {
+          case 'admin':
+            time = __html('Admin') + ' ' + dv;
+            break;
+          case 'always':
+            time = __html('Always') + ' ' + dv;
+            break;
+          case 'hourly':
+            time = el.hours.from + '-' + el.hours.to + ' ' + dv;
+            break;
+          case 'weekly':
+            el.dow.forEach(function (day, index) {
+              time += day == true ? dow[index] + ' ' : '';
+            });
+            time += '<b>' + el.hours.from + '-' + el.hours.to + '</b> ' + dv;
+            break;
+        }
+        if (el.type == "never") time = __html('Avoid discount calculation for this product.');
+        html += "\n            <li class=\"form-text mb-2\" >\n                ".concat(time, "\n                <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"#ff0079\" class=\"remove-discount bi bi-x-circle\" data-index=").concat(index, " viewBox=\"0 0 16 16\"><path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"></path><path d=\"M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z\"></path></svg>\n            </li>");
+      });
+      if (html == '') {
+        document.querySelector('.discount-list').classList.add('d-none');
+      } else {
+        document.querySelector('.discount-list').classList.remove('d-none');
+      }
+      document.querySelector('.discount-blocks ul').innerHTML = html;
+      onClick('.remove-discount', _this.listeners.removeDiscount);
+    });
+    this.state = {
+      ajaxQueue: 0,
+      settings: {}
+    };
+    this.getData();
+  });
+  new ProductEdit();
+
+})();
+//# sourceMappingURL=index.js.map

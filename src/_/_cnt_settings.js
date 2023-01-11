@@ -1,6 +1,6 @@
 import { __html } from '@kenzap/k-cloud';
 
-export const HTMLContent = (__) => {
+export const HTMLContent = () => {
 
   return `
     <div class="container p-edit">

@@ -1,27 +1,44 @@
-// js dependencies
-import { H, __html, __attr, html, attr, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime, stockBadge, simpleTags, onlyNumbers, initFooter } from "../_/_helpers.js"
+import { H, __html, __attr,  attr, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
+import { getPageNumber, getPagination, priceFormat, formatTime, stockBadge, initFooter } from "../_/_helpers.js"
 import { inventoryListContent } from "../_/_cnt_inventory_list.js"
 import { inventoryEdit } from "../_/_mod_inventory_edit.js"
 import { inventoryView } from "../_/_mod_inventory_view.js"
 import { categoryTable } from "../_/_mod_inventory_category_table.js"
 
-// where everything happens
-const _this = {
-  
-    state:{
-        firstLoad: true,
-        settings: {},
-        limit: 50, // number of records to load per table
-    },
-    init: () => {
-         
-        _this.getData();
-    },
-    getData: () => {
+/**
+ * Inventory page of the dashboard.
+ * Loads HTMLContent from _cnt_inventory_list.js file.
+ * Renders inventory list in a dynamic table.
+ * Supports global search, sorting and pagination
+ * 
+ * @version 1.0
+ */
+class Inventory {
+    
+    // construct class
+    constructor(){
+        
+        this.state = {
+            firstLoad: true,
+            settings: {}, // cache settings object retrieved from the backend
+            limit: 50,  // number of records to load per table
+        };
+    
+        // connect to backend
+        this.getData();
+    }
+
+    /**
+     * Get data from the cloud and authenticate the user.
+     * Load settings, user, inventory and locale  data.
+     * 
+     * @version 1.0
+     * @link https://developer.kenzap.cloud/
+     */
+    getData = () => {
 
         // show loader during first load
-        if (_this.state.firstLoad) showLoader();
+        if (this.state.firstLoad) showLoader();
 
         // search content
         let s = document.querySelector('.search-cont input') ? document.querySelector('.search-cont input').value : '';
@@ -94,16 +111,16 @@ const _this = {
         let search = {};
         
         // filter by tag
-        if(_this.state.tag){
+        if(this.state.tag){
 
-            console.log("tag: " + _this.state.tag);
+            console.log("tag: " + this.state.tag);
 
-            document.querySelector('.select-title-btn').innerHTML = __html('Tag %1$', '<span class="fw-light">' + _this.state.tag + '</span>');
+            document.querySelector('.select-title-btn').innerHTML = __html('Tag %1$', '<span class="fw-light">' + this.state.tag + '</span>');
 
             search =
                 {                                                           // if s is empty search query is ignored
                     field: 'tags',
-                    s: _this.state.tag
+                    s: this.state.tag
                 }
         }
 
@@ -130,7 +147,6 @@ const _this = {
                     },
                     locale: {
                         type:       'locale',
-                        // locale:      localStorage.hasOwnProperty('locale') ? localStorage.getItem('locale') : "en",
                         source:      ['extension'],
                         key:         'ecommerce',
                     },
@@ -143,16 +159,11 @@ const _this = {
                         type:       'find',
                         key:        'ecommerce-inventory',
                         fields:     ['_id', 'id', 'img', 'status', 'tags', 'price', 'price_prev', 'price_per_unit', 'price_per_unit_prev', 'write_off', 'title', 'stock_amount', 'stock_unit', 'stock_warning', 'updated'],
-                        limit:      _this.state.limit,
-                        offset:     s.length > 0 ? 0 : getPageNumber() * _this.state.limit - _this.state.limit,    // automatically calculate the offset of table pagination
+                        limit:      this.state.limit,
+                        offset:     s.length > 0 ? 0 : getPageNumber() * this.state.limit - this.state.limit,    // automatically calculate the offset of table pagination
                         search:     search,
                         sortby:     sort,
                         term:       term
-                        // groupby:    [
-                        //                 {
-                        //                     field: 'created',
-                        //                 }
-                        //             ]
                     },
                 }
             })
@@ -165,29 +176,29 @@ const _this = {
 
             if(response.success){
 
-                _this.state.settings = response.settings;
-                _this.state.response = response;
+                this.state.settings = response.settings;
+                this.state.response = response;
 
                 // init header
                 initHeader(response);
 
                 // get core html content 
-                _this.loadPageStructure();  
+                this.html();  
 
                 // render table
-                _this.renderPage(response);
+                this.render(response);
 
                 // bind content listeners
-                _this.initListeners();
+                this.initListeners();
             
                 // init pagination
-                _this.initPagination(response);
+                this.initPagination(response);
 
                 // initiate footer
-                initFooter(_this);
+                initFooter(this);
 
                 // first load
-                _this.state.firstLoad = false;
+                this.state.firstLoad = false;
 
             }else{
 
@@ -195,8 +206,9 @@ const _this = {
             }
         })
         .catch(error => { parseApiError(error); });
-    },
-    authUser: (response) => {
+    }
+
+    authUser = (response) => {
 
         if(response.user){
             
@@ -205,19 +217,23 @@ const _this = {
                 
             }
         }
-    },
-    loadPageStructure: () => {
+    }
+
+    html = () => {
   
-        if(!_this.state.firstLoad) return;
+        if(!this.state.firstLoad) return;
 
         // get core html content 
         document.querySelector('#contents').innerHTML = inventoryListContent(__);
-    },
-    renderPage: (response) => {
+    }
+
+    render = (response) => {
 
         console.log(response)
 
-        if(_this.state.firstLoad){
+        let self = this;
+
+        if(this.state.firstLoad){
 
             // initiate breadcrumbs
             initBreadcrumbs(
@@ -297,42 +313,6 @@ const _this = {
             response.inventory[i].stock_warning = parseFloat(response.inventory[i].stock_warning);
             response.inventory[i].stock_amount = parseFloat(response.inventory[i].stock_amount);
 
-            let allow = true;
-
-            // if(response.inventory.stock_amount <= 0 && document.querySelector('.select-stock-btn').dataset.key == "out"){
-
-            //     allow = true;
-            // }else if(response.inventory.stock_warning >= response.inventory.stock_amount && document.querySelector('.select-stock-btn').dataset.key == "low"){
-
-            //     allow = true;
-            // }
- 
-            // // in stock
-            // if(response.inventory[i].stock_warning < response.inventory[i].stock_amount && document.querySelector('.select-stock-btn').dataset.key == "in"){
-
-            //     allow = true;
-            // }
-
-            // // low stock
-            // if(response.inventory[i].stock_warning >= response.inventory[i].stock_amount && response.inventory[i].stock_amount > 0 && document.querySelector('.select-stock-btn').dataset.key == "low"){
-
-            //     allow = true;
-            // }
-
-            // // out of stock
-            // if(response.inventory[i].stock_amount <= 0 && document.querySelector('.select-stock-btn').dataset.key == "out"){
-
-            //     allow = true;
-            // }
-            
-            // // all
-            // if(document.querySelector('.select-stock-btn').dataset.key == ""){
-
-            //    allow = true;
-            // }
-            
-            // if(allow){
-
             // set inventory image
             let img = 'https://cdn.kenzap.com/loading.png';
             if(typeof(response.inventory[i].img) === 'undefined') response.inventory[i].img = [];
@@ -354,17 +334,17 @@ const _this = {
                                     <div id="stock_arrow" class="triangle_down mx-2"></div>
                                 </div>
                                 <div class="d-flex align-items-center ms-1">
-                                    <div>${ priceFormat(_this, parseFloat(response.inventory[i].price_per_unit)) }</div>
+                                    <div>${ priceFormat(self, parseFloat(response.inventory[i].price_per_unit)) }</div>
                                     <div id="price_arrow" class="${ (parseFloat(response.inventory[i].price_per_unit_prev) - parseFloat(response.inventory[i].price_per_unit)) > 0 ? 'triangle_down triangle_green' : '' } ${ (parseFloat(response.inventory[i].price_per_unit_prev) - parseFloat(response.inventory[i].price_per_unit)) < 0 ? 'triangle_up triangle_red' : '' } mx-2"></div>
                                 </div>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <span>${ stockBadge(_this, response.inventory[i]) }</span>
+                        <span>${ stockBadge(self, response.inventory[i]) }</span>
                     </td>
                     <td class="d-none d-sm-table-cell">
-                        <span>${ priceFormat(_this, response.inventory[i].price) }</span>
+                        <span>${ priceFormat(self, response.inventory[i].price) }</span>
                     </td>
                     <td class="d-none d-sm-table-cell">
                         <span>${ formatTime(__, response.inventory[i].updated) }</span>
@@ -373,67 +353,62 @@ const _this = {
 
                     </td>
                 </tr>`; 
-            // }
         }
 
         // provide result to the page
         document.querySelector(".table tbody").innerHTML = list;
 
         if(response.inventory.length < 2){ document.querySelector(".table tbody").style.height = "150px"; }else{ document.querySelector(".table tbody").style.height = "auto"; }
-    },
-    initListeners: () => {
+    }
 
-        // remove product
-        onClick('.remove-product', _this.listeners.removeProduct);
-        
+    initListeners = () => {
+
         // view item
         onClick('.view-item', e => {
 
-            _this.viewItem(e);
+            this.viewItem(e);
         });
 
         // search inventory activation
-        onClick('.table-p-list .bi-search', _this.listeners.searchInventoryActivate);
+        onClick('.table-p-list .bi-search', this.listeners.searchInventoryActivate);
 
         // search inventory hide
-        onClick('.table-p-list .btn-search-clear', _this.listeners.searchInventoryDeactivate);
+        onClick('.table-p-list .btn-search-clear', this.listeners.searchInventoryDeactivate);
 
         // search inventory activation
-        onClick('.table-p-list .inventoryActionsCont .dropdown-item', _this.listeners.tableAction);
+        onClick('.table-p-list .inventoryActionsCont .dropdown-item', this.listeners.tableAction);
 
         // stock sort select
-        onClick('.select-stock a', _this.listeners.stockSort)
+        onClick('.select-stock a', this.listeners.stockSort)
 
         // title sort select
-        onClick('.select-title a', _this.listeners.titleSort)
+        onClick('.select-title a', this.listeners.titleSort)
 
         // break here if initListeners is called more than once
-        if(!_this.state.firstLoad) return;
+        if(!this.state.firstLoad) return;
 
         // add product modal
-        onClick('.btn-add', _this.addItem);
+        onClick('.btn-add', this.addItem);
+    }
 
-        // add product confirm
-        // onClick('.btn-modal', _this.listeners.modalSuccessBtn);
-    },
-    listeners: {
+    listeners = {
 
         titleSort: (e) => {
 
             e.preventDefault();
 
-            _this.state.tag = "";
+            this.state.tag = "";
 
             // pick category first
             if(e.currentTarget.dataset.key == 'tag'){
 
-                categoryTable(_this)
+                categoryTable(this)
             }else{
 
                 document.querySelector('.select-title-btn').innerHTML = e.currentTarget.innerHTML;
                 document.querySelector('.select-title-btn').dataset.key = e.currentTarget.dataset.key;
 
-                _this.getData();
+                this.getData();
             }
         },
 
@@ -444,47 +419,7 @@ const _this = {
             document.querySelector('.select-stock-btn').innerHTML = e.currentTarget.innerHTML;
             document.querySelector('.select-stock-btn').dataset.key = e.currentTarget.dataset.key;
 
-            _this.getData();
-        },
-
-        removeProduct: (e) => {
-
-            e.preventDefault();
-
-            let c = confirm( __attr('Completely remove this product?') );
-
-            if(!c) return;
-  
-            // send data
-            fetch('https://api-v1.kenzap.cloud/', {
-                method: 'post',
-                headers: H(),
-                body: JSON.stringify({
-                    query: {
-                        product: {
-                            type:       'delete',
-                            key:        'ecommerce-inventory',   
-                            id:         e.currentTarget.dataset.id,
-                        }
-                    }
-                })
-            })
-            .then(response => response.json())
-            .then(response => {
-
-                if (response.success){
-
-                    // modalCont.hide();
-
-                    _this.getData();
-
-                }else{
-
-                    parseApiError(response);
-                }
-                
-            })
-            .catch(error => { parseApiError(error); });
+            this.getData();
         },
  
         searchInventoryActivate: (e) => {
@@ -496,7 +431,7 @@ const _this = {
             document.querySelector('.table-p-list thead tr th:nth-child(2) .search-cont input').focus();
 
             // search inventory
-            onKeyUp('.table-p-list thead tr th:nth-child(2) .search-cont input', _this.listeners.searchInventory);
+            onKeyUp('.table-p-list thead tr th:nth-child(2) .search-cont input', this.listeners.searchInventory);
         },
 
         searchInventoryDeactivate: (e) => {
@@ -507,24 +442,18 @@ const _this = {
             document.querySelector('.table-p-list thead tr th:nth-child(2) .search-cont').style.display = 'none';
             document.querySelector('.search-cont input').value = "";
 
-            setTimeout(()=>{ _this.getData(); },500);
+            setTimeout(()=>{ this.getData(); },500);
         },
 
         tableAction: (e) => {
 
             e.preventDefault();
 
-            _this.state.id = e.currentTarget.dataset.id;
-
-            // alert(_this.state.id);
+            this.state.id = e.currentTarget.dataset.id;
 
             switch(e.currentTarget.dataset.action){
 
-                case 'edit':
-
-                    _this.editItem(e);
-
-                break;
+                case 'edit': this.editItem(e); break;
             }
         },
  
@@ -532,43 +461,40 @@ const _this = {
 
             e.preventDefault();
 
-            _this.getData();
+            this.getData();
         },
+    }
 
-        // modalSuccessBtn: (e) => {
-            
-        //     console.log('calling modalSuccessBtnFunc');
-        //     _this.listeners.modalSuccessBtnFunc(e);
-        // },
+    viewItem = (e) => {
 
-        // modalSuccessBtnFunc: null
-    },
-    viewItem: (e) => {
+        this.state.id = e.currentTarget.dataset.id;
 
-        _this.state.id = e.currentTarget.dataset.id;
+        inventoryView(this);
+    }
 
-        inventoryView(_this);
-    },
-    editItem: (e) => {
+    editItem = (e) => {
 
-        _this.state.action = 'edit';
+        this.state.action = 'edit';
 
-        inventoryEdit(_this);
-    },
-    addItem: (e) => {
+        inventoryEdit(this);
+    }
 
-        _this.state.action = 'add';
+    addItem = (e) => {
 
-        inventoryEdit(_this);
-    },
-    initPagination: (response) => {
+        this.state.action = 'add';
 
-        getPagination(__, response.meta, _this.getData);
-    },
-    initFooter: () => {
+        inventoryEdit(this);
+    }
+
+    initPagination = (response) => {
+
+        getPagination(__, response.meta, this.getData);
+    }
+
+    initFooter = () => {
         
         initFooter(__html('Created by %1$Kenzap%2$. ❤️ Licensed %3$GPL3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>'), '');
     }
 }
 
-_this.init();
+new Inventory();

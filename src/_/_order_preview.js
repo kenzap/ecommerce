@@ -177,6 +177,17 @@ export const preview = {
         setTimeout(() => { preview.refreshTotals(); }, 100);
 
         html += '';
+
+        // add live delivery if present
+        console.log(_this.state.orderSingle.delivery);
+        if(_this.state.orderSingle.delivery) if(_this.state.orderSingle.delivery.shareLink){
+
+            html += `
+            <div class="mb-3 mt-3 order-row keyx-delivery-map"  >                
+                <iframe src="${_this.state.orderSingle.delivery.shareLink}" style="width: 100%;min-height: 500px;"></iframe>
+            </div>`;
+        }
+        
         _this.modal.querySelector(".modal-body").innerHTML = '<div class="modal-body-cont">' + html + '</div>';
         
         _this.modalCont.show();

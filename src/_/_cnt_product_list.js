@@ -1,12 +1,14 @@
+import { __html } from '@kenzap/k-cloud';
+
 // html product list loader
-export const productListContent = (__) => {
+export const productListContent = () => {
 
     return `
     <div class="container">
 
         <div class="d-md-flex justify-content-between bd-highlight mb-3">
             <nav class="bc" aria-label="breadcrumb"></nav>
-            <button class="btn btn-primary btn-add mt-3 mb-1 mt-md-0 mb-md-0" type="button">${ __('Add product') }</button>
+            <button class="btn btn-primary btn-add mt-3 mb-1 mt-md-0 mb-md-0" type="button">${ __html('Add product') }</button>
         </div>
 
         <div class="row">

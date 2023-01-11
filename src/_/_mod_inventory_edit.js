@@ -1,13 +1,10 @@
-import { H, __html, __attr, html, attr, showLoader, hideLoader, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { formatStatus, priceFormat, formatTime, simpleTags, onlyNumbers } from "../_/_helpers.js"
+import { H, __html, __attr, html, parseApiError, toast } from '@kenzap/k-cloud';
+import { simpleTags, onlyNumbers } from "../_/_helpers.js"
 
 // html inventory list loader
 export const inventoryEdit = (_this) => {
 
     let inventory = { img: [], price: 0, price_per_unit: 0, price_per_unit_prev: 0, status: "1", tags: [], stock_amount: 0, stock_unit: "kg", stock_warning: "", title: "", write_off: { type: "never", dof: [], time: '0', amount: 0 }, updated: 0 };
-
-    // console.log(_this.state.id);
-    // console.log(_this.state.response.inventory);
 
     if(_this.state.action == 'edit' && _this.state.id){
 
@@ -283,9 +280,6 @@ export const inventoryEdit = (_this) => {
         data.img = [];
         data.cats = [];
 
-        // console.log(data);
-        // return;
-
         if(data.title.length<2){ alert( __html('Please provide longer title') ); return; }
         if(data.price_per_unit.length == 0){ data.price_per_unit = '0'; }
         if(data.stock_amount == 0) data.stock_amount = '0';
@@ -358,7 +352,7 @@ export const inventoryEdit = (_this) => {
         if(modal.querySelector('.btn-add-item').dataset.loading) return false;
 
         // confirm removal
-        if(!confirm('Completely remove from inventory?')) return;
+        if(!confirm( __html('Completely remove from inventory?') )) return;
 
         // show loading
         let btnHTML = modal.querySelector('.btn-remove-item').innerHTML;
