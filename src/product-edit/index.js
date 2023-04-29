@@ -902,9 +902,9 @@ class ProductEdit {
             if (input.files && input.files[0]) {
 
                 // check image type
-                if(input.files[0].type != 'image/jpeg' && input.files[0].type != 'image/jpg' && input.files[0].type != 'image/png'){
+                if(input.files[0].type != 'image/jpeg' && input.files[0].type != 'image/jpg' && input.files[0].type != 'image/png' && input.files[0].type != 'image/webp'){
 
-                    toast( __html("Please provide image in JPEG format") );
+                    toast( __html("Please provide image in JPEG, PNG or WEBP format") );
                     return;
                 }
           
@@ -1004,7 +1004,7 @@ class ProductEdit {
         let t = '';
         for(let i=0;i<5;i++){
      
-          let img = (product.img !== undefined && product.img[i] == 'true') ? 'https://preview.kenzap.cloud/S'+spaceID()+'/_site/images/product-'+product.id+'-'+(i+1)+'-100x100.jpeg?'+product.updated:'https://account.kenzap.com/images/placeholder.jpg';
+          let img = (product.img !== undefined && product.img[i] == 'true') ? 'https://preview.kenzap.cloud/S'+spaceID()+'/_site/images/product-'+product.id+'-'+(i+1)+'-100x100.webp?'+product.updated:'https://account.kenzap.com/images/placeholder.jpg';
           t+=`\
           <div class="p-img-cont float-start">\
             <p data-index="${i}">\
@@ -1030,7 +1030,7 @@ class ProductEdit {
         for(let fi=0; fi<5; fi++){
     
             // async load image to verify if it exists on CDN 
-            let image_url = CDN+'/S'+sid+'/product-'+id+'-'+(parseInt(fi)+1)+'-250.jpeg?'+product.updated;
+            let image_url = CDN+'/S'+sid+'/product-'+id+'-'+(parseInt(fi)+1)+'-250.webp?'+product.updated;
             setTimeout(function(img, sel, _fi){
         
                 let allow = true;
@@ -1044,7 +1044,24 @@ class ProductEdit {
                     };
                     i.src=img;
                 }
-            }, 300, image_url, ".images-", fi );
+            }, 300, image_url, ".images-", fi);
+
+            // async load image to verify if it exists on CDN 
+            let image_url_jpeg = CDN+'/S'+sid+'/product-'+id+'-'+(parseInt(fi)+1)+'-250.jpeg?'+product.updated;
+            setTimeout(function(img, sel, _fi){
+        
+                let allow = true;
+                if(typeof(product.img)!=="undefined"){ if(!product.img[_fi]) allow = false; }
+                if(allow){
+
+                    let i = new Image();
+                    i.onload = function(){
+                        d.querySelector(sel+_fi).setAttribute('src', img);
+                        d.querySelector(sel+_fi).parentElement.querySelector('.remove').classList.remove('hd');
+                    };
+                    i.src=img;
+                }
+            }, 300, image_url_jpeg, ".images-", fi);
         }
     }
 

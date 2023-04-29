@@ -64,7 +64,7 @@ class ProductList {
                     products: {
                         type:       'find',
                         key:        'ecommerce-product',
-                        fields:     ['_id', 'id', 'img', 'status', 'price', 'title', 'updated'],
+                        fields:     ['_id', 'id', 'img', 'status', 'price', 'title', 'updated', 'created'],
                         limit:      this.state.limit,
                         offset:     s.length > 0 ? 0 : getPageNumber() * this.state.limit - this.state.limit,    // automatically calculate the offset of table pagination
                         search:     {                                                           // if s is empty search query is ignored
@@ -185,10 +185,11 @@ class ProductList {
         let list = '';
         for (let i in response.products) {
 
+            // console.log(response.products[i].created);
             let img = 'https://cdn.kenzap.com/loading.png';
 
             if(typeof(response.products[i].img) === 'undefined') response.products[i].img = [];
-            if(response.products[i].img[0]) img = CDN + '/S'+sid+'/product-'+response.products[i]._id+'-1-100x100.jpeg?'+response.products[i].updated;
+            if(response.products[i].img[0]) parseInt(response.products[i].created) < 1677000000 ? img = CDN + '/S'+sid+'/product-'+response.products[i]._id+'-1-100x100.jpeg?'+response.products[i].updated : img = CDN + '/S'+sid+'/product-'+response.products[i]._id+'-1-100x100.webp?'+response.products[i].updated;
               
             list += `
                 <tr>

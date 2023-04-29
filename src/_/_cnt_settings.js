@@ -1,6 +1,6 @@
 import { __html } from '@kenzap/k-cloud';
 
-export const HTMLContent = () => {
+export const HTMLContent = (self) => {
 
   return `
     <div class="container p-edit">
@@ -17,6 +17,7 @@ export const HTMLContent = () => {
                         <a class="nav-link d-none" id="nav-currency-link" data-bs-toggle="tab" data-bs-target="#nav-currency" type="button" role="tab" aria-controls="nav-currency" aria-selected="true" href="#">${__html('Currency &amp; Tax')}</a>
                         <a class="nav-link" id="nav-payout-link" data-bs-toggle="tab" data-bs-target="#nav-payout" type="button" role="tab" aria-controls="nav-payout" aria-selected="true"  href="#">${__html('Payout')}</a>
                         <a class="nav-link" id="nav-tax-link" data-bs-toggle="tab" data-bs-target="#nav-tax" type="button" role="tab" aria-controls="nav-tax" aria-selected="true"  href="#">${__html('Legal')}</a>
+                        <a class="nav-link" id="nav-printing-link" data-bs-toggle="tab" data-bs-target="#nav-printing" type="button" role="tab" aria-controls="nav-printing" aria-selected="true"  href="#">${__html('Printing')}</a>
                     </div>
                 </nav>
                 <div class="card-body tab-content" id="nav-tabContent">
@@ -413,7 +414,7 @@ export const HTMLContent = () => {
                                 ${__html('Custom methods')}
                               </label>
                             </div>
-                            <p class="form-text">${__html('Allow changing of payment method in the dashboard.')}</p>
+                            <p class="form-text">${__html('Allow to change payment method in the dashboard.')}</p>
                           </div> 
                         </div>
                       </div>
@@ -429,59 +430,7 @@ export const HTMLContent = () => {
                       </div>
                     </div>
 
-                    <h4 id="h-discounts" class="card-title mb-4 mt-4">${__html('Discounts')}</h4>
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <div class="form-group row mb-3 mt-1">
-                          <label class="col-sm-3 col-form-label">${__html('Coupons')}</label>
-                          <div class="col-sm-9">
-                            <div class="form-check">
-                              <input id="coupons" class="form-check-input inp" name="coupons" type="checkbox" value="1" data-type="checkbox">
-                              <label class="form-check-label" for="coupons">
-                                ${__html('Enable coupons')}
-                              </label>
-                            </div>
-                            <p class="form-text">${__html('Allow use of coupons upon checkout.')}</p>
-                          </div> 
-                        </div>
-                      </div>
-          
-                      <div class="col-lg-6">
-                        <div class="form-group row mb-3 mt-1">
-                          <label class="col-sm-3 col-form-label">${__html('List of coupons')}</label>
-                          <div class="col-sm-9">
-                            <textarea id="coupon_list" class="form-control inp" name="coupon_list" rows="2" data-type="text" style="font-size:13px;font-family: monospace;"></textarea>
-                            <p class="form-text">${__html('Provide one coupon and its discount rate per line. Example: BESTDEALS 15.')}</p>
-                          </div> 
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <div class="form-group row mb-3 mt-1">
-                          <label class="col-sm-3 col-form-label">${__html('Products')}</label>
-                          <div class="col-sm-9">
-                            <div class="form-check">
-                              <input id="product_discounts" class="form-check-input inp" name="product_discounts" type="checkbox" value="1" data-type="checkbox">
-                              <label class="form-check-label" for="product_discounts">
-                                ${__html('Product discounts')}
-                              </label>
-                            </div>
-                            <p class="form-text">${__html('Enable or disable all discounts defined under individual products page.')}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-lg-6 d-none">
-                        <div class="form-group row mb-3 mt-1">
-                          <label class="col-sm-3 col-form-label">${__html('List of hours')}</label>
-                          <div class="col-sm-9">
-                            <textarea id="happy_hours_list" class="form-control inp" name="happy_hours_list" rows="2" data-type="text" style="font-size:13px;font-family: monospace;"></textarea>
-                            <p class="form-text">${__html('Provide one happy hour, its discount per line. Example: Monday 15:00-17:30 10.')}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    ${ self.state.discounts.html() }
 
                     <h4 id="h-webhooks" class="card-title mb-4 mt-4">${__html('Webhooks')}</h4>
                     <div class="row webhook-list">
@@ -511,125 +460,6 @@ export const HTMLContent = () => {
                         </div>
                       </div>
                     </div>
-
-                    <h4 id="h-printing" class="card-title mb-4 mt-4">${__html('Printing')}</h4>
-
-                      <div class="row">
-
-                        <div class="col-xl-6">
-                          <div class="form-group row mb-3 mt-1">
-                            <label class="col-sm-3 col-form-label d-none">${__html('Printers')}</label>
-                            <div class="col-sm-12">
-
-                              <input id="printers" class="form-control inp d-none" name="printers" type="text" value="1" data-type="text">
-                              
-                              <table class="printer-table order-form mb-3">
-                                <theader>
-                                  <tr><th><div class="me-1 me-sm-3">${ __html('Device ID') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __html('Type') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __html('Paper') }</div></th><th class="printer-ip-th d-none"><div class="me-1 me-sm-3 ">${ __html('IP Address') }</div></th><th></th></tr>
-                                  <tr class="new-item-row">
-                                      <td>
-                                        <div class="me-1 me-sm-3 mt-2">
-                                            <input type="text" value="" autocomplete="off" placeholder="${ __html('AW4FROYNFRGV') }" class="form-control form-control-sm printer-idd" style="max-width: 156px;" data-id="" data-index="" list="item-suggestions">
-                                        </div>
-                                      </td>
-                                      <td class="printer-type">
-                                          <div class="me-1 me-sm-3 mt-2">
-                                            <button class="form-control form-control-sm dropdown-toggle" type="button" id="printer_type"  data-value="" data-bs-toggle="dropdown" aria-expanded="false">
-                                              ${ __html('Select') }
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="printer_type">
-                                              <li><a class="dropdown-item" data-value="bluetooth" href="#"><img style="height:24px" src="/assets/img/bluetooth.webp" > ${ __html('bluetooth') }</a></li>
-                                              <li><a class="dropdown-item" data-value="ethernet" href="#"><img style="height:24px" src="/assets/img/ethernet.png" > ${ __html('ethernet') }</a></li>
-                                              <li><a class="dropdown-item" data-value="usb" href="#"><img style="height:24px" src="/assets/img/usb.png" > ${ __html('usb') }</a></li>
-                                            </ul>
-                                          </div>
-                                      </td>
-                                      <td class="printer-paper-type">
-                                          <div class="me-1 me-sm-3 mt-2">
-                                            <button class="form-control form-control-sm dropdown-toggle" type="button" id="printer_paper_type"  data-value="" data-bs-toggle="dropdown" aria-expanded="false">
-                                              ${ __html('Select') }
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="printer_paper_type">
-                                              <li><a class="dropdown-item" data-value="58" href="#">${ __html('58mm') }</a></li>
-                                              <li><a class="dropdown-item" data-value="80" href="#">${ __html('80mm') }</a></li>
-                                            </ul>
-                                          </div>
-                                      </td>
-                                      <td class="printer-ip-td d-none">
-                                        <div class="me-1 me-sm-3 mt-2"> 
-                                          <input type="text" value="" autocomplete="off" placeholder="${ __html('192.168.1.12') }" class="form-control form-control-sm printer-ip" style="max-width: 156px;" data-id="" data-index="" >
-                                        </div>
-                                      </td>
-                                      <td class="align-middle text-center pt-2"> 
-                                          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="24" height="24" class="bi bi-plus-circle text-success align-middle add-printer po"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>
-                                      </td>
-                                  </tr>
-                                </theader>
-                                <tbody>
-
-
-                                </tbody>
-                              </table>
-                              <p class="form-text">${__html('List all printers connected to the Cloud.')}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xl-6">
-                          <div class="form-group row mb-3 mt-1">
-                            <label class="col-sm-3 col-form-label">${__html('Action')}</label>
-                            <div class="col-sm-9">
-                              <select id="print_action" class="form-select inp" name="print_action" data-type="select">
-                                <option value="system">${__html('Default printing dialogue')}</option>
-                                <option value="app">${__html('Kenzap print app')}</option>
-                              </select>
-                              <p class="form-text">${__html('Choose action when printing icon is clicked.')}</p>
-                            </div> 
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="border-top my-3 mb-5 d-none"></div>
-
-                      <h4 id="h-templates" class="card-title mb-4 mt-4">${__html('Templates')}</h4>
-
-                      <input id="templates" class="form-control inp d-none" name="templates" type="text" value="" data-type="text">
-
-                      <div id="templates-list" class="accordion accordion-flush templates-list" > </div>
-
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="text-end "> 
-                            <button class="btn btn-outline-primary btn-template-new mt-5 mb-1 mt-md-4 mb-md-0 d-flex align-items-center" type="button"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="16" height="16" class="bi bi-plus-circle align-middle me-2 po" ><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>${ __html('New template') }</button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row d-none">
-                        <div class="col-lg-6">
-                          <div class="form-group row mb-3 mt-1">
-                            <label class="col-sm-3 col-form-label">${__html('QR code')}</label>
-                            <div class="col-sm-9">
-                              <div class="form-check">
-                                <input id="qr_print" class="form-check-input inp" name="qr_print" type="checkbox" value="1" data-type="checkbox">
-                                <label class="form-check-label" for="qr_print">
-                                  ${__html('QR code printing')}
-                                </label>
-                              </div>
-                              <p class="form-text">${__html('Allow "Scan me to order" QR-code printing from orders dashboard.')}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-lg-6">
-                          <div class="form-group row mb-3 mt-1">
-                            <label class="col-sm-3 col-form-label">${__html('QR printing')}</label>
-                            <div class="col-sm-9">
-                              <textarea id="qr_template" class="form-control inp" name="qr_template" rows="10" data-type="text" style="font-size:13px;font-family: monospace;"></textarea>
-                              <p class="form-text">${__html('Default "Scan me to order" template for printers.')}</p>
-                            </div> 
-                          </div>
-                        </div>
-                      </div>
-
 
                     </div>
 
@@ -753,10 +583,7 @@ export const HTMLContent = () => {
                       </div>
                     </div>
 
-                    <br>
-                    <hr>
-                    <br>
-                    <br>
+           
                     </div>
                     <div class="tab-pane fade" id="nav-payout" role="tabpanel" aria-labelledby="nav-payout-link">
                     <h4 id="h-payout" class="card-title mb-4" title="payouts">${__html('Payout data')}</h4>
@@ -818,6 +645,129 @@ export const HTMLContent = () => {
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  <div class="tab-pane fade" id="nav-printing" role="tabpanel" aria-labelledby="nav-printing-link">
+                    <h4 id="h-payout" class="card-title mb-4" title="payouts">${__html('Printing')}</h4>
+                    <p class="card-description">${__html('Connect Kenzap Cloud priting services.')}</p>
+
+
+                    <div class="row">
+
+                        <div class="col-xl-6">
+                          <div class="form-group row mb-3 mt-1">
+                            <label class="col-sm-3 col-form-label d-none">${__html('Printers')}</label>
+                            <div class="col-sm-12">
+
+                              <input id="printers" class="form-control inp d-none" name="printers" type="text" value="1" data-type="text">
+                              
+                              <table class="printer-table order-form mb-3">
+                                <theader>
+                                  <tr><th><div class="me-1 me-sm-3">${ __html('Device ID') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __html('Type') }</div></th><th class="tp"><div class="me-1 me-sm-3">${ __html('Paper') }</div></th><th class="printer-ip-th d-none"><div class="me-1 me-sm-3 ">${ __html('IP Address') }</div></th><th></th></tr>
+                                  <tr class="new-item-row">
+                                      <td>
+                                        <div class="me-1 me-sm-3 mt-2">
+                                            <input type="text" value="" autocomplete="off" placeholder="${ __html('AW4FROYNFRGV') }" class="form-control form-control-sm printer-idd" style="max-width: 156px;" data-id="" data-index="" list="item-suggestions">
+                                        </div>
+                                      </td>
+                                      <td class="printer-type">
+                                          <div class="me-1 me-sm-3 mt-2">
+                                            <button class="form-control form-control-sm dropdown-toggle" type="button" id="printer_type"  data-value="" data-bs-toggle="dropdown" aria-expanded="false">
+                                              ${ __html('Select') }
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="printer_type">
+                                              <li><a class="dropdown-item" data-value="bluetooth" href="#"><img style="height:24px" src="/assets/img/bluetooth.webp" > ${ __html('bluetooth') }</a></li>
+                                              <li><a class="dropdown-item" data-value="ethernet" href="#"><img style="height:24px" src="/assets/img/ethernet.png" > ${ __html('ethernet') }</a></li>
+                                              <li><a class="dropdown-item" data-value="usb" href="#"><img style="height:24px" src="/assets/img/usb.png" > ${ __html('usb') }</a></li>
+                                            </ul>
+                                          </div>
+                                      </td>
+                                      <td class="printer-paper-type">
+                                          <div class="me-1 me-sm-3 mt-2">
+                                            <button class="form-control form-control-sm dropdown-toggle" type="button" id="printer_paper_type"  data-value="" data-bs-toggle="dropdown" aria-expanded="false">
+                                              ${ __html('Select') }
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="printer_paper_type">
+                                              <li><a class="dropdown-item" data-value="58" href="#">${ __html('58mm') }</a></li>
+                                              <li><a class="dropdown-item" data-value="80" href="#">${ __html('80mm') }</a></li>
+                                            </ul>
+                                          </div>
+                                      </td>
+                                      <td class="printer-ip-td d-none">
+                                        <div class="me-1 me-sm-3 mt-2"> 
+                                          <input type="text" value="" autocomplete="off" placeholder="${ __html('192.168.1.12') }" class="form-control form-control-sm printer-ip" style="max-width: 156px;" data-id="" data-index="" >
+                                        </div>
+                                      </td>
+                                      <td class="align-middle text-center pt-2"> 
+                                          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="24" height="24" class="bi bi-plus-circle text-success align-middle add-printer po"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>
+                                      </td>
+                                  </tr>
+                                </theader>
+                                <tbody>
+
+
+                                </tbody>
+                              </table>
+                              <p class="form-text">${__html('List all printers connected to the Cloud.')}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xl-6">
+                          <div class="form-group row mb-3 mt-1">
+                            <label class="col-sm-3 col-form-label">${__html('Action')}</label>
+                            <div class="col-sm-9">
+                              <select id="print_action" class="form-select inp" name="print_action" data-type="select">
+                                <option value="system">${__html('Default printing dialogue')}</option>
+                                <option value="app">${__html('Kenzap print app')}</option>
+                              </select>
+                              <p class="form-text">${__html('Choose action when printing icon is clicked.')}</p>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="border-top my-3 mb-5 d-none"></div>
+
+                      <h4 id="h-templates" class="card-title mb-4 mt-4">${__html('Templates')}</h4>
+
+                      <input id="templates" class="form-control inp d-none" name="templates" type="text" value="" data-type="text">
+
+                      <div id="templates-list" class="accordion accordion-flush templates-list" > </div>
+
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="text-end "> 
+                            <button class="btn btn-outline-primary btn-template-new mt-5 mb-1 mt-md-4 mb-md-0 d-flex align-items-center" type="button"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" width="16" height="16" class="bi bi-plus-circle align-middle me-2 po" ><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>${ __html('New template') }</button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row d-none">
+                        <div class="col-lg-6">
+                          <div class="form-group row mb-3 mt-1">
+                            <label class="col-sm-3 col-form-label">${__html('QR code')}</label>
+                            <div class="col-sm-9">
+                              <div class="form-check">
+                                <input id="qr_print" class="form-check-input inp" name="qr_print" type="checkbox" value="1" data-type="checkbox">
+                                <label class="form-check-label" for="qr_print">
+                                  ${__html('QR code printing')}
+                                </label>
+                              </div>
+                              <p class="form-text">${__html('Allow "Scan me to order" QR-code printing from orders dashboard.')}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="form-group row mb-3 mt-1">
+                            <label class="col-sm-3 col-form-label">${__html('QR printing')}</label>
+                            <div class="col-sm-9">
+                              <textarea id="qr_template" class="form-control inp" name="qr_template" rows="10" data-type="text" style="font-size:13px;font-family: monospace;"></textarea>
+                              <p class="form-text">${__html('Default "Scan me to order" template for printers.')}</p>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+
                   </div>
                 </div>
               </div>

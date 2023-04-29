@@ -2,6 +2,7 @@ import { H, __html, showLoader, hideLoader, initHeader, initBreadcrumbs, parseAp
 import { getCurrencies, initFooter } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_settings.js"
 import { printerSettings } from "../_/_printer_settings.js"
+import { Discounts } from "../_/_discount_settings.js"
 
 /**
  * Settings page of the dashboard.
@@ -121,8 +122,10 @@ class Settings {
 
         if(!this.state.firstLoad) return;
 
+        this.state.discounts = new Discounts(this);
+        
         // get core html content 
-        document.querySelector('#contents').innerHTML = HTMLContent();
+        document.querySelector('#contents').innerHTML = HTMLContent(this);
     }
 
     render = (response) => {
@@ -176,12 +179,15 @@ class Settings {
                 case 'emails':  
                 case 'select':
                 case 'textarea': field.value = localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) : ""; break;
-                case 'checkbox': console.log(localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) : false); field.checked = localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) == "true" ? true : false : false; break;
+                case 'checkbox': field.checked = localStorage.hasOwnProperty(field.name) ? localStorage.getItem(field.name) == "true" ? true : false : false; break;
             }
         }
 
         // printer settings
         printerSettings.init(this);
+
+        // init discounts
+        this.state.discounts.init(this);
 
         // webhooks
         if(response.settings.webhooks) response.settings.webhooks.forEach((hook, i) => {
@@ -314,6 +320,9 @@ class Settings {
 
         // get templates
         data = printerSettings.save(this, data);
+
+        // get coupons
+        data = this.state.discounts.save(data);
 
         // webhooks
         data.webhooks = [];
