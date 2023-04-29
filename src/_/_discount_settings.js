@@ -12,6 +12,8 @@ export class Discounts {
   constructor(parent){
 
     console.log(parent.state.settings);
+
+    if(!parent.state.settings.discounts) parent.state.settings.discounts = { enabled: false, products: false, list: [] }
       
     this.parent = parent;
     this.state = {
