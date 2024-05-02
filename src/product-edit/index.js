@@ -1,5 +1,5 @@
 import { H, __html, __attr, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onChange, simulateClick, spaceID, toast, link } from '@kenzap/k-cloud';
-import { getProductId, makeNumber, priceFormat, onlyNumbers, loadAddon, initFooter } from "../_/_helpers.js"
+import { getProductId, makeNumber, priceFormat, onlyNumbers, loadAddon, initFooter, getAPI } from "../_/_helpers.js"
 import { simpleTags } from "../_/_ui.js"
 import { HTMLContent } from "../_/_cnt_product_edit.js"
 import { inventoryTable } from "../_/_mod_product_edit_inventory_edit.js"
@@ -40,7 +40,7 @@ class ProductEdit {
 
         let id = getProductId();
 
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({
@@ -856,7 +856,7 @@ class ProductEdit {
             showLoader();
 
             // send data
-            fetch('https://api-v1.kenzap.cloud/', {
+            fetch(getAPI(), {
                 method: 'post',
                 headers: H(),
                 body: JSON.stringify({

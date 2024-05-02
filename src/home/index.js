@@ -1,6 +1,6 @@
 import { H, showLoader, hideLoader, initHeader, __html, initBreadcrumbs, parseApiError, link } from '@kenzap/k-cloud';
 import { HTMLContent } from "../_/_cnt_home.js"
-import { initFooter } from "../_/_helpers.js"
+import { initFooter, getAPI } from "../_/_helpers.js"
 
 /**
  * Main navigation menu page of the dashboard.
@@ -37,7 +37,7 @@ class Menu {
         if (this.state.firstLoad) showLoader();
 
         // do API query
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({

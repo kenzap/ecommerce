@@ -13,6 +13,25 @@ __('Discount by value')
 __('Grand Total')
 */
 
+/**
+ * @name getAPI
+ * @description Returns API link
+ */
+export const getAPI = () => {
+
+    return localStorage.getItem("API") ? localStorage.getItem("API") : "https://api-eu.kenzap.cloud";
+}
+
+/**
+ * @name getStorage
+ * @description Returns Bucket link
+ */
+export const getStorage = () => {
+
+    return localStorage.getItem("STORAGE") ? localStorage.getItem("STORAGE") : "https://kenzap-sites-eu.oss-eu-central-1.aliyuncs.com";
+}
+
+
 export const mt = (val) => {
 
     return (""+val).length < 2 ? "0"+val : val;
@@ -798,7 +817,7 @@ export const simpleTags = (element) => {
 export const initFooter = (_this) => {
         
     // Created by %1$Kenzap%2$. ❤️ 
-    let left = __html('E-commerce 2.1.2 by %1$Kenzap%2$. ❤️ Licensed %3$GPLv3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>')  
+    let left = __html('E-commerce 2.1.3 by %1$Kenzap%2$. ❤️ Licensed %3$GPLv3%4$.', '<a class="text-muted" href="https://kenzap.com/" target="_blank">', '</a>', '<a class="text-muted" href="https://github.com/kenzap/ecommerce" target="_blank">', '</a>')  
     let right = "";
     document.querySelector("footer .row").innerHTML = `
     <div class="d-sm-flex justify-content-center justify-content-sm-between">

@@ -1,5 +1,5 @@
 import { H, __attr, __html, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, link } from '@kenzap/k-cloud';
-import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime, onlyNumbers, initFooter } from "../_/_helpers.js"
+import { getPageNumber, getPagination, formatStatus, priceFormat, formatTime, onlyNumbers, initFooter, getAPI } from "../_/_helpers.js"
 import { productListContent } from "../_/_cnt_product_list.js"
 
 /**
@@ -41,7 +41,7 @@ class ProductList {
         let s = document.querySelector('.search-cont input') ? document.querySelector('.search-cont input').value : '';
 
         // do API query
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({
@@ -257,7 +257,7 @@ class ProductList {
             if(!c) return;
   
             // send data
-            fetch('https://api-v1.kenzap.cloud/', {
+            fetch(getAPI(), {
                 method: 'post',
                 headers: H(),
                 body: JSON.stringify({
@@ -358,7 +358,7 @@ class ProductList {
             if(data.title.length<2){ alert( __html('Please provide longer title') ); return; }
 
             // send data
-            fetch('https://api-v1.kenzap.cloud/', {
+            fetch(getAPI(), {
                 method: 'post',
                 headers: H(),
                 body: JSON.stringify({

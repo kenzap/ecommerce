@@ -1,7 +1,7 @@
 // js dependencies
 import { H, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, link, onClick, onChange } from '@kenzap/k-cloud';
 import { HTMLContent } from "../_/_cnt_analytics.js"
-import { priceFormat, mt, initFooter } from "../_/_helpers.js"
+import { priceFormat, mt, initFooter, getAPI } from "../_/_helpers.js"
 
 // where everything happens
 const _this = {
@@ -23,7 +23,7 @@ const _this = {
         if (_this.state.firstLoad) showLoader();
 
         // do API query
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({
@@ -191,7 +191,7 @@ const _this = {
         console.log((from) + ' ' + (to));
 
         // do API query
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({
@@ -213,12 +213,12 @@ const _this = {
                                 "type": "numeric",
                                 "value": Date.parse(from)  / 1000 | 0
                             },
-                            {
-                                "field": "status",
-                                "relation": "=",
-                                "type": "string",
-                                "value":"completed"
-                            },
+                            // {
+                            //     "field": "status",
+                            //     "relation": "=",
+                            //     "type": "string",
+                            //     "value":"completed"
+                            // },
                             {
                                 "field": "created",
                                 "relation": "<=",
@@ -427,12 +427,12 @@ const _this = {
                                 "type": "numeric",
                                 "value": Date.parse(from)  / 1000 | 0
                             },
-                            {
-                                "field": "status",
-                                "relation": "=",
-                                "type": "string",
-                                "value":"completed"
-                            },
+                            // {
+                            //     "field": "status",
+                            //     "relation": "=",
+                            //     "type": "string",
+                            //     "value":"completed"
+                            // },
                             {
                                 "field": "created",
                                 "relation": "<=",
@@ -449,6 +449,11 @@ const _this = {
                             "field": "created",
                             "order": "DESC"
                         },
+                        // groupby: [
+                        //     {
+                        //         "field": "created_ymd"
+                        //     }
+                        // ],
                         limit: 1000,
                         offset: 0
                     },

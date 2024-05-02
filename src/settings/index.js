@@ -1,5 +1,5 @@
 import { H, __html, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, toast, link } from '@kenzap/k-cloud';
-import { getCurrencies, initFooter } from "../_/_helpers.js"
+import { getCurrencies, initFooter, getAPI } from "../_/_helpers.js"
 import { HTMLContent } from "../_/_cnt_settings.js"
 import { printerSettings } from "../_/_printer_settings.js"
 import { Discounts } from "../_/_discount_settings.js"
@@ -43,7 +43,7 @@ class Settings {
         let s = document.querySelector('.search-cont input') ? document.querySelector('.search-cont input').value : '';
 
         // do API query
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({
@@ -217,7 +217,7 @@ class Settings {
             if(!c) return;
   
             // send data
-            fetch('https://api-v1.kenzap.cloud/', {
+            fetch(getAPI(), {
                 method: 'post',
                 headers: H(),
                 body: JSON.stringify({
@@ -338,7 +338,7 @@ class Settings {
         console.log(data);
 
         // send data
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({

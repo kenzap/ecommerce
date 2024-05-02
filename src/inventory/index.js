@@ -1,5 +1,5 @@
 import { H, __html, __attr,  attr, showLoader, hideLoader, initHeader, initBreadcrumbs, parseApiError, getCookie, onClick, onKeyUp, getSiteId, toast, link } from '@kenzap/k-cloud';
-import { getPageNumber, getPagination, priceFormat, formatTime, stockBadge, initFooter } from "../_/_helpers.js"
+import { getPageNumber, getPagination, priceFormat, formatTime, stockBadge, initFooter, getAPI } from "../_/_helpers.js"
 import { inventoryListContent } from "../_/_cnt_inventory_list.js"
 import { inventoryEdit } from "../_/_mod_inventory_edit.js"
 import { inventoryView } from "../_/_mod_inventory_view.js"
@@ -135,7 +135,7 @@ class Inventory {
         }
 
         // do API query
-        fetch('https://api-v1.kenzap.cloud/', {
+        fetch(getAPI(), {
             method: 'post',
             headers: H(),
             body: JSON.stringify({
